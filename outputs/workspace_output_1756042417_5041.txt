@@ -1,0 +1,1 @@
+Text successfully extracted from Agrimaan_Farm_Detailed_Design_Complete.docx to outputs/detailed_design.txt

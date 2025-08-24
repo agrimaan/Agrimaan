@@ -1,0 +1,7 @@
+total 36
+drwxr-xr-x 2 root root    84 Aug 24 07:33 .
+drwxr-xr-x 5 root root   170 Aug 24 07:33 ..
+-rw-r--r-- 1 root root 16704 Aug 24 07:33 Dashboard.tsx
+-rw-r--r-- 1 root root  3571 Aug 24 07:31 Login.tsx
+-rw-r--r-- 1 root root  1342 Aug 24 07:33 NotFound.tsx
+-rw-r--r-- 1 root root  7156 Aug 24 07:32 Register.tsx

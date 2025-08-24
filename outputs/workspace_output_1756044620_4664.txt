@@ -1,0 +1,6 @@
+total 40
+drwxr-xr-x 2 root root    59 Aug 24 07:37 .
+drwxr-xr-x 7 root root   124 Aug 24 07:35 ..
+-rw-r--r-- 1 root root 15609 Aug 24 07:35 index.html
+-rw-r--r-- 1 root root  6809 Aug 24 07:37 script.js
+-rw-r--r-- 1 root root 13212 Aug 24 07:36 styles.css

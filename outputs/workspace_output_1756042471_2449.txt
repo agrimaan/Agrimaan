@@ -1,0 +1,50 @@
+4
+Material Requirement Plan
+Planning
+It involved planning, purchase and production of components used in making items in MPS
+5
+Purchase and production activity control
+execution
+It ensures that the production plan is executed as planned in the first four levels of MPC. This level is an execution technique.
+Business Area
+Pain Area
+AGRIMAAN Solution
+Organic Farming
+Reporting & Inspection of Organic Farming
+Farming data recording, Automatic record creation: material and financial flow
+Organic Farming
+Traceability
+From the seed (INVOICE REC., STOCKS) via field (CYCLES, FERT.PLAN) to the table (INOVICE ISS., STOCKS)
+Organic Farming
+Cost control
+Own Price Controlling: Cost Centres/ Analysis
+Benefit Point
+Detailed Explanation
+Building equity for NextGen farmer
+The incoming NextGen farmer is encouraged to acquire some equity which is a key desire, but usually out of reach, for many aspiring farmers across the country.
+Attractive returns
+Long term target of return of 10% p.a. comprising of approximately 6% of capital growth and up to 4% rental income
+Robust Process
+Firstly, NextGen farmers are vetted by Cultivate Farms and the retiring farmer before being matched onto the farm opportunity.
+The AGRIMAAN platform is then used to list the properties and crowdfund the purchase price.
+Investors can choose properties that interest them. Furthermore, 1 or more agricultural properties can be acquired by investors.
+Opportunity to fractionally own the farm
+Investors can participate in the fractional ownership of an agricultural property within the Next Generation Farmers Strategy which is then leased to both the retiring and aspiring farmer
+Succession planning
+The NextGen project provides a succession plan for retiring farmers to transition their farm to the next generation of farmers while seeing their farm scale to a higher level of productivity.
+Facilitating a smooth transition
+The retiring farmer will also retain some equity and stay farming in partnership with the NextGen farmer to ensure a smooth transition is achieved.
+ENTITIES
+
+
+FIRST NAME
+
+
+MIDDLE NAME
+
+
+LAST NAME
+
+
+
+

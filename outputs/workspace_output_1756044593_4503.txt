@@ -1,0 +1,11 @@
+total 100
+drwxr-xr-x   6 root root   182 Aug 24 07:20 .
+drwxr-xr-x   7 root root   124 Aug 24 07:35 ..
+-rw-r--r--   1 root root   111 Aug 24 07:15 .env
+drwxr-xr-x   2 root root    29 Aug 24 07:20 middleware
+drwxr-xr-x   2 root root  4096 Aug 24 14:05 models
+drwxr-xr-x 163 root root  8192 Aug 24 07:10 node_modules
+-rw-r--r--   1 root root 69537 Aug 24 07:10 package-lock.json
+-rw-r--r--   1 root root   583 Aug 24 07:10 package.json
+drwxr-xr-x   2 root root  4096 Aug 24 14:08 routes
+-rw-r--r--   1 root root  1510 Aug 24 07:15 server.js

@@ -1,0 +1,7 @@
+total 8
+drwxr-xr-x 4 root root   92 Aug 24 07:34 .
+drwxr-xr-x 7 root root  124 Aug 24 07:35 ..
+-rw-r--r-- 1 root root 1227 Aug 24 07:25 package.json
+drwxr-xr-x 2 root root   57 Aug 24 07:34 public
+drwxr-xr-x 5 root root  170 Aug 24 07:33 src
+-rw-r--r-- 1 root root  556 Aug 24 07:25 tsconfig.json

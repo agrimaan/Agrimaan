@@ -1,0 +1,12 @@
+total 180
+drwxr-xr-x 2 root root  4096 Aug 24 14:08 .
+drwxr-xr-x 6 root root   182 Aug 24 07:20 ..
+-rw-r--r-- 1 root root 13716 Aug 24 07:23 analytics.routes.js
+-rw-r--r-- 1 root root  3602 Aug 24 07:20 auth.routes.js
+-rw-r--r-- 1 root root 18294 Aug 24 14:00 blockchain.routes.js
+-rw-r--r-- 1 root root 14356 Aug 24 07:22 crop.routes.js
+-rw-r--r-- 1 root root  7927 Aug 24 07:21 field.routes.js
+-rw-r--r-- 1 root root 32537 Aug 24 14:03 iot.routes.js
+-rw-r--r-- 1 root root 14308 Aug 24 07:23 sensor.routes.js
+-rw-r--r-- 1 root root 55473 Aug 24 14:08 supplychain.routes.js
+-rw-r--r-- 1 root root  5254 Aug 24 07:20 user.routes.js

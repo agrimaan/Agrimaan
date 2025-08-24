@@ -1,0 +1,11 @@
+total 4720
+drwxr-xr-x 5 root root    4096 Aug 24 13:31 .
+drwxr-xr-x 1 root root     162 Aug 24 13:31 ..
+-rw-r--r-- 1 root root      29 Aug 24 10:17 .created
+drwxr-xr-x 8 root root    4096 Aug 24 07:58 .git
+-rw-r--r-- 1 root root 4728852 Aug 24 13:31 Agrimaan Product Proposal.docx
+-rw-r--r-- 1 root root   66077 Aug 24 13:31 Agrimaan_Farm_Detailed_Design_Complete.docx
+drwxr-xr-x 7 root root     124 Aug 24 07:35 agritech-app
+-rw-r--r-- 1 root root    9014 Aug 24 07:10 architecture.md
+drwxr-xr-x 2 root root    4096 Aug 24 13:32 outputs
+-rw-r--r-- 1 root root    1312 Aug 24 07:37 todo.md

@@ -1,0 +1,8 @@
+total 8
+drwxr-xr-x 5 root root  111 Aug 24 15:00 .
+drwxr-xr-x 7 root root  152 Aug 24 14:57 ..
+drwxr-xr-x 3 root root   17 Aug 24 15:00 cypress
+-rw-r--r-- 1 root root 1227 Aug 24 07:25 package.json
+drwxr-xr-x 2 root root   57 Aug 24 07:34 public
+drwxr-xr-x 5 root root  170 Aug 24 07:33 src
+-rw-r--r-- 1 root root  556 Aug 24 07:25 tsconfig.json

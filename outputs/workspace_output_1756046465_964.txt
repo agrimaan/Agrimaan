@@ -1,0 +1,10 @@
+total 0
+drwxr-xr-x 9 root root 137 Aug 24 07:30 .
+drwxr-xr-x 5 root root 170 Aug 24 07:33 ..
+drwxr-xr-x 2 root root  35 Aug 24 07:27 alert
+drwxr-xr-x 2 root root  39 Aug 24 07:29 analytics
+drwxr-xr-x 2 root root  34 Aug 24 07:26 auth
+drwxr-xr-x 2 root root  34 Aug 24 07:28 crops
+drwxr-xr-x 2 root root  35 Aug 24 07:27 fields
+drwxr-xr-x 2 root root  36 Aug 24 07:28 sensors
+drwxr-xr-x 2 root root  37 Aug 24 07:30 weather

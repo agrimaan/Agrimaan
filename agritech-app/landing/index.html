@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriTech - Smart Agriculture Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <img src="images/logo.png" alt="AgriTech Logo">
+        <h1>AgriTech</h1>
+      </div>
+      <nav class="nav">
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#solutions">Solutions</a></li>
+          <li><a href="#technology">Technology</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="/app" class="btn btn-primary">Login</a></li>
+        </ul>
+      </nav>
+      <div class="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Empowering Farmers with Smart Technology</h1>
+        <p>AgriTech combines IoT, AI, and blockchain to revolutionize agriculture with data-driven insights, real-time monitoring, and secure transactions.</p>
+        <div class="hero-buttons">
+          <a href="#features" class="btn btn-primary">Learn More</a>
+          <a href="/register" class="btn btn-secondary">Get Started</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="images/hero-image.jpg" alt="Smart Agriculture">
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Our Platform Features</h2>
+        <p>Comprehensive solutions for modern agriculture challenges</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="images/icon-crop.svg" alt="Crop Management">
+          </div>
+          <h3>Crop Management System</h3>
+          <p>Optimize crop health and boost yields with real-time data from soil sensors and weather stations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="images/icon-precision.svg" alt="Precision Agriculture">
+          </div>
+          <h3>Precision Agriculture Management</h3>
+          <p>Monitor pest pressures and optimize fertilizer use with AI-driven precision farming tools.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="images/icon-decision.svg" alt="Decision Support">
+          </div>
+          <h3>Decision Support System</h3>
+          <p>Automate data analysis to generate reports that guide crucial decisions like variable-rate seeding.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <img src="images/icon-data.svg" alt="Data Sharing">
+          </div>
+          <h3>Data Sharing Platform</h3>
+          <p>Seamlessly share agricultural data across the value chain, improving collaboration and traceability.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solutions Section -->
+  <section id="solutions" class="solutions">
+    <div class="container">
+      <div class="section-header">
+        <h2>Solutions for Every Stakeholder</h2>
+        <p>Tailored approaches for different agricultural needs</p>
+      </div>
+      <div class="solutions-tabs">
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-target="farmers">For Farmers</button>
+          <button class="tab-btn" data-target="agronomists">For Agronomists</button>
+          <button class="tab-btn" data-target="investors">For Investors</button>
+        </div>
+        <div class="tabs-content">
+          <div class="tab-pane active" id="farmers">
+            <div class="tab-content">
+              <div class="tab-text">
+                <h3>Empowering Farmers</h3>
+                <p>Our platform provides farmers with real-time insights into their fields, crops, and environmental conditions. Make data-driven decisions to optimize yields, reduce costs, and improve sustainability.</p>
+                <ul>
+                  <li>Real-time soil moisture and nutrient monitoring</li>
+                  <li>Automated irrigation management</li>
+                  <li>Early pest and disease detection</li>
+                  <li>Weather forecasts and alerts</li>
+                  <li>Yield prediction and optimization</li>
+                </ul>
+                <a href="/farmers" class="btn btn-secondary">Learn More</a>
+              </div>
+              <div class="tab-image">
+                <img src="images/farmer-solution.jpg" alt="Farmer using AgriTech">
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="agronomists">
+            <div class="tab-content">
+              <div class="tab-text">
+                <h3>Tools for Agronomists</h3>
+                <p>Agronomists can leverage our advanced analytics and monitoring tools to provide better guidance to farmers and manage larger areas more efficiently.</p>
+                <ul>
+                  <li>Multi-field monitoring dashboard</li>
+                  <li>Advanced soil analysis tools</li>
+                  <li>Crop performance comparison</li>
+                  <li>Custom recommendation engine</li>
+                  <li>Client management system</li>
+                </ul>
+                <a href="/agronomists" class="btn btn-secondary">Learn More</a>
+              </div>
+              <div class="tab-image">
+                <img src="images/agronomist-solution.jpg" alt="Agronomist using AgriTech">
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane" id="investors">
+            <div class="tab-content">
+              <div class="tab-text">
+                <h3>Secure Agricultural Investments</h3>
+                <p>Investors can participate in agriculture with transparency and security through our blockchain-based investment platform.</p>
+                <ul>
+                  <li>Tokenized farmland investment</li>
+                  <li>Transparent yield tracking</li>
+                  <li>Automated profit distribution</li>
+                  <li>Risk assessment tools</li>
+                  <li>Sustainable agriculture certification</li>
+                </ul>
+                <a href="/investors" class="btn btn-secondary">Learn More</a>
+              </div>
+              <div class="tab-image">
+                <img src="images/investor-solution.jpg" alt="Investor using AgriTech">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technology Section -->
+  <section id="technology" class="technology">
+    <div class="container">
+      <div class="section-header">
+        <h2>Cutting-Edge Technology</h2>
+        <p>Powered by the latest advancements in agricultural technology</p>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tech-icon">
+            <img src="images/icon-iot.svg" alt="IoT">
+          </div>
+          <h3>IoT Sensors</h3>
+          <p>Real-time monitoring of soil conditions, weather, crop health, and more through connected sensors.</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">
+            <img src="images/icon-ai.svg" alt="AI">
+          </div>
+          <h3>Artificial Intelligence</h3>
+          <p>Advanced algorithms that analyze data to provide actionable insights and predictions.</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">
+            <img src="images/icon-blockchain.svg" alt="Blockchain">
+          </div>
+          <h3>Blockchain</h3>
+          <p>Secure, transparent transactions and data sharing across the agricultural value chain.</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">
+            <img src="images/icon-mobile.svg" alt="Mobile">
+          </div>
+          <h3>Mobile Access</h3>
+          <p>Monitor and manage your agricultural operations from anywhere, anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <h2>What Our Users Say</h2>
+        <p>Success stories from farmers and agribusinesses</p>
+      </div>
+      <div class="testimonial-slider">
+        <div class="testimonial-slide">
+          <div class="testimonial-content">
+            <p>"AgriTech has transformed how I manage my farm. The soil moisture sensors alone have reduced my water usage by 30% while improving crop yields."</p>
+            <div class="testimonial-author">
+              <img src="images/farmer-1.jpg" alt="John Smith">
+              <div>
+                <h4>John Smith</h4>
+                <p>Wheat Farmer, Kansas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide">
+          <div class="testimonial-content">
+            <p>"As an agronomist, I can now monitor multiple client farms simultaneously and provide data-driven recommendations that have real impact."</p>
+            <div class="testimonial-author">
+              <img src="images/agronomist-1.jpg" alt="Maria Rodriguez">
+              <div>
+                <h4>Maria Rodriguez</h4>
+                <p>Senior Agronomist, AgriConsult</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-slide">
+          <div class="testimonial-content">
+            <p>"The blockchain-based investment platform has allowed me to diversify my portfolio into agriculture with full transparency and minimal risk."</p>
+            <div class="testimonial-author">
+              <img src="images/investor-1.jpg" alt="Robert Chen">
+              <div>
+                <h4>Robert Chen</h4>
+                <p>Investment Manager, Green Capital</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Transform Your Agricultural Operations?</h2>
+        <p>Join thousands of farmers and agribusinesses already benefiting from our platform.</p>
+        <div class="cta-buttons">
+          <a href="/register" class="btn btn-primary">Get Started</a>
+          <a href="/demo" class="btn btn-secondary">Request Demo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header">
+        <h2>Contact Us</h2>
+        <p>Have questions? We're here to help.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-form">
+          <form>
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" required>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </form>
+        </div>
+        <div class="contact-info">
+          <div class="info-item">
+            <div class="info-icon">
+              <img src="images/icon-location.svg" alt="Location">
+            </div>
+            <div>
+              <h4>Address</h4>
+              <p>123 AgriTech Way, Palo Alto, CA 94301, USA</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <img src="images/icon-email.svg" alt="Email">
+            </div>
+            <div>
+              <h4>Email</h4>
+              <p>info@agritech.com</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <img src="images/icon-phone.svg" alt="Phone">
+            </div>
+            <div>
+              <h4>Phone</h4>
+              <p>+1 (555) 123-4567</p>
+            </div>
+          </div>
+          <div class="social-links">
+            <a href="#" class="social-link"><img src="images/icon-facebook.svg" alt="Facebook"></a>
+            <a href="#" class="social-link"><img src="images/icon-twitter.svg" alt="Twitter"></a>
+            <a href="#" class="social-link"><img src="images/icon-linkedin.svg" alt="LinkedIn"></a>
+            <a href="#" class="social-link"><img src="images/icon-instagram.svg" alt="Instagram"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <img src="images/logo.png" alt="AgriTech Logo">
+            <h3>AgriTech</h3>
+          </div>
+          <p>Empowering farmers and agribusinesses with cutting-edge technology for a sustainable future.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#solutions">Solutions</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Solutions</h4>
+          <ul>
+            <li><a href="/farmers">For Farmers</a></li>
+            <li><a href="/agronomists">For Agronomists</a></li>
+            <li><a href="/investors">For Investors</a></li>
+            <li><a href="/enterprise">Enterprise</a></li>
+            <li><a href="/government">Government</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Subscribe to Our Newsletter</h4>
+          <p>Stay updated with the latest in AgriTech</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address">
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 AgriTech. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/cookies">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

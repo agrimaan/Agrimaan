@@ -1,0 +1,10 @@
+total 28
+drwxr-xr-x 7 root root   152 Aug 24 14:57 .
+drwxr-xr-x 6 root root  4096 Aug 24 21:14 ..
+-rw-r--r-- 1 root root  3918 Aug 24 07:34 README.md
+drwxr-xr-x 8 root root  4096 Aug 24 15:06 backend
+drwxr-xr-x 3 root root    33 Aug 24 15:09 docs
+drwxr-xr-x 5 root root   111 Aug 24 15:00 frontend
+drwxr-xr-x 2 root root    59 Aug 24 07:37 landing
+drwxr-xr-x 2 root root     6 Aug 24 07:10 scripts
+-rw-r--r-- 1 root root 14366 Aug 24 14:57 testing-setup.md

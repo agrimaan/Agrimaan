@@ -1,0 +1,591 @@
+const express = require('express');
+const router = express.Router();
+const { body, validationResult } = require('express-validator');
+const { BlockchainTransaction, SmartContract, Wallet, Token } = require('../models/Blockchain');
+const auth = require('../middleware/auth');
+const Web3 = require('web3');
+
+// Initialize Web3 with provider (would be configured from environment variables in production)
+const web3 = new Web3(process.env.BLOCKCHAIN_PROVIDER_URL || 'http://localhost:8545');
+
+// @route   GET api/blockchain/transactions
+// @desc    Get all blockchain transactions for a user
+// @access  Private
+router.get('/transactions', auth, async (req, res) => {
+  try {
+    const transactions = await BlockchainTransaction.find({
+      $or: [
+        { fromAddress: req.user.walletAddress },
+        { toAddress: req.user.walletAddress }
+      ]
+    }).sort({ timestamp: -1 });
+    
+    res.json(transactions);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET api/blockchain/transactions/:id
+// @desc    Get transaction by ID
+// @access  Private
+router.get('/transactions/:id', auth, async (req, res) => {
+  try {
+    const transaction = await BlockchainTransaction.findById(req.params.id);
+    
+    if (!transaction) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+    
+    // Check if user is involved in the transaction
+    if (transaction.fromAddress !== req.user.walletAddress && 
+        transaction.toAddress !== req.user.walletAddress && 
+        req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+    
+    res.json(transaction);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/blockchain/transactions
+// @desc    Create a new blockchain transaction
+// @access  Private
+router.post(
+  '/transactions',
+  [
+    auth,
+    [
+      body('toAddress', 'Recipient address is required').not().isEmpty(),
+      body('amount', 'Amount must be a positive number').isFloat({ min: 0.000001 }),
+      body('tokenType', 'Token type is required').isIn(['AGM', 'LAND', 'FARMHOUSE', 'OTHER'])
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { toAddress, amount, tokenType, metadata } = req.body;
+      
+      // Get user's wallet
+      const wallet = await Wallet.findOne({ user: req.user.id });
+      
+      if (!wallet) {
+        return res.status(404).json({ message: 'Wallet not found' });
+      }
+      
+      // Check if wallet is active
+      if (wallet.status !== 'active') {
+        return res.status(400).json({ message: 'Wallet is not active' });
+      }
+      
+      // Check balance
+      const tokenBalance = wallet.balances.find(b => b.tokenType === tokenType);
+      if (!tokenBalance || tokenBalance.amount < amount) {
+        return res.status(400).json({ message: 'Insufficient balance' });
+      }
+      
+      // In a real implementation, we would interact with the blockchain here
+      // For now, we'll simulate a blockchain transaction
+      
+      // Create transaction record
+      const newTransaction = new BlockchainTransaction({
+        transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`, // Simulated hash
+        fromAddress: wallet.address,
+        toAddress,
+        amount,
+        tokenType,
+        status: 'pending',
+        metadata
+      });
+      
+      const transaction = await newTransaction.save();
+      
+      // Update wallet balances (in a real implementation, this would happen after blockchain confirmation)
+      // Deduct from sender
+      await Wallet.findOneAndUpdate(
+        { address: wallet.address, 'balances.tokenType': tokenType },
+        { $inc: { 'balances.$.amount': -amount } }
+      );
+      
+      // Add to recipient (if they have a wallet in our system)
+      const recipientWallet = await Wallet.findOne({ address: toAddress });
+      if (recipientWallet) {
+        const hasToken = recipientWallet.balances.some(b => b.tokenType === tokenType);
+        
+        if (hasToken) {
+          await Wallet.findOneAndUpdate(
+            { address: toAddress, 'balances.tokenType': tokenType },
+            { $inc: { 'balances.$.amount': amount } }
+          );
+        } else {
+          await Wallet.findOneAndUpdate(
+            { address: toAddress },
+            { $push: { balances: { tokenType, amount } } }
+          );
+        }
+      }
+      
+      res.json(transaction);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route   GET api/blockchain/contracts
+// @desc    Get all smart contracts
+// @access  Private/Admin
+router.get('/contracts', auth, async (req, res) => {
+  try {
+    // Check if user is admin
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+    
+    const contracts = await SmartContract.find().sort({ createdAt: -1 });
+    res.json(contracts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET api/blockchain/contracts/:id
+// @desc    Get smart contract by ID
+// @access  Private
+router.get('/contracts/:id', auth, async (req, res) => {
+  try {
+    const contract = await SmartContract.findById(req.params.id);
+    
+    if (!contract) {
+      return res.status(404).json({ message: 'Smart contract not found' });
+    }
+    
+    res.json(contract);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Smart contract not found' });
+    }
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/blockchain/contracts
+// @desc    Deploy a new smart contract
+// @access  Private/Admin
+router.post(
+  '/contracts',
+  [
+    auth,
+    [
+      body('contractName', 'Contract name is required').not().isEmpty(),
+      body('contractType', 'Contract type is required').isIn(['token', 'marketplace', 'supply_chain', 'yield_sharing', 'land_ownership', 'other']),
+      body('abi', 'Contract ABI is required').not().isEmpty(),
+      body('network', 'Network is required').isIn(['mainnet', 'testnet', 'polygon', 'polygon_testnet', 'private'])
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+      
+      const { contractName, contractType, abi, bytecode, network } = req.body;
+      
+      // In a real implementation, we would deploy the contract to the blockchain here
+      // For now, we'll simulate a contract deployment
+      
+      const newContract = new SmartContract({
+        contractAddress: `0x${Math.random().toString(16).substr(2, 40)}`, // Simulated address
+        contractName,
+        contractType,
+        abi,
+        bytecode,
+        network,
+        owner: req.user.id,
+        deploymentTransaction: `0x${Math.random().toString(16).substr(2, 64)}` // Simulated transaction hash
+      });
+      
+      const contract = await newContract.save();
+      
+      res.json(contract);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route   GET api/blockchain/wallet
+// @desc    Get user's wallet
+// @access  Private
+router.get('/wallet', auth, async (req, res) => {
+  try {
+    const wallet = await Wallet.findOne({ user: req.user.id });
+    
+    if (!wallet) {
+      return res.status(404).json({ message: 'Wallet not found' });
+    }
+    
+    res.json(wallet);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/blockchain/wallet
+// @desc    Create a new wallet for user
+// @access  Private
+router.post('/wallet', auth, async (req, res) => {
+  try {
+    // Check if user already has a wallet
+    let wallet = await Wallet.findOne({ user: req.user.id });
+    
+    if (wallet) {
+      return res.status(400).json({ message: 'User already has a wallet' });
+    }
+    
+    // Create a new Ethereum account
+    const account = web3.eth.accounts.create();
+    
+    // Create new wallet
+    wallet = new Wallet({
+      user: req.user.id,
+      address: account.address,
+      publicKey: account.address,
+      encryptedPrivateKey: account.privateKey, // In production, this would be encrypted
+      walletType: 'custodial',
+      balances: [
+        {
+          tokenType: 'AGM',
+          amount: 0
+        }
+      ]
+    });
+    
+    await wallet.save();
+    
+    // Update user with wallet address
+    await User.findByIdAndUpdate(req.user.id, { walletAddress: account.address });
+    
+    res.json(wallet);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET api/blockchain/tokens
+// @desc    Get all tokens owned by user
+// @access  Private
+router.get('/tokens', auth, async (req, res) => {
+  try {
+    const tokens = await Token.find({ owner: req.user.id });
+    res.json(tokens);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   GET api/blockchain/tokens/:id
+// @desc    Get token by ID
+// @access  Private
+router.get('/tokens/:id', auth, async (req, res) => {
+  try {
+    const token = await Token.findById(req.params.id);
+    
+    if (!token) {
+      return res.status(404).json({ message: 'Token not found' });
+    }
+    
+    // Check if user is the owner or admin
+    if (token.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+    
+    res.json(token);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Token not found' });
+    }
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/blockchain/tokens/mint
+// @desc    Mint a new token
+// @access  Private/Admin
+router.post(
+  '/tokens/mint',
+  [
+    auth,
+    [
+      body('tokenType', 'Token type is required').isIn(['ERC20', 'ERC721', 'ERC1155']),
+      body('contractAddress', 'Contract address is required').not().isEmpty(),
+      body('assetType', 'Asset type is required').isIn(['land', 'farmhouse', 'equipment', 'crop_yield', 'other']),
+      body('metadata', 'Metadata is required').not().isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+      
+      const { 
+        tokenType, 
+        contractAddress, 
+        ownerUserId, // The user who will own this token
+        assetType, 
+        metadata,
+        assetDetails,
+        value,
+        fractionalOwnership,
+        yieldSharing
+      } = req.body;
+      
+      // Verify contract exists
+      const contract = await SmartContract.findOne({ contractAddress });
+      if (!contract) {
+        return res.status(404).json({ message: 'Smart contract not found' });
+      }
+      
+      // Verify user exists
+      const tokenOwner = await User.findById(ownerUserId);
+      if (!tokenOwner) {
+        return res.status(404).json({ message: 'Token owner not found' });
+      }
+      
+      // In a real implementation, we would mint the token on the blockchain here
+      // For now, we'll simulate token minting
+      
+      const newToken = new Token({
+        tokenId: `${Math.floor(Math.random() * 1000000)}`, // Simulated token ID
+        tokenType,
+        contractAddress,
+        owner: ownerUserId,
+        metadata,
+        assetType,
+        assetDetails: assetDetails || {},
+        value: value || { amount: 0, currency: 'USD', lastValuation: new Date() },
+        fractionalOwnership: fractionalOwnership || { isEnabled: false },
+        yieldSharing: yieldSharing || { isEnabled: false }
+      });
+      
+      const token = await newToken.save();
+      
+      res.json(token);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route   POST api/blockchain/tokens/transfer
+// @desc    Transfer a token to another user
+// @access  Private
+router.post(
+  '/tokens/transfer',
+  [
+    auth,
+    [
+      body('tokenId', 'Token ID is required').not().isEmpty(),
+      body('toUserId', 'Recipient user ID is required').not().isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { tokenId, toUserId } = req.body;
+      
+      // Find the token
+      const token = await Token.findOne({ tokenId });
+      if (!token) {
+        return res.status(404).json({ message: 'Token not found' });
+      }
+      
+      // Check if user is the owner
+      if (token.owner.toString() !== req.user.id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+      
+      // Check if token is transferable
+      if (token.status !== 'active') {
+        return res.status(400).json({ message: 'Token is not transferable' });
+      }
+      
+      // Verify recipient exists
+      const recipient = await User.findById(toUserId);
+      if (!recipient) {
+        return res.status(404).json({ message: 'Recipient not found' });
+      }
+      
+      // In a real implementation, we would transfer the token on the blockchain here
+      // For now, we'll simulate token transfer
+      
+      // Record previous owner
+      token.previousOwners.push({
+        user: token.owner,
+        transferDate: new Date(),
+        transactionHash: `0x${Math.random().toString(16).substr(2, 64)}` // Simulated transaction hash
+      });
+      
+      // Update owner
+      token.owner = toUserId;
+      token.updatedAt = new Date();
+      
+      await token.save();
+      
+      res.json(token);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+// @route   POST api/blockchain/tokens/fractional/buy
+// @desc    Buy fractional shares of a token
+// @access  Private
+router.post(
+  '/tokens/fractional/buy',
+  [
+    auth,
+    [
+      body('tokenId', 'Token ID is required').not().isEmpty(),
+      body('shares', 'Number of shares is required').isInt({ min: 1 })
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { tokenId, shares } = req.body;
+      
+      // Find the token
+      const token = await Token.findOne({ tokenId });
+      if (!token) {
+        return res.status(404).json({ message: 'Token not found' });
+      }
+      
+      // Check if fractional ownership is enabled
+      if (!token.fractionalOwnership.isEnabled) {
+        return res.status(400).json({ message: 'Fractional ownership is not enabled for this token' });
+      }
+      
+      // Check if enough shares are available
+      if (token.fractionalOwnership.availableShares < shares) {
+        return res.status(400).json({ message: 'Not enough shares available' });
+      }
+      
+      // Get share price (in a real implementation, this would be calculated based on token value)
+      const sharePrice = token.value.amount / token.fractionalOwnership.totalShares;
+      const totalCost = sharePrice * shares;
+      
+      // Check if user has enough balance
+      const wallet = await Wallet.findOne({ user: req.user.id });
+      if (!wallet) {
+        return res.status(404).json({ message: 'Wallet not found' });
+      }
+      
+      const agmBalance = wallet.balances.find(b => b.tokenType === 'AGM');
+      if (!agmBalance || agmBalance.amount < totalCost) {
+        return res.status(400).json({ message: 'Insufficient AGM balance' });
+      }
+      
+      // In a real implementation, we would execute this transaction on the blockchain
+      // For now, we'll simulate the purchase
+      
+      // Check if user already owns shares
+      const existingShareholderIndex = token.fractionalOwnership.shareholders.findIndex(
+        sh => sh.user.toString() === req.user.id
+      );
+      
+      if (existingShareholderIndex >= 0) {
+        // Update existing shareholder
+        token.fractionalOwnership.shareholders[existingShareholderIndex].shares += shares;
+      } else {
+        // Add new shareholder
+        token.fractionalOwnership.shareholders.push({
+          user: req.user.id,
+          shares,
+          purchaseDate: new Date(),
+          purchasePrice: sharePrice
+        });
+      }
+      
+      // Update available shares
+      token.fractionalOwnership.availableShares -= shares;
+      
+      // Update token
+      await token.save();
+      
+      // Update user's wallet balance
+      await Wallet.findOneAndUpdate(
+        { user: req.user.id, 'balances.tokenType': 'AGM' },
+        { $inc: { 'balances.$.amount': -totalCost } }
+      );
+      
+      // Add balance to token owner's wallet
+      const ownerWallet = await Wallet.findOne({ user: token.owner });
+      if (ownerWallet) {
+        const hasAgm = ownerWallet.balances.some(b => b.tokenType === 'AGM');
+        
+        if (hasAgm) {
+          await Wallet.findOneAndUpdate(
+            { user: token.owner, 'balances.tokenType': 'AGM' },
+            { $inc: { 'balances.$.amount': totalCost } }
+          );
+        } else {
+          await Wallet.findOneAndUpdate(
+            { user: token.owner },
+            { $push: { balances: { tokenType: 'AGM', amount: totalCost } } }
+          );
+        }
+      }
+      
+      res.json(token);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+module.exports = router;

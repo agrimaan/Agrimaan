@@ -1,0 +1,308 @@
+import React, { useState } from 'react';
+import { 
+  Box, 
+  BottomNavigation, 
+  BottomNavigationAction, 
+  Paper, 
+  Drawer, 
+  List, 
+  ListItem, 
+  ListItemButton, 
+  ListItemIcon, 
+  ListItemText, 
+  IconButton, 
+  Typography, 
+  Divider, 
+  Badge,
+  Avatar,
+  useTheme
+} from '@mui/material';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LandscapeIcon from '@mui/icons-material/Landscape';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import SensorsIcon from '@mui/icons-material/Sensors';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import CloseIcon from '@mui/icons-material/Close';
+import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import SettingsIcon from '@mui/icons-material/Settings';
+import HelpIcon from '@mui/icons-material/Help';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+// Define prop types for the component
+interface MobileNavigationProps {
+  notifications?: number;
+  userName?: string;
+  userAvatar?: string;
+  onLogout?: () => void;
+  onNotificationsClick?: () => void;
+}
+
+// Define navigation items
+const mainNavItems = [
+  { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+  { text: 'Fields', icon: <LandscapeIcon />, path: '/fields' },
+  { text: 'Crops', icon: <AgricultureIcon />, path: '/crops' },
+  { text: 'Sensors', icon: <SensorsIcon />, path: '/sensors' },
+  { text: 'Weather', icon: <WaterDropIcon />, path: '/weather' },
+  { text: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' },
+  { text: 'Blockchain', icon: <AccountBalanceWalletIcon />, path: '/blockchain' },
+  { text: 'Marketplace', icon: <StorefrontIcon />, path: '/marketplace' },
+];
+
+const secondaryNavItems = [
+  { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
+  { text: 'Help', icon: <HelpIcon />, path: '/help' },
+  { text: 'Profile', icon: <AccountCircleIcon />, path: '/profile' },
+  { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
+];
+
+const MobileNavigation: React.FC<MobileNavigationProps> = ({
+  notifications = 0,
+  userName = 'User',
+  userAvatar,
+  onLogout,
+  onNotificationsClick
+}) => {
+  const theme = useTheme();
+  const location = useLocation();
+  const [moreDrawerOpen, setMoreDrawerOpen] = useState(false);
+  
+  // Get current path for bottom navigation
+  const getCurrentNavValue = () => {
+    const path = location.pathname;
+    
+    if (path.startsWith('/dashboard')) return 0;
+    if (path.startsWith('/fields')) return 1;
+    if (path.startsWith('/crops')) return 2;
+    if (path.startsWith('/sensors')) return 3;
+    return 4; // More
+  };
+  
+  // Handle bottom navigation change
+  const handleNavChange = (event: React.SyntheticEvent, newValue: number) => {
+    if (newValue === 4) {
+      setMoreDrawerOpen(true);
+    }
+  };
+  
+  // Handle more drawer close
+  const handleMoreDrawerClose = () => {
+    setMoreDrawerOpen(false);
+  };
+  
+  // Handle logout
+  const handleLogout = () => {
+    handleMoreDrawerClose();
+    if (onLogout) {
+      onLogout();
+    }
+  };
+  
+  // Handle notifications click
+  const handleNotificationsClick = () => {
+    handleMoreDrawerClose();
+    if (onNotificationsClick) {
+      onNotificationsClick();
+    }
+  };
+  
+  // Check if a nav item is active
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+  };
+  
+  // Render more drawer content
+  const renderMoreDrawerContent = () => (
+    <Box sx={{ width: '100%', maxWidth: 360 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          p: 2,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {userAvatar ? (
+            <Avatar 
+              alt={userName} 
+              src={userAvatar} 
+              sx={{ mr: 2 }}
+            />
+          ) : (
+            <Avatar sx={{ mr: 2, bgcolor: theme.palette.primary.main }}>
+              {userName.charAt(0)}
+            </Avatar>
+          )}
+          <Typography variant="h6">{userName}</Typography>
+        </Box>
+        <IconButton onClick={handleMoreDrawerClose}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <Divider />
+      <List>
+        {mainNavItems.slice(4).map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to={item.path}
+              selected={isActive(item.path)}
+              onClick={handleMoreDrawerClose}
+              sx={{
+                '&.Mui-selected': {
+                  backgroundColor: `${theme.palette.primary.main}20`,
+                  borderLeft: `4px solid ${theme.palette.primary.main}`,
+                  '&:hover': {
+                    backgroundColor: `${theme.palette.primary.main}30`,
+                  },
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        {secondaryNavItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to={item.path}
+              selected={isActive(item.path)}
+              onClick={item.text === 'Notifications' ? handleNotificationsClick : handleMoreDrawerClose}
+              sx={{
+                '&.Mui-selected': {
+                  backgroundColor: `${theme.palette.primary.main}20`,
+                  borderLeft: `4px solid ${theme.palette.primary.main}`,
+                  '&:hover': {
+                    backgroundColor: `${theme.palette.primary.main}30`,
+                  },
+                },
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
+                }}
+              >
+                {item.text === 'Notifications' ? (
+                  <Badge badgeContent={notifications} color="error">
+                    {item.icon}
+                  </Badge>
+                ) : (
+                  item.icon
+                )}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleLogout}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
+  
+  return (
+    <>
+      {/* Bottom Navigation */}
+      <Paper 
+        sx={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          zIndex: 1100,
+          borderTop: `1px solid ${theme.palette.divider}`
+        }} 
+        elevation={3}
+      >
+        <BottomNavigation
+          showLabels
+          value={getCurrentNavValue()}
+          onChange={handleNavChange}
+        >
+          <BottomNavigationAction 
+            label="Dashboard" 
+            icon={<DashboardIcon />} 
+            component={RouterLink}
+            to="/dashboard"
+          />
+          <BottomNavigationAction 
+            label="Fields" 
+            icon={<LandscapeIcon />} 
+            component={RouterLink}
+            to="/fields"
+          />
+          <BottomNavigationAction 
+            label="Crops" 
+            icon={<AgricultureIcon />} 
+            component={RouterLink}
+            to="/crops"
+          />
+          <BottomNavigationAction 
+            label="Sensors" 
+            icon={<SensorsIcon />} 
+            component={RouterLink}
+            to="/sensors"
+          />
+          <BottomNavigationAction 
+            label="More" 
+            icon={
+              notifications > 0 ? (
+                <Badge badgeContent={notifications} color="error">
+                  <MoreHorizIcon />
+                </Badge>
+              ) : (
+                <MoreHorizIcon />
+              )
+            } 
+          />
+        </BottomNavigation>
+      </Paper>
+      
+      {/* More Drawer */}
+      <Drawer
+        anchor="right"
+        open={moreDrawerOpen}
+        onClose={handleMoreDrawerClose}
+        sx={{
+          '& .MuiDrawer-paper': { 
+            width: '80%', 
+            maxWidth: 360,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        {renderMoreDrawerContent()}
+      </Drawer>
+      
+      {/* Add bottom padding to content to account for bottom navigation */}
+      <Box sx={{ pb: 7 }} />
+    </>
+  );
+};
+
+export default MobileNavigation;
