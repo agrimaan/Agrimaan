@@ -1,3 +1,8 @@
+# Pre-requisites
+node
+npm
+
+
 # Install Mongo DB on ubuntu
 sudo apt update
 sudo apt install -y mongodb-org
