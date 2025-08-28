@@ -1,0 +1,6 @@
+# Install node modules
+npm install
+
+
+# Run the backend
+npm start

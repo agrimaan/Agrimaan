@@ -1,0 +1,13 @@
+# Install Mongo DB on ubuntu
+sudo apt update
+sudo apt install -y mongodb-org
+sudo systemctl enable mongod
+sudo systemctl start mongod
+
+
+# Install node modules
+npm install
+
+
+# Run the backend
+npm start
