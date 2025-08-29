@@ -465,6 +465,7 @@ const SensorDashboard: React.FC<SensorDashboardProps> = ({
                                 stroke={theme.palette.primary.main} 
                                 fill={theme.palette.primary.light} 
                                 fillOpacity={0.3}
+                                /*
                                 dot={(props: any) => {
                                   const { cx, cy, payload } = props;
                                   return payload.isAnomaly ? (
@@ -477,6 +478,24 @@ const SensorDashboard: React.FC<SensorDashboardProps> = ({
                                     />
                                   ) : null;
                                 }}
+                                  // Return a transparent circle instead of null
+                                  //return <circle cx={cx} cy={cy} r={2} fill={theme.palette.primary.main} />;
+  
+                                  */
+                                activeDot={(props: any) => {
+                                  const { cx, cy, payload } = props;
+                                  if (!payload?.isAnomaly) return <circle cx={cx} cy={cy} r={0} fill="transparent" />;
+                                  return (
+                                    <circle 
+                                      cx={cx} 
+                                      cy={cy} 
+                                      r={4} 
+                                      fill={theme.palette.error.main}
+                                      stroke={theme.palette.error.dark}
+                                      strokeWidth={2}
+                                    />
+                                  );
+                                }}                                
                               />
                             </AreaChart>
                           </ResponsiveContainer>

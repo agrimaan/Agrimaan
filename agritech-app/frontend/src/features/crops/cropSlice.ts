@@ -96,7 +96,9 @@ interface CropState {
 // Get all crops
 export const getCrops = createAsyncThunk(
   'crop/getCrops',
-  async (fieldId?: string, { rejectWithValue }) => {
+  //this was wrong statement, it async (fieldId?: string, { rejectWithValue }) => {
+  async (fieldId: string | undefined, { rejectWithValue }) => {
+
     try {
       const url = fieldId ? `/api/crops?fieldId=${fieldId}` : '/api/crops';
       const res = await axios.get(url);

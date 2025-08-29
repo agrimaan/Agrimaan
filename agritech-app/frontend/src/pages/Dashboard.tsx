@@ -77,7 +77,28 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch(getFields() as any);
     dispatch(getCrops() as any);
-    dispatch(getSensors() as any);
+    //dispatch(getCrops(undefined) as any); // Also fix this if it has the same issue
+    //dispatch(getSensors() as any);
+    //dispatch(getSensors(undefined) as any);
+
+
+// To get crops with a specific status
+dispatch(getSensors({ status: 'active' }) as any);
+
+    // To get all sensors
+dispatch(getSensors({}) as any);
+
+// To get sensors for a specific field
+dispatch(getSensors({ fieldId: 'some-field-id' }) as any);
+
+// To get sensors of a specific type
+dispatch(getSensors({ type: 'temperature' }) as any);
+
+// To get sensors with a specific status
+dispatch(getSensors({ status: 'active' }) as any);
+
+
+
     dispatch(getRecommendations() as any);
   }, [dispatch]);
   

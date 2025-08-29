@@ -1,9 +1,12 @@
 import React from 'react';
-import { Box, Paper, Typography, Grid, Tooltip, CircularProgress, useTheme } from '@mui/material';
+import { Box, Paper, Typography, Grid, CircularProgress, useTheme } from '@mui/material';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip, 
   PieChart, Pie, Cell, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
+
+// Use RechartsTooltip for recharts
+<RechartsTooltip />
 
 // Define prop types for the component
 interface CropHealthVisualizationProps {
@@ -156,7 +159,7 @@ const CropHealthVisualization: React.FC<CropHealthVisualizationProps> = ({
             {cropData.harvestDate && (
               <Typography variant="body2">
                 Expected Harvest: <strong>{formatDate(cropData.harvestDate)}</strong> 
-                {calculateDaysUntilHarvest() !== null && calculateDaysUntilHarvest() > 0 && 
+                {calculateDaysUntilHarvest() !== null && calculateDaysUntilHarvest() ! > 0 && 
                   <> ({calculateDaysUntilHarvest()} days remaining)</>
                 }
               </Typography>
@@ -217,7 +220,14 @@ const CropHealthVisualization: React.FC<CropHealthVisualizationProps> = ({
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                   // label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                   //label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`
+                  //}
+                  label={(props: any) => {
+                    const { name, percent } = props;
+                    if (percent === undefined) return '';
+                    return `${name}: ${(percent * 100).toFixed(0)}%`;
+                  }}
                   >
                     {prepareRiskData().map((entry, index) => {
                       const colors = [
@@ -250,7 +260,7 @@ const CropHealthVisualization: React.FC<CropHealthVisualizationProps> = ({
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />
-                    <Tooltip />
+                    <RechartsTooltip />
                     <Legend />
                     <Bar dataKey="ndvi" name="NDVI (%)" fill={theme.palette.success.main} />
                     <Bar dataKey="healthScore" name="Health Score" fill={theme.palette.primary.main} />
@@ -276,8 +286,12 @@ const CropHealthVisualization: React.FC<CropHealthVisualizationProps> = ({
                   .replace(/([a-z])([A-Z])/g, '$1 $2'); // Add space between camelCase words
                 
                 // Determine color based on value and metric type
-                let color = theme.palette.info.main;
-                let formattedValue = value;
+                //let color = theme.palette.info.main;
+                let color = theme.palette.text.primary;
+
+                //let formattedValue = value;
+                let formattedValue: string;
+
                 
                 if (key === 'ndvi') {
                   formattedValue = (value * 100).toFixed(1) + '%';

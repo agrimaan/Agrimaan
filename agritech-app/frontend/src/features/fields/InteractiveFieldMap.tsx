@@ -9,11 +9,13 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   ListItemSecondaryAction,
   Switch,
   FormControl,
+  Grid,
   InputLabel,
   Select,
   MenuItem,
@@ -388,9 +390,9 @@ const InteractiveFieldMap: React.FC = () => {
         },
         edit: {
           featureGroup: drawnItems,
-          poly: {
-            allowIntersection: false
-          }
+        //  poly: {
+        //   allowIntersection: false
+        //  }
         }
       });
       
@@ -430,7 +432,7 @@ const InteractiveFieldMap: React.FC = () => {
       // Add fields as GeoJSON
       fields.forEach(field => {
         const geoJSONLayer = L.geoJSON(
-          { type: 'Feature', geometry: field.geometry, properties: { id: field.id, name: field.name } },
+          { type: 'Feature', geometry: field.geometry, properties: { id: field.id, name: field.name } } as GeoJSON.Feature, // Type assertion
           {
             style: {
               color: theme.palette.secondary.main,

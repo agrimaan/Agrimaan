@@ -1,4 +1,9 @@
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/agritech
+# MongoDB Configuration
+MONGO_ROOT_USERNAME=admin
+MONGO_ROOT_PASSWORD=Agrim@@n2025
+
 JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFncmltYWFuIEdsb2JhbCIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.DTNMQcrFHIKRUA6j4gMrRDqfOpB0l-AmI7uVmG29XqY
-NODE_ENV=development EOF
+
+export NODE_ENV=development EOF
+
+sudo systemctl status mongodb

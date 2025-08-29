@@ -16,12 +16,14 @@ import {
   useTheme,
   useMediaQuery,
   IconButton,
-  Tooltip,
+  Tooltip as MuiTooltip,
   Skeleton,
   SwipeableDrawer,
   Tabs,
   Tab
 } from '@mui/material';
+
+
 import {
   Add as AddIcon,
   Terrain as TerrainIcon,
@@ -56,7 +58,7 @@ import {
   LineElement, 
   BarElement,
   Title, 
-  Tooltip, 
+  Tooltip as ChartTooltip, // Use alias
   Legend, 
   ArcElement 
 } from 'chart.js';
@@ -70,7 +72,7 @@ ChartJS.register(
   LineElement, 
   BarElement,
   Title, 
-  Tooltip, 
+  ChartTooltip, 
   Legend,
   ArcElement
 );
@@ -93,7 +95,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch(getFields() as any);
     dispatch(getCrops() as any);
-    dispatch(getSensors() as any);
+    dispatch(getSensors({}) as any);
     dispatch(getRecommendations() as any);
   }, [dispatch]);
   
