@@ -4,6 +4,6 @@ MONGO_ROOT_PASSWORD=Agrim@@n2025
 
 JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFncmltYWFuIEdsb2JhbCIsImFkbWluIjp0cnVlLCJpYXQiOjE1MTYyMzkwMjJ9.DTNMQcrFHIKRUA6j4gMrRDqfOpB0l-AmI7uVmG29XqY
 
-export NODE_ENV=development EOF
+export NODE_ENV=development
 
 sudo systemctl status mongodb

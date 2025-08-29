@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { register } from 'features/auth/authSlice';
 
 const Register: React.FC = () => {
   const dispatch = useDispatch();
@@ -131,7 +132,7 @@ const Register: React.FC = () => {
     try {
       // Your registration logic here
       console.log('Registration data:', formData);
-      // dispatch(register(formData));
+       dispatch(register(formData) as any);
     } catch (error) {
       console.error('Registration error:', error);
     }
