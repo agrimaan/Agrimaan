@@ -1,0 +1,4769 @@
+openapi: 3.0.3
+info:
+  title: agrimaan API
+  description: |
+    API documentation for the agrimaan application, providing endpoints for field management, crop monitoring, IoT device integration, weather data, analytics, and blockchain functionality.
+  version: 1.0.0
+  contact:
+    name: NinjaTech AI
+    email: support@ninjatech.ai
+    url: https://ninjatech.ai
+servers:
+  - url: https://api.agrimaan.ninjatech.ai/v1
+    description: Production server
+  - url: https://staging-api.agrimaan.ninjatech.ai/v1
+    description: Staging server
+  - url: http://localhost:3001/v1
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Fields
+    description: Field management operations
+  - name: Crops
+    description: Crop management and monitoring
+  - name: Sensors
+    description: IoT sensor management and data
+  - name: Weather
+    description: Weather data and forecasts
+  - name: Analytics
+    description: Advanced analytics and recommendations
+  - name: Blockchain
+    description: Blockchain transactions and tokenization
+  - name: Notifications
+    description: User notification management
+  - name: User Preferences
+    description: User preference settings
+
+paths:
+  #
+  # Authentication Endpoints
+  #
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Creates a new user account with the provided information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticates a user and returns access and refresh tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Uses a refresh token to generate a new access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+                  description: The refresh token provided during login
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidates the current refresh token
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Logout successful
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Fields Endpoints
+  #
+  /fields:
+    get:
+      tags:
+        - Fields
+      summary: Get all fields
+      description: Returns a list of all fields belonging to the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of fields to return
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Number of fields to skip
+          schema:
+            type: integer
+            default: 0
+        - name: sort
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+            enum: [name, area, createdAt]
+            default: createdAt
+        - name: order
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: List of fields
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Field'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Fields
+      summary: Create a new field
+      description: Creates a new field with the provided information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldInput'
+      responses:
+        '201':
+          description: Field created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Field'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /fields/{id}:
+    get:
+      tags:
+        - Fields
+      summary: Get field by ID
+      description: Returns a specific field by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Field ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Field details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Field'
+        '404':
+          description: Field not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - Fields
+      summary: Update field
+      description: Updates an existing field with the provided information
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Field ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldInput'
+      responses:
+        '200':
+          description: Field updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Field'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Field not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      tags:
+        - Fields
+      summary: Delete field
+      description: Deletes a specific field by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Field ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Field deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Field deleted successfully
+                  field:
+                    $ref: '#/components/schemas/Field'
+        '404':
+          description: Field not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /fields/{id}/boundaries:
+    get:
+      tags:
+        - Fields
+      summary: Get field boundaries
+      description: Returns the GeoJSON boundaries of a specific field
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Field ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Field boundaries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldBoundaries'
+        '404':
+          description: Field not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - Fields
+      summary: Update field boundaries
+      description: Updates the GeoJSON boundaries of a specific field
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Field ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldBoundariesInput'
+      responses:
+        '200':
+          description: Field boundaries updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldBoundaries'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Field not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Crops Endpoints
+  #
+  /crops:
+    get:
+      tags:
+        - Crops
+      summary: Get all crops
+      description: Returns a list of all crops belonging to the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of crops to return
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Number of crops to skip
+          schema:
+            type: integer
+            default: 0
+        - name: status
+          in: query
+          description: Filter by crop status
+          schema:
+            type: string
+            enum: [planned, planted, growing, harvested, failed]
+        - name: fieldId
+          in: query
+          description: Filter by field ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of crops
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Crop'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Crops
+      summary: Create a new crop
+      description: Creates a new crop with the provided information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CropInput'
+      responses:
+        '201':
+          description: Crop created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Crop'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /crops/{id}:
+    get:
+      tags:
+        - Crops
+      summary: Get crop by ID
+      description: Returns a specific crop by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crop ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Crop details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Crop'
+        '404':
+          description: Crop not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - Crops
+      summary: Update crop
+      description: Updates an existing crop with the provided information
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crop ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CropInput'
+      responses:
+        '200':
+          description: Crop updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Crop'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Crop not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      tags:
+        - Crops
+      summary: Delete crop
+      description: Deletes a specific crop by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crop ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Crop deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Crop deleted successfully
+                  crop:
+                    $ref: '#/components/schemas/Crop'
+        '404':
+          description: Crop not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Sensors Endpoints
+  #
+  /sensors:
+    get:
+      tags:
+        - Sensors
+      summary: Get all sensors
+      description: Returns a list of all sensors belonging to the authenticated user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of sensors to return
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Number of sensors to skip
+          schema:
+            type: integer
+            default: 0
+        - name: status
+          in: query
+          description: Filter by sensor status
+          schema:
+            type: string
+            enum: [active, inactive, maintenance, error]
+        - name: type
+          in: query
+          description: Filter by sensor type
+          schema:
+            type: string
+        - name: fieldId
+          in: query
+          description: Filter by field ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of sensors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Sensors
+      summary: Register a new sensor
+      description: Registers a new sensor with the provided information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorInput'
+      responses:
+        '201':
+          description: Sensor registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /sensors/{id}:
+    get:
+      tags:
+        - Sensors
+      summary: Get sensor by ID
+      description: Returns a specific sensor by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sensor details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - Sensors
+      summary: Update sensor
+      description: Updates an existing sensor with the provided information
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorInput'
+      responses:
+        '200':
+          description: Sensor updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    delete:
+      tags:
+        - Sensors
+      summary: Delete sensor
+      description: Deletes a specific sensor by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sensor deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Sensor deleted successfully
+                  sensor:
+                    $ref: '#/components/schemas/Sensor'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /sensors/{id}/data:
+    get:
+      tags:
+        - Sensors
+      summary: Get sensor data
+      description: Returns data readings from a specific sensor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date for data readings (ISO format)
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: End date for data readings (ISO format)
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Maximum number of readings to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Number of readings to skip
+          schema:
+            type: integer
+            default: 0
+        - name: aggregation
+          in: query
+          description: Data aggregation method
+          schema:
+            type: string
+            enum: [none, hourly, daily, weekly, monthly]
+            default: none
+      responses:
+        '200':
+          description: Sensor data readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensorReading'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Sensors
+      summary: Add sensor data
+      description: Adds new data readings for a specific sensor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/SensorReadingInput'
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/SensorReadingInput'
+      responses:
+        '201':
+          description: Sensor data added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Sensor data added successfully
+                  count:
+                    type: integer
+                    description: Number of readings added
+                    example: 1
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /sensors/{id}/calibrate:
+    post:
+      tags:
+        - Sensors
+      summary: Calibrate sensor
+      description: Initiates a calibration process for a specific sensor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorCalibrationInput'
+      responses:
+        '200':
+          description: Calibration initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorCalibration'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /sensors/{id}/firmware:
+    get:
+      tags:
+        - Sensors
+      summary: Get sensor firmware info
+      description: Returns firmware information for a specific sensor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sensor firmware information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorFirmware'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Sensors
+      summary: Update sensor firmware
+      description: Initiates a firmware update for a specific sensor
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensorFirmwareUpdateInput'
+      responses:
+        '200':
+          description: Firmware update initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensorFirmwareUpdate'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sensor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Weather Endpoints
+  #
+  /weather/current:
+    get:
+      tags:
+        - Weather
+      summary: Get current weather
+      description: Returns current weather data for a specific location
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude
+          schema:
+            type: number
+            format: float
+        - name: lon
+          in: query
+          description: Longitude
+          schema:
+            type: number
+            format: float
+        - name: fieldId
+          in: query
+          description: Field ID (alternative to lat/lon)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current weather data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentWeather'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /weather/forecast:
+    get:
+      tags:
+        - Weather
+      summary: Get weather forecast
+      description: Returns weather forecast data for a specific location
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude
+          schema:
+            type: number
+            format: float
+        - name: lon
+          in: query
+          description: Longitude
+          schema:
+            type: number
+            format: float
+        - name: fieldId
+          in: query
+          description: Field ID (alternative to lat/lon)
+          schema:
+            type: string
+        - name: days
+          in: query
+          description: Number of days to forecast
+          schema:
+            type: integer
+            default: 7
+            minimum: 1
+            maximum: 16
+      responses:
+        '200':
+          description: Weather forecast data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherForecast'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /weather/historical:
+    get:
+      tags:
+        - Weather
+      summary: Get historical weather data
+      description: Returns historical weather data for a specific location and time period
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude
+          schema:
+            type: number
+            format: float
+        - name: lon
+          in: query
+          description: Longitude
+          schema:
+            type: number
+            format: float
+        - name: fieldId
+          in: query
+          description: Field ID (alternative to lat/lon)
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: true
+          description: Start date (ISO format)
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: true
+          description: End date (ISO format)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Historical weather data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoricalWeather'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /weather/alerts:
+    get:
+      tags:
+        - Weather
+      summary: Get weather alerts
+      description: Returns active weather alerts for a specific location
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude
+          schema:
+            type: number
+            format: float
+        - name: lon
+          in: query
+          description: Longitude
+          schema:
+            type: number
+            format: float
+        - name: fieldId
+          in: query
+          description: Field ID (alternative to lat/lon)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Weather alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeatherAlert'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Analytics Endpoints
+  #
+  /analytics/yield-prediction:
+    get:
+      tags:
+        - Analytics
+      summary: Get yield prediction
+      description: Returns yield prediction data for a specific field and crop
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: fieldId
+          in: query
+          required: true
+          description: Field ID
+          schema:
+            type: string
+        - name: cropId
+          in: query
+          required: true
+          description: Crop ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Yield prediction data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/YieldPrediction'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /analytics/pest-risk:
+    get:
+      tags:
+        - Analytics
+      summary: Get pest risk assessment
+      description: Returns pest risk assessment data for a specific field and crop
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: fieldId
+          in: query
+          required: true
+          description: Field ID
+          schema:
+            type: string
+        - name: cropId
+          in: query
+          required: true
+          description: Crop ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pest risk assessment data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PestRiskAssessment'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /analytics/soil-health:
+    get:
+      tags:
+        - Analytics
+      summary: Get soil health analysis
+      description: Returns soil health analysis data for a specific field
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: fieldId
+          in: query
+          required: true
+          description: Field ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Soil health analysis data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SoilHealthAnalysis'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /analytics/crop-image:
+    post:
+      tags:
+        - Analytics
+      summary: Analyze crop image
+      description: Analyzes a crop image for health assessment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Crop image file
+                fieldId:
+                  type: string
+                  description: Field ID
+                cropId:
+                  type: string
+                  description: Crop ID
+      responses:
+        '200':
+          description: Crop image analysis results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CropImageAnalysis'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /analytics/market-forecast:
+    get:
+      tags:
+        - Analytics
+      summary: Get market forecast
+      description: Returns market forecast data for agricultural products
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cropType
+          in: query
+          description: Crop type
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: Region code
+          schema:
+            type: string
+        - name: period
+          in: query
+          description: Forecast period in months
+          schema:
+            type: integer
+            default: 6
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: Market forecast data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketForecast'
+        '400':
+          description: Invalid input or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /analytics/recommendations:
+    get:
+      tags:
+        - Analytics
+      summary: Get recommendations
+      description: Returns personalized recommendations for fields and crops
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: fieldId
+          in: query
+          description: Filter by field ID
+          schema:
+            type: string
+        - name: cropId
+          in: query
+          description: Filter by crop ID
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Filter by recommendation type
+          schema:
+            type: string
+            enum: [irrigation, fertilizer, pest_control, harvest_timing]
+        - name: priority
+          in: query
+          description: Filter by priority level
+          schema:
+            type: string
+            enum: [low, medium, high, critical]
+      responses:
+        '200':
+          description: Recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recommendation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Blockchain Endpoints
+  #
+  /blockchain/wallet:
+    get:
+      tags:
+        - Blockchain
+      summary: Get wallet information
+      description: Returns information about the user's blockchain wallet
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Wallet information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Blockchain
+      summary: Create wallet
+      description: Creates a new blockchain wallet for the user
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Wallet created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '400':
+          description: Wallet already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /blockchain/transactions:
+    get:
+      tags:
+        - Blockchain
+      summary: Get transactions
+      description: Returns a list of blockchain transactions for the user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of transactions to return
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Number of transactions to skip
+          schema:
+            type: integer
+            default: 0
+        - name: type
+          in: query
+          description: Filter by transaction type
+          schema:
+            type: string
+            enum: [token, land, farmhouse, investment]
+        - name: status
+          in: query
+          description: Filter by transaction status
+          schema:
+            type: string
+            enum: [pending, confirmed, failed]
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Blockchain
+      summary: Create transaction
+      description: Creates a new blockchain transaction
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInput'
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /blockchain/tokens:
+    get:
+      tags:
+        - Blockchain
+      summary: Get token balance
+      description: Returns the user's AGM token balance
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenBalance'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /blockchain/land-tokens:
+    get:
+      tags:
+        - Blockchain
+      summary: Get land tokens
+      description: Returns a list of land tokens owned by the user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of land tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LandToken'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Blockchain
+      summary: Create land token
+      description: Creates a new land token for a field
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LandTokenInput'
+      responses:
+        '201':
+          description: Land token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LandToken'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /blockchain/farmhouse-tokens:
+    get:
+      tags:
+        - Blockchain
+      summary: Get farmhouse tokens
+      description: Returns a list of farmhouse tokens owned by the user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of farmhouse tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FarmhouseToken'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Blockchain
+      summary: Create farmhouse token
+      description: Creates a new farmhouse token
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FarmhouseTokenInput'
+      responses:
+        '201':
+          description: Farmhouse token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FarmhouseToken'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /blockchain/investments:
+    get:
+      tags:
+        - Blockchain
+      summary: Get investments
+      description: Returns a list of investments made by or available to the user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: query
+          description: Filter by investment type
+          schema:
+            type: string
+            enum: [made, received, available]
+            default: available
+      responses:
+        '200':
+          description: List of investments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Investment'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      tags:
+        - Blockchain
+      summary: Create investment opportunity
+      description: Creates a new investment opportunity
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvestmentInput'
+      responses:
+        '201':
+          description: Investment opportunity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Investment'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /blockchain/investments/{id}/invest:
+    post:
+      tags:
+        - Blockchain
+      summary: Invest in opportunity
+      description: Makes an investment in an available opportunity
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Investment opportunity ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  description: Investment amount in AGM tokens
+      responses:
+        '200':
+          description: Investment successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvestmentTransaction'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Investment opportunity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # Notifications Endpoints
+  #
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      summary: Get notifications
+      description: Returns a list of notifications for the user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of notifications to return
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          description: Number of notifications to skip
+          schema:
+            type: integer
+            default: 0
+        - name: read
+          in: query
+          description: Filter by read status
+          schema:
+            type: boolean
+        - name: type
+          in: query
+          description: Filter by notification type
+          schema:
+            type: string
+            enum: [system, weather, field, crop, sensor, blockchain]
+      responses:
+        '200':
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /notifications/{id}/read:
+    put:
+      tags:
+        - Notifications
+      summary: Mark notification as read
+      description: Marks a specific notification as read
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Notification ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '404':
+          description: Notification not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /notifications/read-all:
+    put:
+      tags:
+        - Notifications
+      summary: Mark all notifications as read
+      description: Marks all notifications as read
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: All notifications marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: All notifications marked as read
+                  count:
+                    type: integer
+                    description: Number of notifications marked as read
+                    example: 5
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /notifications/settings:
+    get:
+      tags:
+        - Notifications
+      summary: Get notification settings
+      description: Returns the user's notification settings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Notification settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - Notifications
+      summary: Update notification settings
+      description: Updates the user's notification settings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationSettingsInput'
+      responses:
+        '200':
+          description: Notification settings updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSettings'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  #
+  # User Preferences Endpoints
+  #
+  /user/preferences:
+    get:
+      tags:
+        - User Preferences
+      summary: Get user preferences
+      description: Returns the user's preference settings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      tags:
+        - User Preferences
+      summary: Update user preferences
+      description: Updates the user's preference settings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreferencesInput'
+      responses:
+        '200':
+          description: User preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreferences'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /user/preferences/{category}:
+    get:
+      tags:
+        - User Preferences
+      summary: Get specific preference category
+      description: Returns a specific category of user preferences
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: path
+          required: true
+          description: Preference category
+          schema:
+            type: string
+            enum: [notifications, display, privacy, language]
+      responses:
+        '200':
+          description: Preference category
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/NotificationPreferences'
+                  - $ref: '#/components/schemas/DisplayPreferences'
+                  - $ref: '#/components/schemas/PrivacyPreferences'
+                  - $ref: '#/components/schemas/LanguagePreferences'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    patch:
+      tags:
+        - User Preferences
+      summary: Update specific preference category
+      description: Updates a specific category of user preferences
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: path
+          required: true
+          description: Preference category
+          schema:
+            type: string
+            enum: [notifications, display, privacy, language]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/NotificationPreferences'
+                - $ref: '#/components/schemas/DisplayPreferences'
+                - $ref: '#/components/schemas/PrivacyPreferences'
+                - $ref: '#/components/schemas/LanguagePreferences'
+      responses:
+        '200':
+          description: Preference category updated successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/NotificationPreferences'
+                  - $ref: '#/components/schemas/DisplayPreferences'
+                  - $ref: '#/components/schemas/PrivacyPreferences'
+                  - $ref: '#/components/schemas/LanguagePreferences'
+        '400':
+          description: Invalid input or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  schemas:
+    # Authentication Schemas
+    UserRegistration:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: farmer@example.com
+        password:
+          type: string
+          format: password
+          description: User's password
+          example: SecureP@ssw0rd
+        firstName:
+          type: string
+          description: User's first name
+          example: John
+        lastName:
+          type: string
+          description: User's last name
+          example: Farmer
+        phoneNumber:
+          type: string
+          description: User's phone number
+          example: "+15551234567"
+        farmName:
+          type: string
+          description: Name of the user's farm
+          example: Green Valley Farm
+    
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: farmer@example.com
+        password:
+          type: string
+          format: password
+          description: User's password
+          example: SecureP@ssw0rd
+    
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              description: User ID
+              example: 60d21b4667d0d8992e610c80
+            email:
+              type: string
+              format: email
+              description: User's email address
+              example: farmer@example.com
+            firstName:
+              type: string
+              description: User's first name
+              example: John
+            lastName:
+              type: string
+              description: User's last name
+              example: Farmer
+            farmName:
+              type: string
+              description: Name of the user's farm
+              example: Green Valley Farm
+        accessToken:
+          type: string
+          description: JWT access token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: JWT refresh token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expiresIn:
+          type: integer
+          description: Token expiration time in seconds
+          example: 3600
+    
+    # Field Schemas
+    Field:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        name:
+          type: string
+          description: Field name
+          example: North Field
+        area:
+          type: number
+          format: float
+          description: Field area in acres
+          example: 25.4
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        boundaries:
+          $ref: '#/components/schemas/GeoPolygon'
+        soilType:
+          type: string
+          description: Soil type
+          example: Clay Loam
+        crops:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldCrop'
+        sensors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldSensor'
+        owner:
+          type: string
+          description: User ID of the field owner
+          example: 60d21b4667d0d8992e610c80
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: 2025-06-24T10:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    FieldInput:
+      type: object
+      required:
+        - name
+        - area
+      properties:
+        name:
+          type: string
+          description: Field name
+          example: North Field
+        area:
+          type: number
+          format: float
+          description: Field area in acres
+          example: 25.4
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        boundaries:
+          $ref: '#/components/schemas/GeoPolygon'
+        soilType:
+          type: string
+          description: Soil type
+          example: Clay Loam
+    
+    FieldCrop:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Crop ID
+          example: 60d21b4667d0d8992e610c90
+        name:
+          type: string
+          description: Crop name
+          example: Corn
+        status:
+          type: string
+          enum: [planned, planted, growing, harvested, failed]
+          description: Crop status
+          example: growing
+        plantingDate:
+          type: string
+          format: date
+          description: Planting date
+          example: 2025-04-15
+        harvestDate:
+          type: string
+          format: date
+          description: Expected harvest date
+          example: 2025-09-20
+    
+    FieldSensor:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Sensor ID
+          example: 60d21b4667d0d8992e610c95
+        name:
+          type: string
+          description: Sensor name
+          example: Soil Moisture 1
+        type:
+          type: string
+          description: Sensor type
+          example: soil_moisture
+        status:
+          type: string
+          enum: [active, inactive, maintenance, error]
+          description: Sensor status
+          example: active
+    
+    FieldBoundaries:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        name:
+          type: string
+          description: Field name
+          example: North Field
+        boundaries:
+          $ref: '#/components/schemas/GeoPolygon'
+        area:
+          type: number
+          format: float
+          description: Calculated area in acres
+          example: 25.4
+    
+    FieldBoundariesInput:
+      type: object
+      required:
+        - boundaries
+      properties:
+        boundaries:
+          $ref: '#/components/schemas/GeoPolygon'
+    
+    # Crop Schemas
+    Crop:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Crop ID
+          example: 60d21b4667d0d8992e610c90
+        name:
+          type: string
+          description: Crop name
+          example: Corn
+        variety:
+          type: string
+          description: Crop variety
+          example: Sweet Corn
+        field:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Field ID
+              example: 60d21b4667d0d8992e610c85
+            name:
+              type: string
+              description: Field name
+              example: North Field
+        status:
+          type: string
+          enum: [planned, planted, growing, harvested, failed]
+          description: Crop status
+          example: growing
+        plantingDate:
+          type: string
+          format: date
+          description: Planting date
+          example: 2025-04-15
+        harvestDate:
+          type: string
+          format: date
+          description: Expected harvest date
+          example: 2025-09-20
+        expectedYield:
+          type: number
+          format: float
+          description: Expected yield in tons per acre
+          example: 8.5
+        actualYield:
+          type: number
+          format: float
+          description: Actual yield in tons per acre
+          example: 8.2
+        notes:
+          type: string
+          description: Additional notes
+          example: Good growth, some minor pest issues in July
+        owner:
+          type: string
+          description: User ID of the crop owner
+          example: 60d21b4667d0d8992e610c80
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: 2025-06-24T10:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    CropInput:
+      type: object
+      required:
+        - name
+        - fieldId
+      properties:
+        name:
+          type: string
+          description: Crop name
+          example: Corn
+        variety:
+          type: string
+          description: Crop variety
+          example: Sweet Corn
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        status:
+          type: string
+          enum: [planned, planted, growing, harvested, failed]
+          description: Crop status
+          example: growing
+        plantingDate:
+          type: string
+          format: date
+          description: Planting date
+          example: 2025-04-15
+        harvestDate:
+          type: string
+          format: date
+          description: Expected harvest date
+          example: 2025-09-20
+        expectedYield:
+          type: number
+          format: float
+          description: Expected yield in tons per acre
+          example: 8.5
+        notes:
+          type: string
+          description: Additional notes
+          example: Planning to use organic fertilizer
+    
+    # Sensor Schemas
+    Sensor:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Sensor ID
+          example: 60d21b4667d0d8992e610c95
+        name:
+          type: string
+          description: Sensor name
+          example: Soil Moisture 1
+        type:
+          type: string
+          description: Sensor type
+          example: soil_moisture
+        model:
+          type: string
+          description: Sensor model
+          example: SM-100
+        manufacturer:
+          type: string
+          description: Sensor manufacturer
+          example: AgriSense
+        field:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Field ID
+              example: 60d21b4667d0d8992e610c85
+            name:
+              type: string
+              description: Field name
+              example: North Field
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        status:
+          type: string
+          enum: [active, inactive, maintenance, error]
+          description: Sensor status
+          example: active
+        batteryLevel:
+          type: number
+          format: float
+          description: Battery level percentage
+          example: 85.5
+        signalStrength:
+          type: number
+          format: float
+          description: Signal strength percentage
+          example: 92.3
+        firmware:
+          type: object
+          properties:
+            version:
+              type: string
+              description: Firmware version
+              example: 2.1.5
+            lastUpdated:
+              type: string
+              format: date-time
+              description: Last firmware update timestamp
+              example: 2025-05-15T08:30:00Z
+        lastCalibration:
+          type: string
+          format: date-time
+          description: Last calibration timestamp
+          example: 2025-06-01T10:15:00Z
+        lastReading:
+          type: string
+          format: date-time
+          description: Last reading timestamp
+          example: 2025-06-24T10:25:00Z
+        owner:
+          type: string
+          description: User ID of the sensor owner
+          example: 60d21b4667d0d8992e610c80
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: 2025-04-10T14:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    SensorInput:
+      type: object
+      required:
+        - name
+        - type
+        - fieldId
+      properties:
+        name:
+          type: string
+          description: Sensor name
+          example: Soil Moisture 1
+        type:
+          type: string
+          description: Sensor type
+          example: soil_moisture
+        model:
+          type: string
+          description: Sensor model
+          example: SM-100
+        manufacturer:
+          type: string
+          description: Sensor manufacturer
+          example: AgriSense
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        status:
+          type: string
+          enum: [active, inactive, maintenance, error]
+          description: Sensor status
+          example: active
+    
+    SensorReading:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Reading ID
+          example: 60d21b4667d0d8992e610c9a
+        sensorId:
+          type: string
+          description: Sensor ID
+          example: 60d21b4667d0d8992e610c95
+        timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+          example: 2025-06-24T10:25:00Z
+        value:
+          type: number
+          format: float
+          description: Reading value
+          example: 35.7
+        unit:
+          type: string
+          description: Reading unit
+          example: %
+        metadata:
+          type: object
+          description: Additional metadata
+          example:
+            temperature: 22.5
+            batteryLevel: 85.5
+    
+    SensorReadingInput:
+      type: object
+      required:
+        - timestamp
+        - value
+        - unit
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Reading timestamp
+          example: 2025-06-24T10:25:00Z
+        value:
+          type: number
+          format: float
+          description: Reading value
+          example: 35.7
+        unit:
+          type: string
+          description: Reading unit
+          example: %
+        metadata:
+          type: object
+          description: Additional metadata
+          example:
+            temperature: 22.5
+            batteryLevel: 85.5
+    
+    SensorCalibration:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Calibration ID
+          example: 60d21b4667d0d8992e610c9b
+        sensorId:
+          type: string
+          description: Sensor ID
+          example: 60d21b4667d0d8992e610c95
+        timestamp:
+          type: string
+          format: date-time
+          description: Calibration timestamp
+          example: 2025-06-24T10:30:00Z
+        status:
+          type: string
+          enum: [pending, in_progress, completed, failed]
+          description: Calibration status
+          example: completed
+        referenceValue:
+          type: number
+          format: float
+          description: Reference value used for calibration
+          example: 35.0
+        measuredValue:
+          type: number
+          format: float
+          description: Measured value before calibration
+          example: 33.2
+        adjustmentFactor:
+          type: number
+          format: float
+          description: Calibration adjustment factor
+          example: 1.054
+        notes:
+          type: string
+          description: Calibration notes
+          example: Standard calibration using reference solution
+    
+    SensorCalibrationInput:
+      type: object
+      required:
+        - referenceValue
+      properties:
+        referenceValue:
+          type: number
+          format: float
+          description: Reference value for calibration
+          example: 35.0
+        notes:
+          type: string
+          description: Calibration notes
+          example: Standard calibration using reference solution
+    
+    SensorFirmware:
+      type: object
+      properties:
+        sensorId:
+          type: string
+          description: Sensor ID
+          example: 60d21b4667d0d8992e610c95
+        currentVersion:
+          type: string
+          description: Current firmware version
+          example: 2.1.5
+        latestVersion:
+          type: string
+          description: Latest available firmware version
+          example: 2.2.0
+        lastUpdated:
+          type: string
+          format: date-time
+          description: Last firmware update timestamp
+          example: 2025-05-15T08:30:00Z
+        updateAvailable:
+          type: boolean
+          description: Whether a firmware update is available
+          example: true
+        releaseNotes:
+          type: string
+          description: Release notes for the latest version
+          example: Improved battery efficiency and fixed connectivity issues
+    
+    SensorFirmwareUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Update ID
+          example: 60d21b4667d0d8992e610c9c
+        sensorId:
+          type: string
+          description: Sensor ID
+          example: 60d21b4667d0d8992e610c95
+        fromVersion:
+          type: string
+          description: Current firmware version
+          example: 2.1.5
+        toVersion:
+          type: string
+          description: Target firmware version
+          example: 2.2.0
+        status:
+          type: string
+          enum: [pending, in_progress, completed, failed]
+          description: Update status
+          example: in_progress
+        progress:
+          type: number
+          format: float
+          description: Update progress percentage
+          example: 45.0
+        startedAt:
+          type: string
+          format: date-time
+          description: Update start timestamp
+          example: 2025-06-24T10:35:00Z
+        completedAt:
+          type: string
+          format: date-time
+          description: Update completion timestamp
+          example: null
+        error:
+          type: string
+          description: Error message if update failed
+          example: null
+    
+    SensorFirmwareUpdateInput:
+      type: object
+      required:
+        - version
+      properties:
+        version:
+          type: string
+          description: Target firmware version
+          example: 2.2.0
+    
+    # Weather Schemas
+    CurrentWeather:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        timestamp:
+          type: string
+          format: date-time
+          description: Weather data timestamp
+          example: 2025-06-24T10:30:00Z
+        temperature:
+          type: number
+          format: float
+          description: Temperature in degrees Celsius
+          example: 24.5
+        feelsLike:
+          type: number
+          format: float
+          description: Feels like temperature in degrees Celsius
+          example: 26.2
+        humidity:
+          type: number
+          format: float
+          description: Humidity percentage
+          example: 65.0
+        pressure:
+          type: number
+          format: float
+          description: Atmospheric pressure in hPa
+          example: 1013.2
+        windSpeed:
+          type: number
+          format: float
+          description: Wind speed in m/s
+          example: 3.5
+        windDirection:
+          type: number
+          format: float
+          description: Wind direction in degrees
+          example: 180.0
+        cloudCover:
+          type: number
+          format: float
+          description: Cloud cover percentage
+          example: 25.0
+        precipitation:
+          type: number
+          format: float
+          description: Precipitation amount in mm
+          example: 0.0
+        condition:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: Weather condition code
+              example: 800
+            description:
+              type: string
+              description: Weather condition description
+              example: Clear sky
+            icon:
+              type: string
+              description: Weather condition icon code
+              example: 01d
+    
+    WeatherForecast:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        generatedAt:
+          type: string
+          format: date-time
+          description: Forecast generation timestamp
+          example: 2025-06-24T10:30:00Z
+        daily:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+                description: Forecast date
+                example: 2025-06-25
+              sunrise:
+                type: string
+                format: date-time
+                description: Sunrise time
+                example: 2025-06-25T05:45:00Z
+              sunset:
+                type: string
+                format: date-time
+                description: Sunset time
+                example: 2025-06-25T20:30:00Z
+              temperatureMin:
+                type: number
+                format: float
+                description: Minimum temperature in degrees Celsius
+                example: 18.5
+              temperatureMax:
+                type: number
+                format: float
+                description: Maximum temperature in degrees Celsius
+                example: 28.2
+              humidity:
+                type: number
+                format: float
+                description: Humidity percentage
+                example: 60.0
+              windSpeed:
+                type: number
+                format: float
+                description: Wind speed in m/s
+                example: 4.2
+              precipitation:
+                type: number
+                format: float
+                description: Precipitation amount in mm
+                example: 2.5
+              precipitationProbability:
+                type: number
+                format: float
+                description: Precipitation probability percentage
+                example: 30.0
+              condition:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: Weather condition code
+                    example: 500
+                  description:
+                    type: string
+                    description: Weather condition description
+                    example: Light rain
+                  icon:
+                    type: string
+                    description: Weather condition icon code
+                    example: 10d
+        hourly:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                format: date-time
+                description: Forecast timestamp
+                example: 2025-06-25T12:00:00Z
+              temperature:
+                type: number
+                format: float
+                description: Temperature in degrees Celsius
+                example: 26.5
+              feelsLike:
+                type: number
+                format: float
+                description: Feels like temperature in degrees Celsius
+                example: 28.0
+              humidity:
+                type: number
+                format: float
+                description: Humidity percentage
+                example: 55.0
+              windSpeed:
+                type: number
+                format: float
+                description: Wind speed in m/s
+                example: 3.8
+              precipitation:
+                type: number
+                format: float
+                description: Precipitation amount in mm
+                example: 0.5
+              precipitationProbability:
+                type: number
+                format: float
+                description: Precipitation probability percentage
+                example: 20.0
+              condition:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: Weather condition code
+                    example: 500
+                  description:
+                    type: string
+                    description: Weather condition description
+                    example: Light rain
+                  icon:
+                    type: string
+                    description: Weather condition icon code
+                    example: 10d
+    
+    HistoricalWeather:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        startDate:
+          type: string
+          format: date
+          description: Start date of historical data
+          example: 2025-05-01
+        endDate:
+          type: string
+          format: date
+          description: End date of historical data
+          example: 2025-05-31
+        daily:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+                description: Historical date
+                example: 2025-05-15
+              temperatureMin:
+                type: number
+                format: float
+                description: Minimum temperature in degrees Celsius
+                example: 15.2
+              temperatureMax:
+                type: number
+                format: float
+                description: Maximum temperature in degrees Celsius
+                example: 25.8
+              temperatureAvg:
+                type: number
+                format: float
+                description: Average temperature in degrees Celsius
+                example: 20.5
+              humidity:
+                type: number
+                format: float
+                description: Average humidity percentage
+                example: 62.0
+              windSpeed:
+                type: number
+                format: float
+                description: Average wind speed in m/s
+                example: 3.2
+              precipitation:
+                type: number
+                format: float
+                description: Total precipitation amount in mm
+                example: 5.2
+              condition:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: Predominant weather condition code
+                    example: 800
+                  description:
+                    type: string
+                    description: Predominant weather condition description
+                    example: Clear sky
+    
+    WeatherAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Alert ID
+          example: 60d21b4667d0d8992e610c9d
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        type:
+          type: string
+          description: Alert type
+          example: severe_thunderstorm
+        severity:
+          type: string
+          enum: [minor, moderate, severe, extreme]
+          description: Alert severity
+          example: severe
+        headline:
+          type: string
+          description: Alert headline
+          example: Severe Thunderstorm Warning
+        description:
+          type: string
+          description: Alert description
+          example: Severe thunderstorms expected with potential for damaging winds and large hail
+        instruction:
+          type: string
+          description: Safety instruction
+          example: Seek shelter indoors and stay away from windows
+        onset:
+          type: string
+          format: date-time
+          description: Alert onset time
+          example: 2025-06-24T14:00:00Z
+        expires:
+          type: string
+          format: date-time
+          description: Alert expiration time
+          example: 2025-06-24T20:00:00Z
+        issuedAt:
+          type: string
+          format: date-time
+          description: Alert issue time
+          example: 2025-06-24T12:30:00Z
+    
+    # Analytics Schemas
+    YieldPrediction:
+      type: object
+      properties:
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        cropId:
+          type: string
+          description: Crop ID
+          example: 60d21b4667d0d8992e610c90
+        predictedYield:
+          type: number
+          format: float
+          description: Predicted yield in tons per acre
+          example: 8.7
+        yieldRange:
+          type: object
+          properties:
+            min:
+              type: number
+              format: float
+              description: Minimum predicted yield in tons per acre
+              example: 7.9
+            max:
+              type: number
+              format: float
+              description: Maximum predicted yield in tons per acre
+              example: 9.5
+        confidence:
+          type: number
+          format: float
+          description: Prediction confidence percentage
+          example: 85.0
+        factors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Factor name
+                example: rainfall
+              impact:
+                type: number
+                format: float
+                description: Factor impact score (-1 to 1)
+                example: 0.7
+              description:
+                type: string
+                description: Factor description
+                example: Above average rainfall has positively impacted yield potential
+        historicalComparison:
+          type: object
+          properties:
+            previousYield:
+              type: number
+              format: float
+              description: Previous yield in tons per acre
+              example: 8.2
+            percentageChange:
+              type: number
+              format: float
+              description: Percentage change from previous yield
+              example: 6.1
+        generatedAt:
+          type: string
+          format: date-time
+          description: Prediction generation timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    PestRiskAssessment:
+      type: object
+      properties:
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        cropId:
+          type: string
+          description: Crop ID
+          example: 60d21b4667d0d8992e610c90
+        overallRisk:
+          type: string
+          enum: [low, moderate, high, severe]
+          description: Overall pest risk level
+          example: moderate
+        riskScore:
+          type: number
+          format: float
+          description: Risk score (0-100)
+          example: 65.0
+        pests:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Pest name
+                example: Corn Earworm
+              scientificName:
+                type: string
+                description: Scientific name
+                example: Helicoverpa zea
+              risk:
+                type: string
+                enum: [low, moderate, high, severe]
+                description: Risk level for this pest
+                example: high
+              likelihood:
+                type: number
+                format: float
+                description: Likelihood percentage
+                example: 75.0
+              impactSeverity:
+                type: string
+                enum: [minimal, moderate, significant, severe]
+                description: Potential impact severity
+                example: significant
+              factors:
+                type: array
+                items:
+                  type: string
+                  description: Contributing factors
+                  example: Recent warm temperatures
+              recommendations:
+                type: array
+                items:
+                  type: string
+                  description: Recommended actions
+                  example: Monitor field edges for early signs of infestation
+        weatherFactors:
+          type: object
+          properties:
+            temperature:
+              type: string
+              description: Temperature impact
+              example: Recent warm temperatures increase risk
+            humidity:
+              type: string
+              description: Humidity impact
+              example: High humidity levels favor pest development
+            precipitation:
+              type: string
+              description: Precipitation impact
+              example: Recent rainfall patterns are neutral for pest risk
+        generatedAt:
+          type: string
+          format: date-time
+          description: Assessment generation timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    SoilHealthAnalysis:
+      type: object
+      properties:
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        overallHealth:
+          type: string
+          enum: [poor, fair, good, excellent]
+          description: Overall soil health rating
+          example: good
+        healthScore:
+          type: number
+          format: float
+          description: Health score (0-100)
+          example: 78.5
+        nutrients:
+          type: object
+          properties:
+            nitrogen:
+              type: object
+              properties:
+                value:
+                  type: number
+                  format: float
+                  description: Nitrogen level in ppm
+                  example: 45.0
+                rating:
+                  type: string
+                  enum: [very_low, low, optimal, high, very_high]
+                  description: Nitrogen level rating
+                  example: optimal
+                recommendation:
+                  type: string
+                  description: Recommendation for nitrogen management
+                  example: Maintain current nitrogen application rates
+            phosphorus:
+              type: object
+              properties:
+                value:
+                  type: number
+                  format: float
+                  description: Phosphorus level in ppm
+                  example: 35.0
+                rating:
+                  type: string
+                  enum: [very_low, low, optimal, high, very_high]
+                  description: Phosphorus level rating
+                  example: high
+                recommendation:
+                  type: string
+                  description: Recommendation for phosphorus management
+                  example: Reduce phosphorus application by 15%
+            potassium:
+              type: object
+              properties:
+                value:
+                  type: number
+                  format: float
+                  description: Potassium level in ppm
+                  example: 180.0
+                rating:
+                  type: string
+                  enum: [very_low, low, optimal, high, very_high]
+                  description: Potassium level rating
+                  example: optimal
+                recommendation:
+                  type: string
+                  description: Recommendation for potassium management
+                  example: Maintain current potassium application rates
+        ph:
+          type: object
+          properties:
+            value:
+              type: number
+              format: float
+              description: Soil pH value
+              example: 6.8
+            rating:
+              type: string
+              enum: [very_acidic, acidic, neutral, alkaline, very_alkaline]
+              description: pH rating
+              example: neutral
+            recommendation:
+              type: string
+              description: Recommendation for pH management
+              example: No pH adjustment needed
+        organicMatter:
+          type: object
+          properties:
+            value:
+              type: number
+              format: float
+              description: Organic matter percentage
+              example: 3.5
+            rating:
+              type: string
+              enum: [very_low, low, moderate, high, very_high]
+              description: Organic matter rating
+              example: moderate
+            recommendation:
+              type: string
+              description: Recommendation for organic matter management
+              example: Consider adding cover crops to increase organic matter
+        recommendations:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: Recommendation type
+                example: fertilizer
+              action:
+                type: string
+                description: Recommended action
+                example: Apply 50 lbs/acre of nitrogen fertilizer
+              priority:
+                type: string
+                enum: [low, medium, high, critical]
+                description: Recommendation priority
+                example: medium
+              timing:
+                type: string
+                description: Recommended timing
+                example: Before planting
+        sampleDate:
+          type: string
+          format: date
+          description: Soil sample date
+          example: 2025-06-15
+        generatedAt:
+          type: string
+          format: date-time
+          description: Analysis generation timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    CropImageAnalysis:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Analysis ID
+          example: 60d21b4667d0d8992e610c9e
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        cropId:
+          type: string
+          description: Crop ID
+          example: 60d21b4667d0d8992e610c90
+        imageUrl:
+          type: string
+          description: URL of the analyzed image
+          example: https://storage.agrimaan.com/images/60d21b4667d0d8992e610c9e.jpg
+        healthIndex:
+          type: number
+          format: float
+          description: Crop health index (0-100)
+          example: 85.0
+        healthStatus:
+          type: string
+          enum: [poor, fair, good, excellent]
+          description: Overall health status
+          example: good
+        issues:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: Issue type
+                example: nutrient_deficiency
+              name:
+                type: string
+                description: Issue name
+                example: Nitrogen Deficiency
+              confidence:
+                type: number
+                format: float
+                description: Detection confidence percentage
+                example: 92.5
+              severity:
+                type: string
+                enum: [low, moderate, high, severe]
+                description: Issue severity
+                example: moderate
+              affectedArea:
+                type: number
+                format: float
+                description: Percentage of affected area
+                example: 15.0
+              recommendations:
+                type: array
+                items:
+                  type: string
+                  description: Recommended actions
+                  example: Apply nitrogen fertilizer at 40 lbs/acre
+        coverage:
+          type: object
+          properties:
+            crop:
+              type: number
+              format: float
+              description: Percentage of crop coverage
+              example: 85.0
+            weeds:
+              type: number
+              format: float
+              description: Percentage of weed coverage
+              example: 5.0
+            bare:
+              type: number
+              format: float
+              description: Percentage of bare soil
+              example: 10.0
+        ndvi:
+          type: object
+          properties:
+            min:
+              type: number
+              format: float
+              description: Minimum NDVI value
+              example: 0.35
+            max:
+              type: number
+              format: float
+              description: Maximum NDVI value
+              example: 0.85
+            mean:
+              type: number
+              format: float
+              description: Mean NDVI value
+              example: 0.65
+            imageUrl:
+              type: string
+              description: URL of the NDVI visualization
+              example: https://storage.agrimaan.com/images/ndvi_60d21b4667d0d8992e610c9e.jpg
+        captureDate:
+          type: string
+          format: date-time
+          description: Image capture timestamp
+          example: 2025-06-23T14:30:00Z
+        generatedAt:
+          type: string
+          format: date-time
+          description: Analysis generation timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    MarketForecast:
+      type: object
+      properties:
+        cropType:
+          type: string
+          description: Crop type
+          example: Corn
+        region:
+          type: string
+          description: Region code
+          example: US-CA
+        period:
+          type: integer
+          description: Forecast period in months
+          example: 6
+        priceForecasts:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+                format: date
+                description: Forecast month
+                example: 2025-07-01
+              priceMin:
+                type: number
+                format: float
+                description: Minimum forecasted price per ton
+                example: 180.0
+              priceMax:
+                type: number
+                format: float
+                description: Maximum forecasted price per ton
+                example: 210.0
+              priceMean:
+                type: number
+                format: float
+                description: Mean forecasted price per ton
+                example: 195.0
+              confidence:
+                type: number
+                format: float
+                description: Forecast confidence percentage
+                example: 85.0
+        trends:
+          type: array
+          items:
+            type: object
+            properties:
+              factor:
+                type: string
+                description: Market factor
+                example: supply
+              trend:
+                type: string
+                enum: [decreasing, stable, increasing]
+                description: Factor trend
+                example: decreasing
+              impact:
+                type: string
+                enum: [negative, neutral, positive]
+                description: Impact on price
+                example: positive
+              description:
+                type: string
+                description: Trend description
+                example: Decreasing supply due to drought conditions in major producing regions
+        recommendations:
+          type: array
+          items:
+            type: string
+            description: Market recommendations
+            example: Consider forward contracts to lock in current prices
+        generatedAt:
+          type: string
+          format: date-time
+          description: Forecast generation timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    Recommendation:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Recommendation ID
+          example: 60d21b4667d0d8992e610c9f
+        type:
+          type: string
+          description: Recommendation type
+          example: irrigation_recommendation
+        action:
+          type: string
+          description: Recommended action
+          example: Increase irrigation in North Field by 15%
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Recommendation priority
+          example: high
+        field:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Field ID
+              example: 60d21b4667d0d8992e610c85
+            name:
+              type: string
+              description: Field name
+              example: North Field
+        crop:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Crop ID
+              example: 60d21b4667d0d8992e610c90
+            name:
+              type: string
+              description: Crop name
+              example: Corn
+        reason:
+          type: string
+          description: Reason for the recommendation
+          example: Soil moisture sensors indicate dry conditions and weather forecast shows no rain for the next 7 days
+        impact:
+          type: string
+          description: Potential impact of following the recommendation
+          example: Prevent yield loss due to drought stress
+        deadline:
+          type: string
+          format: date
+          description: Recommended deadline for action
+          example: 2025-06-27
+        createdAt:
+          type: string
+          format: date-time
+          description: Recommendation creation timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    # Blockchain Schemas
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Wallet ID
+          example: 60d21b4667d0d8992e610ca0
+        address:
+          type: string
+          description: Wallet address
+          example: 0x1234567890abcdef1234567890abcdef12345678
+        balance:
+          type: number
+          format: float
+          description: AGM token balance
+          example: 1250.0
+        owner:
+          type: string
+          description: User ID of the wallet owner
+          example: 60d21b4667d0d8992e610c80
+        createdAt:
+          type: string
+          format: date-time
+          description: Wallet creation timestamp
+          example: 2025-04-10T14:30:00Z
+    
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Transaction ID
+          example: 60d21b4667d0d8992e610ca1
+        type:
+          type: string
+          enum: [token, land, farmhouse, investment]
+          description: Transaction type
+          example: token
+        hash:
+          type: string
+          description: Blockchain transaction hash
+          example: 0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+        from:
+          type: string
+          description: Sender wallet address
+          example: 0x1234567890abcdef1234567890abcdef12345678
+        to:
+          type: string
+          description: Recipient wallet address
+          example: 0x9876543210abcdef1234567890abcdef12345678
+        amount:
+          type: number
+          format: float
+          description: Transaction amount
+          example: 100.0
+        asset:
+          type: string
+          description: Asset type
+          example: AGM
+        status:
+          type: string
+          enum: [pending, confirmed, failed]
+          description: Transaction status
+          example: confirmed
+        confirmations:
+          type: integer
+          description: Number of confirmations
+          example: 12
+        fee:
+          type: number
+          format: float
+          description: Transaction fee
+          example: 0.01
+        metadata:
+          type: object
+          description: Additional transaction metadata
+          example:
+            purpose: Token purchase
+            reference: INV-2025-0001
+        createdAt:
+          type: string
+          format: date-time
+          description: Transaction creation timestamp
+          example: 2025-06-24T10:30:00Z
+        confirmedAt:
+          type: string
+          format: date-time
+          description: Transaction confirmation timestamp
+          example: 2025-06-24T10:35:00Z
+    
+    TransactionInput:
+      type: object
+      required:
+        - type
+        - to
+        - amount
+        - asset
+      properties:
+        type:
+          type: string
+          enum: [token, land, farmhouse, investment]
+          description: Transaction type
+          example: token
+        to:
+          type: string
+          description: Recipient wallet address
+          example: 0x9876543210abcdef1234567890abcdef12345678
+        amount:
+          type: number
+          format: float
+          description: Transaction amount
+          example: 100.0
+        asset:
+          type: string
+          description: Asset type
+          example: AGM
+        metadata:
+          type: object
+          description: Additional transaction metadata
+          example:
+            purpose: Token purchase
+            reference: INV-2025-0001
+    
+    TokenBalance:
+      type: object
+      properties:
+        address:
+          type: string
+          description: Wallet address
+          example: 0x1234567890abcdef1234567890abcdef12345678
+        balance:
+          type: number
+          format: float
+          description: AGM token balance
+          example: 1250.0
+        value:
+          type: number
+          format: float
+          description: Estimated value in USD
+          example: 1250.0
+        transactions:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total number of transactions
+              example: 25
+            lastMonth:
+              type: integer
+              description: Number of transactions in the last month
+              example: 5
+        updatedAt:
+          type: string
+          format: date-time
+          description: Balance update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    LandToken:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Land token ID
+          example: 60d21b4667d0d8992e610ca2
+        tokenId:
+          type: string
+          description: Blockchain token ID
+          example: 12345
+        field:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Field ID
+              example: 60d21b4667d0d8992e610c85
+            name:
+              type: string
+              description: Field name
+              example: North Field
+            area:
+              type: number
+              format: float
+              description: Field area in acres
+              example: 25.4
+            location:
+              $ref: '#/components/schemas/GeoLocation'
+        owner:
+          type: string
+          description: User ID of the token owner
+          example: 60d21b4667d0d8992e610c80
+        value:
+          type: number
+          format: float
+          description: Estimated token value in AGM
+          example: 5000.0
+        metadata:
+          type: object
+          description: Additional token metadata
+          example:
+            soilQuality: Good
+            waterRights: Yes
+            zoning: Agricultural
+        createdAt:
+          type: string
+          format: date-time
+          description: Token creation timestamp
+          example: 2025-05-15T14:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Token update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    LandTokenInput:
+      type: object
+      required:
+        - fieldId
+      properties:
+        fieldId:
+          type: string
+          description: Field ID
+          example: 60d21b4667d0d8992e610c85
+        metadata:
+          type: object
+          description: Additional token metadata
+          example:
+            soilQuality: Good
+            waterRights: Yes
+            zoning: Agricultural
+    
+    FarmhouseToken:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Farmhouse token ID
+          example: 60d21b4667d0d8992e610ca3
+        tokenId:
+          type: string
+          description: Blockchain token ID
+          example: 67890
+        name:
+          type: string
+          description: Farmhouse name
+          example: Green Valley Farmhouse
+        description:
+          type: string
+          description: Farmhouse description
+          example: Historic farmhouse with modern amenities
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        owner:
+          type: string
+          description: User ID of the token owner
+          example: 60d21b4667d0d8992e610c80
+        value:
+          type: number
+          format: float
+          description: Estimated token value in AGM
+          example: 10000.0
+        metadata:
+          type: object
+          description: Additional token metadata
+          example:
+            yearBuilt: 1950
+            bedrooms: 4
+            bathrooms: 2
+            squareFeet: 2500
+        images:
+          type: array
+          items:
+            type: string
+            description: Image URL
+            example: https://storage.agrimaan.com/images/farmhouse_60d21b4667d0d8992e610ca3_1.jpg
+        createdAt:
+          type: string
+          format: date-time
+          description: Token creation timestamp
+          example: 2025-05-20T14:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Token update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    FarmhouseTokenInput:
+      type: object
+      required:
+        - name
+        - description
+        - location
+      properties:
+        name:
+          type: string
+          description: Farmhouse name
+          example: Green Valley Farmhouse
+        description:
+          type: string
+          description: Farmhouse description
+          example: Historic farmhouse with modern amenities
+        location:
+          $ref: '#/components/schemas/GeoLocation'
+        value:
+          type: number
+          format: float
+          description: Estimated token value in AGM
+          example: 10000.0
+        metadata:
+          type: object
+          description: Additional token metadata
+          example:
+            yearBuilt: 1950
+            bedrooms: 4
+            bathrooms: 2
+            squareFeet: 2500
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+            description: Farmhouse images
+    
+    Investment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Investment ID
+          example: 60d21b4667d0d8992e610ca4
+        title:
+          type: string
+          description: Investment title
+          example: North Field Expansion
+        description:
+          type: string
+          description: Investment description
+          example: Funding for expanding irrigation infrastructure in North Field
+        creator:
+          type: object
+          properties:
+            id:
+              type: string
+              description: User ID of the investment creator
+              example: 60d21b4667d0d8992e610c80
+            name:
+              type: string
+              description: Creator name
+              example: John Farmer
+        asset:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [field, farmhouse, equipment, other]
+              description: Asset type
+              example: field
+            id:
+              type: string
+              description: Asset ID
+              example: 60d21b4667d0d8992e610c85
+            name:
+              type: string
+              description: Asset name
+              example: North Field
+        targetAmount:
+          type: number
+          format: float
+          description: Target investment amount in AGM
+          example: 5000.0
+        currentAmount:
+          type: number
+          format: float
+          description: Current investment amount in AGM
+          example: 3500.0
+        minInvestment:
+          type: number
+          format: float
+          description: Minimum investment amount in AGM
+          example: 100.0
+        roi:
+          type: number
+          format: float
+          description: Expected return on investment percentage
+          example: 12.5
+        term:
+          type: integer
+          description: Investment term in months
+          example: 12
+        status:
+          type: string
+          enum: [open, funded, in_progress, completed, cancelled]
+          description: Investment status
+          example: open
+        investors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: User ID of the investor
+                example: 60d21b4667d0d8992e610c81
+              amount:
+                type: number
+                format: float
+                description: Investment amount in AGM
+                example: 500.0
+              timestamp:
+                type: string
+                format: date-time
+                description: Investment timestamp
+                example: 2025-06-20T14:30:00Z
+        startDate:
+          type: string
+          format: date
+          description: Investment start date
+          example: 2025-07-01
+        endDate:
+          type: string
+          format: date
+          description: Investment end date
+          example: 2026-07-01
+        createdAt:
+          type: string
+          format: date-time
+          description: Investment creation timestamp
+          example: 2025-06-15T14:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Investment update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    InvestmentInput:
+      type: object
+      required:
+        - title
+        - description
+        - assetType
+        - assetId
+        - targetAmount
+        - minInvestment
+        - roi
+        - term
+      properties:
+        title:
+          type: string
+          description: Investment title
+          example: North Field Expansion
+        description:
+          type: string
+          description: Investment description
+          example: Funding for expanding irrigation infrastructure in North Field
+        assetType:
+          type: string
+          enum: [field, farmhouse, equipment, other]
+          description: Asset type
+          example: field
+        assetId:
+          type: string
+          description: Asset ID
+          example: 60d21b4667d0d8992e610c85
+        targetAmount:
+          type: number
+          format: float
+          description: Target investment amount in AGM
+          example: 5000.0
+        minInvestment:
+          type: number
+          format: float
+          description: Minimum investment amount in AGM
+          example: 100.0
+        roi:
+          type: number
+          format: float
+          description: Expected return on investment percentage
+          example: 12.5
+        term:
+          type: integer
+          description: Investment term in months
+          example: 12
+        startDate:
+          type: string
+          format: date
+          description: Investment start date
+          example: 2025-07-01
+    
+    InvestmentTransaction:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Transaction ID
+          example: 60d21b4667d0d8992e610ca5
+        investmentId:
+          type: string
+          description: Investment ID
+          example: 60d21b4667d0d8992e610ca4
+        investor:
+          type: string
+          description: User ID of the investor
+          example: 60d21b4667d0d8992e610c81
+        amount:
+          type: number
+          format: float
+          description: Investment amount in AGM
+          example: 500.0
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+        createdAt:
+          type: string
+          format: date-time
+          description: Transaction timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    # Notification Schemas
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Notification ID
+          example: 60d21b4667d0d8992e610ca6
+        type:
+          type: string
+          enum: [system, weather, field, crop, sensor, blockchain]
+          description: Notification type
+          example: weather
+        title:
+          type: string
+          description: Notification title
+          example: Weather Alert
+        message:
+          type: string
+          description: Notification message
+          example: Severe thunderstorm warning for your area
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Notification priority
+          example: high
+        read:
+          type: boolean
+          description: Whether the notification has been read
+          example: false
+        data:
+          type: object
+          description: Additional notification data
+          example:
+            alertId: 60d21b4667d0d8992e610c9d
+            fieldId: 60d21b4667d0d8992e610c85
+        recipient:
+          type: string
+          description: User ID of the notification recipient
+          example: 60d21b4667d0d8992e610c80
+        createdAt:
+          type: string
+          format: date-time
+          description: Notification creation timestamp
+          example: 2025-06-24T10:30:00Z
+        readAt:
+          type: string
+          format: date-time
+          description: Notification read timestamp
+          example: null
+    
+    NotificationSettings:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User ID
+          example: 60d21b4667d0d8992e610c80
+        channels:
+          type: object
+          properties:
+            email:
+              type: boolean
+              description: Email notifications enabled
+              example: true
+            sms:
+              type: boolean
+              description: SMS notifications enabled
+              example: false
+            push:
+              type: boolean
+              description: Push notifications enabled
+              example: true
+            inApp:
+              type: boolean
+              description: In-app notifications enabled
+              example: true
+        types:
+          type: object
+          properties:
+            system:
+              type: boolean
+              description: System notifications enabled
+              example: true
+            weather:
+              type: boolean
+              description: Weather notifications enabled
+              example: true
+            field:
+              type: boolean
+              description: Field notifications enabled
+              example: true
+            crop:
+              type: boolean
+              description: Crop notifications enabled
+              example: true
+            sensor:
+              type: boolean
+              description: Sensor notifications enabled
+              example: true
+            blockchain:
+              type: boolean
+              description: Blockchain notifications enabled
+              example: true
+        priorities:
+          type: object
+          properties:
+            low:
+              type: boolean
+              description: Low priority notifications enabled
+              example: true
+            medium:
+              type: boolean
+              description: Medium priority notifications enabled
+              example: true
+            high:
+              type: boolean
+              description: High priority notifications enabled
+              example: true
+            critical:
+              type: boolean
+              description: Critical priority notifications enabled
+              example: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Settings update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    NotificationSettingsInput:
+      type: object
+      properties:
+        channels:
+          type: object
+          properties:
+            email:
+              type: boolean
+              description: Email notifications enabled
+              example: true
+            sms:
+              type: boolean
+              description: SMS notifications enabled
+              example: false
+            push:
+              type: boolean
+              description: Push notifications enabled
+              example: true
+            inApp:
+              type: boolean
+              description: In-app notifications enabled
+              example: true
+        types:
+          type: object
+          properties:
+            system:
+              type: boolean
+              description: System notifications enabled
+              example: true
+            weather:
+              type: boolean
+              description: Weather notifications enabled
+              example: true
+            field:
+              type: boolean
+              description: Field notifications enabled
+              example: true
+            crop:
+              type: boolean
+              description: Crop notifications enabled
+              example: true
+            sensor:
+              type: boolean
+              description: Sensor notifications enabled
+              example: true
+            blockchain:
+              type: boolean
+              description: Blockchain notifications enabled
+              example: true
+        priorities:
+          type: object
+          properties:
+            low:
+              type: boolean
+              description: Low priority notifications enabled
+              example: true
+            medium:
+              type: boolean
+              description: Medium priority notifications enabled
+              example: true
+            high:
+              type: boolean
+              description: High priority notifications enabled
+              example: true
+            critical:
+              type: boolean
+              description: Critical priority notifications enabled
+              example: true
+    
+    # User Preferences Schemas
+    UserPreferences:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User ID
+          example: 60d21b4667d0d8992e610c80
+        notifications:
+          $ref: '#/components/schemas/NotificationPreferences'
+        display:
+          $ref: '#/components/schemas/DisplayPreferences'
+        privacy:
+          $ref: '#/components/schemas/PrivacyPreferences'
+        language:
+          $ref: '#/components/schemas/LanguagePreferences'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Preferences update timestamp
+          example: 2025-06-24T10:30:00Z
+    
+    UserPreferencesInput:
+      type: object
+      properties:
+        notifications:
+          $ref: '#/components/schemas/NotificationPreferences'
+        display:
+          $ref: '#/components/schemas/DisplayPreferences'
+        privacy:
+          $ref: '#/components/schemas/PrivacyPreferences'
+        language:
+          $ref: '#/components/schemas/LanguagePreferences'
+    
+    NotificationPreferences:
+      type: object
+      properties:
+        email:
+          type: boolean
+          description: Email notifications enabled
+          example: true
+        sms:
+          type: boolean
+          description: SMS notifications enabled
+          example: false
+        push:
+          type: boolean
+          description: Push notifications enabled
+          example: true
+        inApp:
+          type: boolean
+          description: In-app notifications enabled
+          example: true
+        weatherAlerts:
+          type: boolean
+          description: Weather alerts enabled
+          example: true
+        marketPrices:
+          type: boolean
+          description: Market price updates enabled
+          example: true
+        systemUpdates:
+          type: boolean
+          description: System updates enabled
+          example: false
+        fieldAlerts:
+          type: boolean
+          description: Field alerts enabled
+          example: true
+        cropHealth:
+          type: boolean
+          description: Crop health alerts enabled
+          example: true
+    
+    DisplayPreferences:
+      type: object
+      properties:
+        theme:
+          type: string
+          enum: [light, dark, system]
+          description: UI theme preference
+          example: system
+        dashboardLayout:
+          type: string
+          enum: [compact, comfortable, spacious]
+          description: Dashboard layout preference
+          example: comfortable
+        dataVisualization:
+          type: string
+          enum: [simple, detailed]
+          description: Data visualization preference
+          example: detailed
+        measurementUnits:
+          type: string
+          enum: [metric, imperial]
+          description: Measurement units preference
+          example: metric
+        dateFormat:
+          type: string
+          enum: [MM/DD/YYYY, DD/MM/YYYY, YYYY-MM-DD]
+          description: Date format preference
+          example: MM/DD/YYYY
+        timeFormat:
+          type: string
+          enum: [12h, 24h]
+          description: Time format preference
+          example: 24h
+        fontSize:
+          type: integer
+          description: Font size preference
+          example: 16
+    
+    PrivacyPreferences:
+      type: object
+      properties:
+        shareData:
+          type: boolean
+          description: Share anonymous usage data
+          example: true
+        shareLocation:
+          type: boolean
+          description: Share location data
+          example: true
+        shareCropData:
+          type: boolean
+          description: Share anonymized crop data
+          example: false
+        allowAnalytics:
+          type: boolean
+          description: Allow analytics
+          example: true
+        profileVisibility:
+          type: string
+          enum: [public, connections, private]
+          description: Profile visibility preference
+          example: connections
+    
+    LanguagePreferences:
+      type: object
+      properties:
+        language:
+          type: string
+          description: Language code
+          example: en
+        region:
+          type: string
+          description: Region code
+          example: US
+        currency:
+          type: string
+          description: Currency code
+          example: USD
+        timezone:
+          type: string
+          description: Timezone
+          example: America/Los_Angeles
+    
+    # Common Schemas
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Invalid input
+        details:
+          type: object
+          description: Error details
+          example:
+            field: "name"
+            message: "Name is required"
+        code:
+          type: integer
+          description: Error code
+          example: 400
+    
+    GeoLocation:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Point]
+          description: GeoJSON type
+          example: Point
+        coordinates:
+          type: array
+          items:
+            type: number
+            format: float
+          description: Coordinates [longitude, latitude]
+          example: [-121.1867, 37.6564]
+    
+    GeoPolygon:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Polygon]
+          description: GeoJSON type
+          example: Polygon
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                format: float
+          description: Polygon coordinates
+          example: [[[-121.1867, 37.6564], [-121.1867, 37.6664], [-121.1767, 37.6664], [-121.1767, 37.6564], [-121.1867, 37.6564]]]
