@@ -6,6 +6,8 @@
       "dom.iterable",
       "esnext"
     ],
+    "typeRoots": ["node_modules/@types", "node_modules"],
+    "types": ["react", "react-dom", "@mui/material"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
