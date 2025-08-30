@@ -284,14 +284,16 @@ const Sensors: React.FC = () => {
                 <Typography variant="body2" color="text.secondary">
                   Last Update: {sensor.lastUpdate}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Battery: <Chip 
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                    Battery:
+                  </Typography>
+                  <Chip 
                     label={sensor.batteryLevel} 
                     color={getBatteryColor(sensor.batteryLevel) as any} 
                     size="small"
-                    sx={{ ml: 1 }}
                   />
-                </Typography>
+                </Box>
               </CardContent>
               <Box sx={{ p: 2 }}>
                 <Button 
