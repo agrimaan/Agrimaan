@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/apiConfig';
 import { setAlert } from '../alert/alertSlice';
 
 // Types
@@ -54,7 +55,7 @@ export const loadUser = createAsyncThunk(
     }
     setAuthToken(token);
     try {
-      const res = await axios.get('/api/auth/me');
+  const res = await axios.get(`${API_BASE_URL}/api/auth/me`);
       return res.data;
     } catch (err: any) {
       setAuthToken(null);
@@ -68,14 +69,16 @@ export const register = createAsyncThunk(
   'auth/register',
   async (formData: RegisterData, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post('/api/auth/register', formData);
+  const res = await axios.post(`${API_BASE_URL}/api/auth/register`, formData);
       
       dispatch(setAlert({
         message: 'Registration successful! Welcome to agrimaan.',
         type: 'success'
       }) as any);
       
-      return res.data;
+  // Set token in axios headers and localStorage after registration
+  setAuthToken(res.data.token);
+  return res.data;
     } catch (err: any) {
       const errors = err.response?.data?.errors;
       
@@ -98,7 +101,7 @@ export const login = createAsyncThunk(
   'auth/login',
   async (formData: LoginCredentials, { rejectWithValue }) => {
     try {
-      const res = await axios.post('/api/auth/login', formData);
+  const res = await axios.post(`${API_BASE_URL}/api/auth/login`, formData);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Invalid credentials');
@@ -113,14 +116,14 @@ export const updateProfile = createAsyncThunk(
     try {
       const state = getState() as { auth: AuthState };
       const userId = state.auth.user?.id;
-      
-      const res = await axios.put(`/api/users/${userId}`, formData);
-      
+      if (!userId) {
+        return rejectWithValue('User not authenticated');
+      }
+  const res = await axios.put(`${API_BASE_URL}/api/users/${userId}`, formData);
       dispatch(setAlert({
         message: 'Profile updated successfully',
         type: 'success'
       }) as any);
-      
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update profile');
@@ -138,17 +141,17 @@ export const changePassword = createAsyncThunk(
     try {
       const state = getState() as { auth: AuthState };
       const userId = state.auth.user?.id;
-      
-      await axios.put(`/api/users/${userId}/change-password`, {
+      if (!userId) {
+        return rejectWithValue('User not authenticated');
+      }
+  await axios.put(`${API_BASE_URL}/api/users/${userId}/change-password`, {
         currentPassword,
         newPassword
       });
-      
       dispatch(setAlert({
         message: 'Password changed successfully',
         type: 'success'
       }) as any);
-      
       return true;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to change password');
@@ -160,6 +163,7 @@ export const changePassword = createAsyncThunk(
 const initialState: AuthState = {
   token: localStorage.getItem('token'),
   isAuthenticated: false,
+  // Note: If you do not call loadUser on app mount, set loading to false
   loading: true,
   user: null,
   error: null

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/apiConfig';
 import { setAlert } from '../alert/alertSlice';
 
 // Types
@@ -106,7 +107,7 @@ export const getAnalytics = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      let url = '/api/analytics';
+  let url = `${API_BASE_URL}/api/analytics`;
       const params = [];
       
       if (fieldId) params.push(`fieldId=${fieldId}`);
@@ -132,7 +133,7 @@ export const getAnalyticsById = createAsyncThunk(
   'analytics/getAnalyticsById',
   async (id: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/analytics/${id}`);
+  const res = await axios.get(`${API_BASE_URL}/api/analytics/${id}`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch analytics');
@@ -145,7 +146,7 @@ export const createAnalytics = createAsyncThunk(
   'analytics/createAnalytics',
   async (formData: Partial<Analytics>, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post('/api/analytics', formData);
+  const res = await axios.post(`${API_BASE_URL}/api/analytics`, formData);
       
       dispatch(setAlert({
         message: 'Analytics created successfully',
@@ -164,7 +165,7 @@ export const updateAnalytics = createAsyncThunk(
   'analytics/updateAnalytics',
   async ({ id, formData }: { id: string; formData: Partial<Analytics> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.put(`/api/analytics/${id}`, formData);
+  const res = await axios.put(`${API_BASE_URL}/api/analytics/${id}`, formData);
       
       dispatch(setAlert({
         message: 'Analytics updated successfully',
@@ -183,7 +184,7 @@ export const deleteAnalytics = createAsyncThunk(
   'analytics/deleteAnalytics',
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
-      await axios.delete(`/api/analytics/${id}`);
+  await axios.delete(`${API_BASE_URL}/api/analytics/${id}`);
       
       dispatch(setAlert({
         message: 'Analytics deleted successfully',
@@ -202,7 +203,7 @@ export const getFieldSummary = createAsyncThunk(
   'analytics/getFieldSummary',
   async (fieldId: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/analytics/field/${fieldId}/summary`);
+  const res = await axios.get(`${API_BASE_URL}/api/analytics/field/${fieldId}/summary`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch field summary');
@@ -215,7 +216,7 @@ export const getCropPredictions = createAsyncThunk(
   'analytics/getCropPredictions',
   async (cropId: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/analytics/crop/${cropId}/predictions`);
+  const res = await axios.get(`${API_BASE_URL}/api/analytics/crop/${cropId}/predictions`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch crop predictions');
@@ -228,7 +229,7 @@ export const getRecommendations = createAsyncThunk(
   'analytics/getRecommendations',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get('/api/analytics/recommendations');
+  const res = await axios.get(`${API_BASE_URL}/api/analytics/recommendations`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch recommendations');

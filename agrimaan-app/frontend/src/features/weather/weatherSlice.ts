@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/apiConfig';
 
 // Types
 interface Temperature {
@@ -83,7 +84,7 @@ export const getCurrentWeather = createAsyncThunk(
   async (fieldId: string, { rejectWithValue }) => {
     try {
       // Assuming the backend has an endpoint to get the latest weather for a field
-      const res = await axios.get(`/api/weather/current/${fieldId}`);
+  const res = await axios.get(`${API_BASE_URL}/api/weather/current/${fieldId}`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch current weather');
@@ -100,7 +101,7 @@ export const getWeatherHistory = createAsyncThunk(
   ) => {
     try {
       const res = await axios.get(
-        `/api/weather/history/${fieldId}?startDate=${startDate}&endDate=${endDate}`
+        `${API_BASE_URL}/api/weather/history/${fieldId}?startDate=${startDate}&endDate=${endDate}`
       );
       return res.data;
     } catch (err: any) {
@@ -114,7 +115,7 @@ export const getWeatherForecast = createAsyncThunk(
   'weather/getWeatherForecast',
   async (fieldId: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/weather/forecast/${fieldId}`);
+  const res = await axios.get(`${API_BASE_URL}/api/weather/forecast/${fieldId}`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch weather forecast');
