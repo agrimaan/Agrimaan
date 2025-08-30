@@ -21,11 +21,6 @@ const Login: React.FC = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    if (error === 'No token, authorization denied') {
-      dispatch(clearError());
-    }
-  }, [dispatch, error]);
 
   const [formData, setFormData] = useState({
     email: '',

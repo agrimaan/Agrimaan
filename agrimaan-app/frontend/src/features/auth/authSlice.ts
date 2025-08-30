@@ -48,11 +48,11 @@ export const loadUser = createAsyncThunk(
   'auth/loadUser',
   async (_, { rejectWithValue }) => {
     const token = localStorage.getItem('token');
-    
-    if (token) {
-      setAuthToken(token);
+    if (!token) {
+      // No token, do not set error, just resolve with null
+      return rejectWithValue(null);
     }
-    
+    setAuthToken(token);
     try {
       const res = await axios.get('/api/auth/me');
       return res.data;
@@ -193,11 +193,12 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(loadUser.rejected, (state, action) => {
-        state.token = null;
-        state.isAuthenticated = false;
-        state.loading = false;
-        state.user = null;
-        state.error = action.payload as string;
+      state.token = null;
+      state.isAuthenticated = false;
+      state.loading = false;
+      state.user = null;
+      // Only set error if there is a real error message
+      state.error = action.payload ? (action.payload as string) : null;
       })
       
       // Register
