@@ -20,7 +20,7 @@ import { register } from 'features/auth/authSlice';
 
 const Register: React.FC = () => {
   const dispatch = useDispatch();
-  // ...existing code...
+  
   const { loading, error } = useSelector((state: RootState) => state.auth);
   
   const [formData, setFormData] = useState({
