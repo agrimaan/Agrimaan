@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Grid,
-  Paper,
   Typography,
   useTheme,
   useMediaQuery,
@@ -12,8 +11,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Tabs,
-  Tab,
 } from '@mui/material';
 
 //import SwipeableViews from 'react-swipeable-views';

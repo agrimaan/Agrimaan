@@ -95,7 +95,7 @@ const mockCrop = {
 
 const CropDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [crop, setCrop] = useState(mockCrop);
+  const [crop] = useState(mockCrop);
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {

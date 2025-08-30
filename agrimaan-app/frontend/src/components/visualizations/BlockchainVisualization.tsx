@@ -17,7 +17,6 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import TokenIcon from '@mui/icons-material/Token';
 import LandscapeIcon from '@mui/icons-material/Landscape';
 import HomeIcon from '@mui/icons-material/Home';
-import PeopleIcon from '@mui/icons-material/People';
 
 // Define prop types for the component
 interface BlockchainVisualizationProps {

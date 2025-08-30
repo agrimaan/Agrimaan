@@ -23,7 +23,7 @@ import { RootState } from './store';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, loading, user } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     dispatch(loadUser() as any);

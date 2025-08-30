@@ -21,7 +21,6 @@ import {
   MenuItem,
   Slider,
   Button,
-  ButtonGroup,
   Chip,
   CircularProgress,
   useTheme,
@@ -30,7 +29,6 @@ import {
   Tab,
   Snackbar,
   Alert,
-  Collapse,
   Card,
   CardContent,
   CardHeader
@@ -51,7 +49,6 @@ import {
   FullscreenExit as FullscreenExitIcon,
   MyLocation as MyLocationIcon,
   Timeline as TimelineIcon,
-  Tune as TuneIcon,
   Close as CloseIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
@@ -324,7 +321,6 @@ const mockSatelliteImages: SatelliteImage[] = [
 const InteractiveFieldMap: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   
   const mapRef = useRef<L.Map | null>(null);
   const drawControlRef = useRef<L.Control.Draw | null>(null);

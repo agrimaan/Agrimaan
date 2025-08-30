@@ -90,7 +90,7 @@ const mockField = {
 
 const FieldDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [field, setField] = useState(mockField);
+  const [field] = useState(mockField);
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {

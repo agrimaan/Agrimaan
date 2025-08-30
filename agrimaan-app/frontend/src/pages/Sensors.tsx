@@ -99,7 +99,7 @@ const Sensors: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [fieldFilter, setFieldFilter] = useState('');
-  const [sensors, setSensors] = useState(mockSensors);
+  const [sensors] = useState(mockSensors);
 
   const handleTypeFilterChange = (event: SelectChangeEvent) => {
     setTypeFilter(event.target.value);

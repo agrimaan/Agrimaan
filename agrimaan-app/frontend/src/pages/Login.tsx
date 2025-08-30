@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,7 +14,7 @@ import {
   Alert
 } from '@mui/material';
 import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material';
-import { login, clearError } from '../features/auth/authSlice';
+import { login } from '../features/auth/authSlice';
 import { RootState } from '../store';
 
 const Login: React.FC = () => {

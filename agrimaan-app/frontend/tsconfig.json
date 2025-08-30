@@ -7,7 +7,7 @@
       "esnext"
     ],
     "typeRoots": ["node_modules/@types", "node_modules"],
-    "types": ["react", "react-dom", "@mui/material", "@reduxjs/toolkit"],
+  "types": ["react", "react-dom", "@mui/material", "@reduxjs/toolkit", "jest"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

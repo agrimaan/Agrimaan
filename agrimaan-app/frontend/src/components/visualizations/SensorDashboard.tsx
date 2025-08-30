@@ -5,8 +5,7 @@ import {
   ToggleButtonGroup, ToggleButton, Menu, MenuItem, Tooltip
 } from '@mui/material';
 import { 
-  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Legend, ResponsiveContainer, Tooltip as RechartsTooltip
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip
 } from 'recharts';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -81,11 +80,11 @@ const SensorDashboard: React.FC<SensorDashboardProps> = ({
   onTimeRangeChange
 }) => {
   const theme = useTheme();
+  const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
 
   // Get all unique sensor types
   const sensorTypes = Array.from(new Set(sensors.map(sensor => sensor.type)));

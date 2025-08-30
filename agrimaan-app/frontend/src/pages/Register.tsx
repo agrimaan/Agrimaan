@@ -13,14 +13,14 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { register } from 'features/auth/authSlice';
 
 const Register: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // ...existing code...
   const { loading, error } = useSelector((state: RootState) => state.auth);
   
   const [formData, setFormData] = useState({

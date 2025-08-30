@@ -13,11 +13,7 @@ import {
   SelectChangeEvent,
   Tabs,
   Tab,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider
+  List
 } from '@mui/material';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import CloudIcon from '@mui/icons-material/Cloud';
