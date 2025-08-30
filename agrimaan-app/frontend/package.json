@@ -7,8 +7,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.18.0",
-    "@reduxjs/toolkit": "^2.0.1",
-    "@types/react": "^19.1.12",
+    "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.6.2",
     "chart.js": "^4.4.1",
     "leaflet": "^1.9.4",
@@ -17,10 +16,11 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
-    "react-redux": "^9.0.4",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^6.20.1",
     "react-scripts": "5.0.1",
     "recharts": "^3.1.2",
+    "redux": "^5.0.1",
     "uuid": "^11.1.0"
   },
   "scripts": {
@@ -51,7 +51,8 @@
     "@types/leaflet": "^1.9.8",
     "@types/leaflet-draw": "^1.0.12",
     "@types/node": "^20.10.4",
-    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
     "typescript": "^4.9.5"
   },
   "proxy": "http://localhost:3001"
