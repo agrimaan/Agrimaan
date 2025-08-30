@@ -60,7 +60,7 @@ const Login: React.FC = () => {
         </Avatar>
         
         <Typography component="h1" variant="h5">
-          Sign in to agrimaan
+          Sign in to Agrimaan
         </Typography>
         
         {error && (
@@ -125,7 +125,7 @@ const Login: React.FC = () => {
         <Typography variant="body2" color="text.secondary">
           {'© '}
           {new Date().getFullYear()}
-          {' agrimaan. All rights reserved.'}
+          {' Agrimaan. All rights reserved.'}
         </Typography>
       </Box>
     </Container>

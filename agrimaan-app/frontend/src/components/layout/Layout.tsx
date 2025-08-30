@@ -60,7 +60,7 @@ const Layout: React.FC = () => {
           }}
         >
           <Box sx={{ textAlign: 'center', color: 'text.secondary' }}>
-            © {new Date().getFullYear()} agrimaan App. All rights reserved.
+            © {new Date().getFullYear()} Agrimaan App. All rights reserved.
           </Box>
         </Box>
       </Box>

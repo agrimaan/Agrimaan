@@ -80,7 +80,7 @@ const drawerWidth = 240;
 
 const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
   children,
-  title = 'agrimaan Platform',
+  title = 'Agrimaan Platform',
   notifications = 0,
   userName = 'User',
   userAvatar,
@@ -161,7 +161,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
         }}
       >
         <Typography variant="h6" noWrap component="div">
-          agrimaan
+          Agrimaan
         </Typography>
         {isMobile && (
           <IconButton onClick={handleDrawerToggle}>

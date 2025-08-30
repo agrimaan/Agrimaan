@@ -245,7 +245,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer, user }) => {
       {open && (
         <Box sx={{ p: 2, opacity: 0.7 }}>
           <ListItemText 
-            primary="agrimaan App" 
+            primary="Agrimaan App" 
             secondary="v1.0.0" 
             primaryTypographyProps={{ variant: 'caption' }}
             secondaryTypographyProps={{ variant: 'caption' }}

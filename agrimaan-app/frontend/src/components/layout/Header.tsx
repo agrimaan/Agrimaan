@@ -100,11 +100,11 @@ const Header: React.FC<HeaderProps> = ({ open, toggleDrawer }) => {
         >
           <Box
             component="img"
-            src="/logo.png"
-            alt="agrimaan Logo"
-            sx={{ height: 32, width: 32, display: { xs: 'none', sm: 'block' } }}
+            src="/images/Logo.png"
+            alt="Agrimaan Logo"
+            sx={{ height: 38, width: 44, display: { xs: 'none', sm: 'block' } }}
           />
-          agrimaan
+          Agrimaan
         </Typography>
         
         {/* Notifications */}
