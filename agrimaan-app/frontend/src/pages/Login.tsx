@@ -20,23 +20,24 @@ import { RootState } from '../store';
 const Login: React.FC = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state: RootState) => state.auth);
-  
+
+  useEffect(() => {
+    if (error === 'No token, authorization denied') {
+      dispatch(clearError());
+    }
+  }, [dispatch, error]);
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  
+
   const { email, password } = formData;
-  
-  useEffect(() => {
-    // Clear any previous errors when component mounts
-    dispatch(clearError());
-  }, [dispatch]);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(login(formData) as any);
@@ -58,17 +59,17 @@ const Login: React.FC = () => {
         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
           <LockOutlinedIcon />
         </Avatar>
-        
+
         <Typography component="h1" variant="h5">
           Sign in to Agrimaan
         </Typography>
-        
+
         {error && (
           <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
             {error}
           </Alert>
         )}
-        
+
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
             margin="normal"
@@ -82,7 +83,7 @@ const Login: React.FC = () => {
             value={email}
             onChange={handleChange}
           />
-          
+
           <TextField
             margin="normal"
             required
@@ -95,7 +96,7 @@ const Login: React.FC = () => {
             value={password}
             onChange={handleChange}
           />
-          
+
           <Button
             type="submit"
             fullWidth
@@ -105,7 +106,7 @@ const Login: React.FC = () => {
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </Button>
-          
+
           <Grid container>
             <Grid item xs>
               <Link component={RouterLink} to="/forgot-password" variant="body2">
@@ -120,7 +121,7 @@ const Login: React.FC = () => {
           </Grid>
         </Box>
       </Paper>
-      
+
       <Box sx={{ mt: 8, mb: 4, textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
           {'© '}
