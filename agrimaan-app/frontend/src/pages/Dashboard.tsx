@@ -6,7 +6,6 @@ import {
   Button,
   Card,
   CardContent,
-  
   Chip,
   Divider,
   Grid,
@@ -17,7 +16,8 @@ import {
   ListItemText,
   Paper,
   Typography,
-  useTheme
+  useTheme,
+  Avatar
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -28,7 +28,10 @@ import {
   WaterDrop as WaterDropIcon,
   BugReport as BugReportIcon,
   Spa as SpaIcon,
-  Thermostat as ThermostatIcon
+  Thermostat as ThermostatIcon,
+  Store as StoreIcon,
+  MonetizationOn as MonetizationOnIcon,
+  ShoppingCart as ShoppingCartIcon
 } from '@mui/icons-material';
 
 import { getFields } from '../features/fields/fieldSlice';
@@ -77,30 +80,27 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     dispatch(getFields() as any);
     dispatch(getCrops() as any);
-    //dispatch(getCrops(undefined) as any); // Also fix this if it has the same issue
-    //dispatch(getSensors() as any);
-    //dispatch(getSensors(undefined) as any);
-
-
-// To get crops with a specific status
-dispatch(getSensors({ status: 'active' }) as any);
-
-    // To get all sensors
-dispatch(getSensors({}) as any);
-
-// To get sensors for a specific field
-dispatch(getSensors({ fieldId: 'some-field-id' }) as any);
-
-// To get sensors of a specific type
-dispatch(getSensors({ type: 'temperature' }) as any);
-
-// To get sensors with a specific status
-dispatch(getSensors({ status: 'active' }) as any);
-
-
-
+    dispatch(getSensors({}) as any);
     dispatch(getRecommendations() as any);
   }, [dispatch]);
+  
+  // Add function to get crops ready for sale
+  const cropsReadyForSale = crops.filter(crop => 
+    crop.status === 'harvested' || crop.status === 'growing'
+  );
+
+  // Helper function to get field name
+  const getFieldName = (fieldRef: any): string => {
+    if (typeof fieldRef === 'string') {
+      // If field is just an ID, find the field name from fields array
+      const field = fields.find(f => f._id === fieldRef);
+      return field?.name || 'Unknown';
+    } else if (fieldRef && typeof fieldRef === 'object' && fieldRef.name) {
+      // If field is populated object
+      return fieldRef.name;
+    }
+    return 'Unknown';
+  };
   
   // Prepare data for charts
   const cropStatusData = {
@@ -230,6 +230,15 @@ dispatch(getSensors({ status: 'active' }) as any);
         <Box>
           <Button
             component={RouterLink}
+            to="/marketplace"
+            variant="outlined"
+            startIcon={<StoreIcon />}
+            sx={{ mr: 1 }}
+          >
+            Sell Crops
+          </Button>
+          <Button
+            component={RouterLink}
             to="/fields/new"
             variant="contained"
             startIcon={<AddIcon />}
@@ -242,7 +251,7 @@ dispatch(getSensors({ status: 'active' }) as any);
       
       {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={2.4}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -265,7 +274,7 @@ dispatch(getSensors({ status: 'active' }) as any);
           </Card>
         </Grid>
         
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={2.4}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -288,7 +297,7 @@ dispatch(getSensors({ status: 'active' }) as any);
           </Card>
         </Grid>
         
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={2.4}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -311,7 +320,30 @@ dispatch(getSensors({ status: 'active' }) as any);
           </Card>
         </Grid>
         
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={2.4}>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Ready to Sell
+                  </Typography>
+                  <Typography variant="h4" component="div">
+                    {cropsLoading ? '...' : cropsReadyForSale.length}
+                  </Typography>
+                </Box>
+                <MonetizationOnIcon color="secondary" sx={{ fontSize: 40 }} />
+              </Box>
+              <Box sx={{ mt: 2 }}>
+                <Link component={RouterLink} to="/marketplace" color="primary" underline="hover">
+                  View marketplace
+                </Link>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={2.4}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -362,8 +394,88 @@ dispatch(getSensors({ status: 'active' }) as any);
           </Paper>
         </Grid>
         
-        {/* Recommendations */}
+        {/* Crops Ready for Sale */}
         <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Crops Ready for Sale
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            
+            {cropsLoading ? (
+              <Typography>Loading crops...</Typography>
+            ) : cropsReadyForSale.length === 0 ? (
+              <Typography color="text.secondary">
+                No crops ready for sale at the moment
+              </Typography>
+            ) : (
+              <List dense>
+                {cropsReadyForSale.slice(0, 4).map((crop) => (
+                  <ListItem 
+                    key={crop._id} 
+                    sx={{ px: 0, mb: 1 }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      <Avatar sx={{ bgcolor: 'success.light', width: 32, height: 32 }}>
+                        <GrassIcon fontSize="small" />
+                      </Avatar>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography variant="subtitle2">
+                            {crop.name}
+                          </Typography>
+                          <Chip
+                            label={crop.status}
+                            size="small"
+                            color={crop.status === 'harvested' ? 'success' : 'warning'}
+                            variant="outlined"
+                          />
+                        </Box>
+                      }
+                      secondary={
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            {`Field: ${getFieldName(crop.field)}`}
+                          </Typography>
+                          <Typography variant="body2" color="primary">
+                            {`${crop.expectedYield || 'N/A'} kg`}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            )}
+            
+            {cropsReadyForSale.length > 0 && (
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                <Button
+                  component={RouterLink}
+                  to="/crops"
+                  size="small"
+                  color="primary"
+                >
+                  View All Crops
+                </Button>
+                <Button
+                  component={RouterLink}
+                  to="/marketplace"
+                  size="small"
+                  variant="contained"
+                  startIcon={<ShoppingCartIcon />}
+                >
+                  Sell Now
+                </Button>
+              </Box>
+            )}
+          </Paper>
+        </Grid>
+        
+        {/* Recommendations */}
+        <Grid item xs={12} md={8}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
               Recommendations
@@ -420,6 +532,50 @@ dispatch(getSensors({ status: 'active' }) as any);
           </Paper>
         </Grid>
         
+        {/* Weather Forecast */}
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom>
+              Weather Forecast
+            </Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Box sx={{ textAlign: 'center', py: 2 }}>
+              <Typography variant="h3" component="div">
+                24°C
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Partly Cloudy
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                Humidity: 65% | Wind: 8 km/h
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2">Mon</Typography>
+                <Typography variant="body1">23°C</Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2">Tue</Typography>
+                <Typography variant="body1">25°C</Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2">Wed</Typography>
+                <Typography variant="body1">22°C</Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2">Thu</Typography>
+                <Typography variant="body1">20°C</Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="body2">Fri</Typography>
+                <Typography variant="body1">21°C</Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Grid>
+        
         {/* Crop Status */}
         <Grid item xs={12} sm={6} md={4}>
           <Paper sx={{ p: 2, height: '100%' }}>
@@ -464,50 +620,6 @@ dispatch(getSensors({ status: 'active' }) as any);
                   }
                 }} 
               />
-            </Box>
-          </Paper>
-        </Grid>
-        
-        {/* Weather Forecast */}
-        <Grid item xs={12} sm={6} md={4}>
-          <Paper sx={{ p: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
-              Weather Forecast
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Box sx={{ textAlign: 'center', py: 2 }}>
-              <Typography variant="h3" component="div">
-                24°C
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Partly Cloudy
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Humidity: 65% | Wind: 8 km/h
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 2 }} />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Mon</Typography>
-                <Typography variant="body1">23°C</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Tue</Typography>
-                <Typography variant="body1">25°C</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Wed</Typography>
-                <Typography variant="body1">22°C</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Thu</Typography>
-                <Typography variant="body1">20°C</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Fri</Typography>
-                <Typography variant="body1">21°C</Typography>
-              </Box>
             </Box>
           </Paper>
         </Grid>
