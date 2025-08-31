@@ -7,3 +7,4 @@ JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFt
 export NODE_ENV=development
 
 sudo systemctl status mongodb
+

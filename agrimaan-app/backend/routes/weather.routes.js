@@ -264,4 +264,53 @@ router.post('/field/:fieldId/refresh', auth, async (req, res) => {
   }
 });
 
+// GET /api/weather/search?query=Melbourne
+router.get('/search', async (req, res) => {
+  try {
+    const q = (req.query.query || '').toString().trim();
+    if (!q) return res.status(400).json({ error: 'Missing query' });
+
+    const data = await weatherService.getByLocationName(q);
+    return res.json(data);
+  } catch (e) {
+    console.error('GET /api/weather/search error:', e?.responseBody || e?.message || e);
+    return res.status(500).json({ error: 'weather search failed', detail: e?.message || 'unknown' });
+  }
+});
+
+// GET /api/weather/by-coords?lat=...&lng=...
+router.get('/by-coords', async (req, res) => {
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return res.status(400).json({ error: 'lat and lng query params are required (numbers)' });
+  }
+
+  try {
+    // Primary provider via your service (e.g., WeatherAPI if configured)
+    const wx = await weatherService.getCurrentWeather(lat, lng);
+    return res.json(wx);
+  } catch (e1) {
+    console.error('Primary provider failed:', e1?.responseBody || e1?.message || e1);
+
+    // Fallback to Open-Meteo so the UI still works
+    try {
+      const wx2 = await openMeteoFallback(lat, lng);
+      return res.json(wx2);
+    } catch (e2) {
+      console.error('Open-Meteo fallback failed:', e2?.responseBody || e2?.message || e2);
+      return res.status(500).json({
+        error: 'weather fetch failed',
+        detail: e1?.message || e2?.message || 'unknown'
+      });
+    }
+  }
+});
+
+
+
+
+
+
 module.exports = router;

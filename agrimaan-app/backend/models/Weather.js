@@ -1,157 +1,86 @@
 const mongoose = require('mongoose');
 
-const WeatherSchema = new mongoose.Schema({
-  location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number], // [longitude, latitude]
-      required: true
-    }
+const CurrentWeatherSchema = new mongoose.Schema({
+  location: { type: String, required: true },
+  coordinates: {
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true }
   },
-  field: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
-  },
-  date: {
-    type: Date,
-    required: true
-  },
-  temperature: {
-    current: {
-      type: Number
-    },
-    min: {
-      type: Number
-    },
-    max: {
-      type: Number
-    },
-    unit: {
-      type: String,
-      enum: ['celsius', 'fahrenheit'],
-      default: 'celsius'
-    }
-  },
-  humidity: {
-    type: Number, // percentage
-    min: 0,
-    max: 100
-  },
-  precipitation: {
-    amount: {
-      type: Number
-    },
-    type: {
-      type: String,
-      enum: ['rain', 'snow', 'sleet', 'hail', 'none'],
-      default: 'none'
-    },
-    unit: {
-      type: String,
-      enum: ['mm', 'inches'],
-      default: 'mm'
-    },
-    probability: {
-      type: Number, // percentage
-      min: 0,
-      max: 100
-    }
-  },
-  wind: {
-    speed: {
-      type: Number
-    },
-    direction: {
-      type: Number, // degrees
-      min: 0,
-      max: 360
-    },
-    unit: {
-      type: String,
-      enum: ['km/h', 'mph', 'm/s'],
-      default: 'km/h'
-    }
-  },
-  pressure: {
-    value: {
-      type: Number
-    },
-    unit: {
-      type: String,
-      enum: ['hPa', 'inHg'],
-      default: 'hPa'
-    }
-  },
-  cloudCover: {
-    type: Number, // percentage
-    min: 0,
-    max: 100
-  },
-  uvIndex: {
-    type: Number,
-    min: 0
-  },
-  visibility: {
-    value: {
-      type: Number
-    },
-    unit: {
-      type: String,
-      enum: ['km', 'miles'],
-      default: 'km'
-    }
-  },
-  sunrise: {
-    type: Date
-  },
-  sunset: {
-    type: Date
-  },
-  source: {
-    type: String, // e.g., 'OpenWeatherMap', 'WeatherAPI', 'Local Station'
-    required: true
-  },
-  forecast: [{
-    date: {
-      type: Date
-    },
-    temperature: {
-      min: {
-        type: Number
-      },
-      max: {
-        type: Number
-      }
-    },
-    precipitation: {
-      amount: {
-        type: Number
-      },
-      probability: {
-        type: Number
-      }
-    },
-    description: {
-      type: String
-    }
-  }],
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
+  date: { type: Date, required: true },
+  temperature: { type: Number, required: true },
+  feelsLike: { type: Number, required: true },
+  condition: { type: String, required: true },
+  humidity: { type: Number, required: true },
+  windSpeed: { type: Number, required: true },
+  windDirection: { type: String, required: true },
+  precipitation: { type: Number, required: true },
+  pressure: { type: Number, required: true },
+  visibility: { type: Number, required: true },
+  uvIndex: { type: Number, required: true },
+  sunrise: { type: Date, required: true },
+  sunset: { type: Date, required: true }
 }, {
   timestamps: true
 });
 
-// Create a 2dsphere index for geospatial queries
-WeatherSchema.index({ location: '2dsphere' });
+const WeatherForecastSchema = new mongoose.Schema({
+  location: { type: String, required: true },
+  coordinates: {
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true }
+  },
+  date: { type: Date, required: true },
+  day: { type: String, required: true },
+  condition: { type: String, required: true },
+  highTemp: { type: Number, required: true },
+  lowTemp: { type: Number, required: true },
+  precipitation: { type: Number, required: true },
+  windSpeed: { type: Number, required: true },
+  windDirection: { type: String, required: true }
+}, {
+  timestamps: true
+});
 
-module.exports = mongoose.model('Weather', WeatherSchema);
+const WeatherAlertSchema = new mongoose.Schema({
+  location: { type: String, required: true },
+  type: { type: String, required: true },
+  severity: { type: String, enum: ['Low', 'Moderate', 'High', 'Extreme'], required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  isActive: { type: Boolean, default: true }
+}, {
+  timestamps: true
+});
+
+const HistoricalWeatherSchema = new mongoose.Schema({
+  location: { type: String, required: true },
+  year: { type: Number, required: true },
+  month: { type: Number, required: true, min: 1, max: 12 },
+  avgHigh: { type: Number, required: true },
+  avgLow: { type: Number, required: true },
+  totalPrecipitation: { type: Number, required: true },
+  avgHumidity: { type: Number, required: true },
+  avgWindSpeed: { type: Number, required: true }
+}, {
+  timestamps: true
+});
+
+// Create compound indexes for better query performance
+CurrentWeatherSchema.index({ location: 1, date: -1 });
+WeatherForecastSchema.index({ location: 1, date: 1 });
+WeatherAlertSchema.index({ location: 1, isActive: 1, startDate: -1 });
+HistoricalWeatherSchema.index({ location: 1, year: 1, month: 1 });
+
+const CurrentWeather = mongoose.model('CurrentWeather', CurrentWeatherSchema);
+const WeatherForecast = mongoose.model('WeatherForecast', WeatherForecastSchema);
+const WeatherAlert = mongoose.model('WeatherAlert', WeatherAlertSchema);
+const HistoricalWeather = mongoose.model('HistoricalWeather', HistoricalWeatherSchema);
+
+module.exports = {
+  CurrentWeather,
+  WeatherForecast,
+  WeatherAlert,
+  HistoricalWeather
+};
