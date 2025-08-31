@@ -8,8 +8,7 @@ import {
   CardMedia, 
   Button,
   TextField,
-  InputAdornment,
-  IconButton
+  InputAdornment
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
@@ -25,7 +24,7 @@ const mockFields = [
 
 const Fields: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [fields, setFields] = useState(mockFields);
+  const [fields] = useState(mockFields);
 
   const filteredFields = fields.filter(field => 
     field.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

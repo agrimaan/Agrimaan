@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import DashboardWidget from '../DashboardWidget';
@@ -249,11 +250,12 @@ describe('DashboardWidget Component', () => {
       </DashboardWidget>,
       { wrapper: TestWrapper }
     );
-    
-    // Get the card element
-    const card = screen.getByText('Test Widget').closest('.MuiCard-root');
+
+    // Get the card element using role
+    const card = screen.getByRole('region', { name: /Test Widget/i });
     expect(card).toHaveStyle('height: 400px');
     expect(card).toHaveStyle('min-height: 300px');
     expect(card).toHaveStyle('max-height: 500px');
   });
 });
+

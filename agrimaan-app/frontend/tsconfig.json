@@ -2,7 +2,13 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "typeRoots": ["node_modules/@types", "node_modules"],
+  "types": ["node","react", "react-dom", "@mui/material", "@reduxjs/toolkit", "jest"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -14,9 +20,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
-    "types": ["node", "react", "react-dom"]
-  },
+    "jsx": "react-jsx"
+    },
   "include": ["src"],
   "exclude": ["node_modules"]
 }

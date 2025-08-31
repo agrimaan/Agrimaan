@@ -1,6 +1,6 @@
 {
-  "short_name": "agrimaan",
-  "name": "agrimaan - Smart Agriculture Platform",
+  "short_name": "Agrimaan",
+  "name": "Agrimaan - Smart Agriculture Platform",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,7 +8,7 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "images/Logo.png",
       "type": "image/png",
       "sizes": "192x192"
     },

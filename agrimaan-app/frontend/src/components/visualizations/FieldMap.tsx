@@ -294,7 +294,7 @@ const FieldMap: React.FC<FieldMapProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [fieldData, sensors, crops, weatherData, theme, interactive]);
+  }, [fieldData, sensors, crops, weatherData, theme, interactive, createSensorIcon, cropStatusColors]);
 
   // Render legend
   const renderLegend = () => {

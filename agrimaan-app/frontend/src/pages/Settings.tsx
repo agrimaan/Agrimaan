@@ -28,7 +28,7 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SecurityIcon from '@mui/icons-material/Security';
 import LanguageIcon from '@mui/icons-material/Language';
-import DataUsageIcon from '@mui/icons-material/DataUsage';
+
 import PersonIcon from '@mui/icons-material/Person';
 import DevicesIcon from '@mui/icons-material/Devices';
 import SaveIcon from '@mui/icons-material/Save';

@@ -9,7 +9,6 @@ import {
   Button,
   TextField,
   InputAdornment,
-  IconButton,
   Chip
 } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -67,7 +66,7 @@ const mockCrops = [
 
 const Crops: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [crops, setCrops] = useState(mockCrops);
+  const [crops] = useState(mockCrops);
 
   const filteredCrops = crops.filter(crop => 
     crop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

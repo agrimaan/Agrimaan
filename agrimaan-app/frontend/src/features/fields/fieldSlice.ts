@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/apiConfig';
 import { setAlert } from '../alert/alertSlice';
 
 // Types
@@ -57,7 +58,7 @@ export const getFields = createAsyncThunk(
   'field/getFields',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get('/api/fields');
+  const res = await axios.get(`${API_BASE_URL}/api/fields`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch fields');
@@ -70,7 +71,7 @@ export const getFieldById = createAsyncThunk(
   'field/getFieldById',
   async (id: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/fields/${id}`);
+  const res = await axios.get(`${API_BASE_URL}/api/fields/${id}`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch field');
@@ -83,7 +84,7 @@ export const createField = createAsyncThunk(
   'field/createField',
   async (formData: Partial<Field>, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post('/api/fields', formData);
+  const res = await axios.post(`${API_BASE_URL}/api/fields`, formData);
       
       dispatch(setAlert({
         message: 'Field created successfully',
@@ -102,7 +103,7 @@ export const updateField = createAsyncThunk(
   'field/updateField',
   async ({ id, formData }: { id: string; formData: Partial<Field> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.put(`/api/fields/${id}`, formData);
+  const res = await axios.put(`${API_BASE_URL}/api/fields/${id}`, formData);
       
       dispatch(setAlert({
         message: 'Field updated successfully',
@@ -121,7 +122,7 @@ export const deleteField = createAsyncThunk(
   'field/deleteField',
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
-      await axios.delete(`/api/fields/${id}`);
+  await axios.delete(`${API_BASE_URL}/api/fields/${id}`);
       
       dispatch(setAlert({
         message: 'Field deleted successfully',
@@ -140,7 +141,7 @@ export const getNearbyFields = createAsyncThunk(
   'field/getNearbyFields',
   async ({ lng, lat, distance }: { lng: number; lat: number; distance: number }, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/fields/nearby/${distance}?lng=${lng}&lat=${lat}`);
+  const res = await axios.get(`${API_BASE_URL}/api/fields/nearby/${distance}?lng=${lng}&lat=${lat}`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch nearby fields');

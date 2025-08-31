@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { API_BASE_URL } from '../../config/apiConfig';
 import { setAlert } from '../alert/alertSlice';
 
 // Types
@@ -100,8 +101,8 @@ export const getCrops = createAsyncThunk(
   async (fieldId: string | undefined, { rejectWithValue }) => {
 
     try {
-      const url = fieldId ? `/api/crops?fieldId=${fieldId}` : '/api/crops';
-      const res = await axios.get(url);
+  const url = fieldId ? `${API_BASE_URL}/api/crops?fieldId=${fieldId}` : `${API_BASE_URL}/api/crops`;
+  const res = await axios.get(url);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch crops');
@@ -114,7 +115,7 @@ export const getCropById = createAsyncThunk(
   'crop/getCropById',
   async (id: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/crops/${id}`);
+  const res = await axios.get(`${API_BASE_URL}/api/crops/${id}`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch crop');
@@ -127,7 +128,7 @@ export const createCrop = createAsyncThunk(
   'crop/createCrop',
   async (formData: Partial<Crop>, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post('/api/crops', formData);
+  const res = await axios.post(`${API_BASE_URL}/api/crops`, formData);
       
       dispatch(setAlert({
         message: 'Crop created successfully',
@@ -146,7 +147,7 @@ export const updateCrop = createAsyncThunk(
   'crop/updateCrop',
   async ({ id, formData }: { id: string; formData: Partial<Crop> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.put(`/api/crops/${id}`, formData);
+  const res = await axios.put(`${API_BASE_URL}/api/crops/${id}`, formData);
       
       dispatch(setAlert({
         message: 'Crop updated successfully',
@@ -165,7 +166,7 @@ export const deleteCrop = createAsyncThunk(
   'crop/deleteCrop',
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
-      await axios.delete(`/api/crops/${id}`);
+  await axios.delete(`${API_BASE_URL}/api/crops/${id}`);
       
       dispatch(setAlert({
         message: 'Crop deleted successfully',
@@ -184,7 +185,7 @@ export const addPestIssue = createAsyncThunk(
   'crop/addPestIssue',
   async ({ cropId, pestIssue }: { cropId: string; pestIssue: Partial<PestIssue> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`/api/crops/${cropId}/pest-issue`, pestIssue);
+  const res = await axios.post(`${API_BASE_URL}/api/crops/${cropId}/pest-issue`, pestIssue);
       
       dispatch(setAlert({
         message: 'Pest issue added successfully',
@@ -203,7 +204,7 @@ export const addDiseaseIssue = createAsyncThunk(
   'crop/addDiseaseIssue',
   async ({ cropId, diseaseIssue }: { cropId: string; diseaseIssue: Partial<DiseaseIssue> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`/api/crops/${cropId}/disease-issue`, diseaseIssue);
+  const res = await axios.post(`${API_BASE_URL}/api/crops/${cropId}/disease-issue`, diseaseIssue);
       
       dispatch(setAlert({
         message: 'Disease issue added successfully',
@@ -222,7 +223,7 @@ export const addFertilizer = createAsyncThunk(
   'crop/addFertilizer',
   async ({ cropId, fertilizer }: { cropId: string; fertilizer: Partial<Fertilizer> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`/api/crops/${cropId}/fertilizer`, fertilizer);
+  const res = await axios.post(`${API_BASE_URL}/api/crops/${cropId}/fertilizer`, fertilizer);
       
       dispatch(setAlert({
         message: 'Fertilizer application added successfully',
@@ -241,7 +242,7 @@ export const addIrrigationEvent = createAsyncThunk(
   'crop/addIrrigationEvent',
   async ({ cropId, irrigation }: { cropId: string; irrigation: Partial<IrrigationEvent> }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.post(`/api/crops/${cropId}/irrigation`, irrigation);
+  const res = await axios.post(`${API_BASE_URL}/api/crops/${cropId}/irrigation`, irrigation);
       
       dispatch(setAlert({
         message: 'Irrigation event added successfully',

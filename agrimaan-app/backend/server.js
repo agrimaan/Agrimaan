@@ -24,6 +24,7 @@ app.use('/api/users', require('./routes/user.routes'));
 app.use('/api/crops', require('./routes/crop.routes'));
 app.use('/api/fields', require('./routes/field.routes'));
 app.use('/api/sensors', require('./routes/sensor.routes'));
+app.use('/api/analytics/recommendations', require('./routes/analytics.recommendations.routes'));
 app.use('/api/analytics', require('./routes/analytics.routes'));
 app.use('/api/advanced-analytics', require('./routes/advanced-analytics.routes'));
 app.use('/api/weather', require('./routes/weather.routes'));

@@ -4,7 +4,7 @@ import {
   CircularProgress, useTheme, Tooltip
 } from '@mui/material';
 import { 
-  LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  LineChart, Line, AreaChart, Area, Bar, XAxis, YAxis, CartesianGrid, 
   Legend, ResponsiveContainer, Tooltip as RechartsTooltip, ComposedChart
 } from 'recharts';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
