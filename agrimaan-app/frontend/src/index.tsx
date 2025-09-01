@@ -17,12 +17,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
-      </BrowserRouter>
+      <App />  {/* Make sure there's no Router wrapper here */}
     </Provider>
   </React.StrictMode>
 );
