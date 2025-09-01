@@ -1,5 +1,16 @@
+// src/components/WeatherAdvicePanel.tsx
 import React from "react";
 import type { WeatherAdvice } from "../services/ai";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  CircularProgress,
+  Box,
+} from "@mui/material";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 type Props = {
   advice?: WeatherAdvice | null;
@@ -9,62 +20,102 @@ type Props = {
   fieldName?: string;
 };
 
-export default function WeatherAdvicePanel({ advice, loading, error, onRefresh, fieldName }: Props) {
+export default function WeatherAdvicePanel({
+  advice,
+  loading,
+  error,
+  onRefresh,
+  fieldName,
+}: Props) {
   return (
-    <div className="rounded-xl border p-4 bg-white/70 dark:bg-zinc-900/50">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-lg font-semibold">
-          AI Weather Advice{fieldName ? ` — ${fieldName}` : ""}
-        </h3>
-        <button
-          onClick={onRefresh}
-          className="text-sm px-3 py-1 rounded-md border hover:bg-gray-50 dark:hover:bg-zinc-800"
-        >
-          Refresh
-        </button>
-      </div>
+    <Card variant="outlined">
+      <CardHeader
+        title={
+          <Typography variant="h6">
+            AI Weather Advice {fieldName ? `— ${fieldName}` : ""}
+          </Typography>
+        }
+        action={
+          onRefresh && (
+            <Button
+              onClick={onRefresh}
+              size="small"
+              startIcon={<RefreshIcon />}
+              disabled={loading}
+            >
+              Refresh
+            </Button>
+          )
+        }
+      />
+      <CardContent>
+        {loading && (
+          <Box display="flex" alignItems="center" gap={1}>
+            <CircularProgress size={20} />
+            <Typography variant="body2">Analyzing latest forecast…</Typography>
+          </Box>
+        )}
 
-      {loading && <p>Analyzing latest forecast…</p>}
-      {error && <p className="text-red-600">{error}</p>}
+        {error && (
+          <Typography color="error" variant="body2">
+            {error}
+          </Typography>
+        )}
 
-      {!loading && !error && advice && (
-        <div className="space-y-3">
-          <p className="whitespace-pre-wrap">{advice.summary}</p>
+        {!loading && !error && advice && (
+          <Box display="flex" flexDirection="column" gap={2}>
+            {advice.summary && (
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                {advice.summary}
+              </Typography>
+            )}
 
-          {advice.risks?.length ? (
-            <div>
-              <h4 className="font-medium">Risks</h4>
-              <ul className="list-disc ml-5">
-                {advice.risks.map((r, i) => (
-                  <li key={i}>{r}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+            {advice.risks?.length ? (
+              <Box>
+                <Typography variant="subtitle2">Risks</Typography>
+                <ul style={{ marginLeft: "1.25rem" }}>
+                  {advice.risks.map((r, i) => (
+                    <li key={i}>
+                      <Typography variant="body2">{r}</Typography>
+                    </li>
+                  ))}
+                </ul>
+              </Box>
+            ) : null}
 
-          {advice.recommendations?.length ? (
-            <div>
-              <h4 className="font-medium">Recommendations</h4>
-              <ul className="list-disc ml-5">
-                {advice.recommendations.map((r, i) => (
-                  <li key={i}>{r}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+            {advice.recommendations?.length ? (
+              <Box>
+                <Typography variant="subtitle2">Recommendations</Typography>
+                <ul style={{ marginLeft: "1.25rem" }}>
+                  {advice.recommendations.map((r, i) => (
+                    <li key={i}>
+                      <Typography variant="body2">{r}</Typography>
+                    </li>
+                  ))}
+                </ul>
+              </Box>
+            ) : null}
 
-          {advice.warnings?.length ? (
-            <div>
-              <h4 className="font-medium text-amber-700">Warnings</h4>
-              <ul className="list-disc ml-5">
-                {advice.warnings.map((r, i) => (
-                  <li key={i}>{r}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-      )}
-    </div>
+            {advice.warnings?.length ? (
+              <Box>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "warning.main" }}
+                >
+                  Warnings
+                </Typography>
+                <ul style={{ marginLeft: "1.25rem" }}>
+                  {advice.warnings.map((r, i) => (
+                    <li key={i}>
+                      <Typography variant="body2">{r}</Typography>
+                    </li>
+                  ))}
+                </ul>
+              </Box>
+            ) : null}
+          </Box>
+        )}
+      </CardContent>
+    </Card>
   );
 }

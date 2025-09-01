@@ -9,6 +9,25 @@ import WeatherAdvicePanel from "../components/WeatherAdvicePanel";
 import LocationSearch from "../components/LocationSearch";
 import { api } from "../lib/api";
 
+import {
+  Box,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Card,
+  CardContent,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
+
+import ThermostatIcon from "@mui/icons-material/Thermostat";
+import AirIcon from "@mui/icons-material/Air";
+import OpacityIcon from "@mui/icons-material/Opacity";
+import GrainIcon from "@mui/icons-material/Grain";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+
 type FieldLite = {
   _id: string;
   name?: string;
@@ -24,7 +43,7 @@ type WeatherResponse = {
     humidity?: number;
     precip_mm?: number;
   };
-  forecast?: any; // supports { forecastday: [...] } or a flat array
+  forecast?: any;
   meta?: any;
 };
 
@@ -49,9 +68,11 @@ function pickForecastArray(wx: WeatherResponse | null): Array<any> {
 }
 function getDateLabel(item: any, index: number): string {
   const date =
-    item?.date ? new Date(item.date) :
-    item?.dt ? new Date(item.dt * 1000) :
-    new Date(Date.now() + index * 24 * 60 * 60 * 1000);
+    item?.date
+      ? new Date(item.date)
+      : item?.dt
+      ? new Date(item.dt * 1000)
+      : new Date(Date.now() + index * 24 * 60 * 60 * 1000);
 
   return date.toLocaleDateString(undefined, {
     weekday: "short",
@@ -77,12 +98,11 @@ function readCondition(item: any): string | undefined {
 // ------------------------------------------------
 
 export default function WeatherPage() {
-  // data sources
   const [fields, setFields] = React.useState<FieldLite[]>([]);
-  // selection
   const [fieldId, setFieldId] = React.useState<string>("");
   const [locationQuery, setLocationQuery] = React.useState<string>("");
-  // UI state
+  const [lastPickedLocation, setLastPickedLocation] = React.useState<Suggestion | null>(null);
+
   const [fieldName, setFieldName] = React.useState<string | undefined>(undefined);
   const [weather, setWeather] = React.useState<WeatherResponse | null>(null);
   const [advice, setAdvice] = React.useState<WeatherAdvice | null>(null);
@@ -90,7 +110,6 @@ export default function WeatherPage() {
   const [loadingAdvice, setLoadingAdvice] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  // load fields on mount
   React.useEffect(() => {
     (async () => {
       try {
@@ -105,7 +124,6 @@ export default function WeatherPage() {
     })();
   }, []);
 
-  // fetch weather + advice by field
   const fetchByField = React.useCallback(
     async (id: string) => {
       try {
@@ -131,45 +149,41 @@ export default function WeatherPage() {
     [fields]
   );
 
-  // when user picks a suggestion from auto-suggest
-  const onPickLocation = React.useCallback(
-    async (s: Suggestion) => {
-      try {
-        setError(null);
-        setLoadingWeather(true);
-        setLoadingAdvice(true);
+  const onPickLocation = React.useCallback(async (s: Suggestion) => {
+    setLastPickedLocation(s);
+    try {
+      setError(null);
+      setLoadingWeather(true);
+      setLoadingAdvice(true);
 
-        // Prefer coords endpoint; adjust if your backend differs
-        const wx = await api<WeatherResponse>(
-          `/api/weather/by-coords?lat=${encodeURIComponent(s.lat)}&lng=${encodeURIComponent(s.lng)}`
-        );
-        setWeather(wx);
+      const wx = await api<WeatherResponse>(
+        `/api/weather/by-coords?lat=${encodeURIComponent(s.lat)}&lng=${encodeURIComponent(s.lng)}`
+      );
+      setWeather(wx);
 
-        setFieldId(""); // clear field selection
-        setFieldName(s.name || s.displayName);
+      setFieldId("");
+      setFieldName(s.name || s.displayName);
 
-        const bundle = {
-          current: {
-            ...wx.current,
-            temperatureUnit: "°C",
-            windUnit: "km/h",
-            station: wx.location?.name || s.name,
-          },
-          forecast: pickForecastArray(wx),
-          historical: [],
-          meta: wx.meta || {},
-        };
-        const res = await getWeatherAdviceByBundle(bundle);
-        setAdvice(res);
-      } catch (e: any) {
-        setError(e?.message || "Failed to fetch weather/advice");
-      } finally {
-        setLoadingWeather(false);
-        setLoadingAdvice(false);
-      }
-    },
-    []
-  );
+      const bundle = {
+        current: {
+          ...wx.current,
+          temperatureUnit: "°C",
+          windUnit: "km/h",
+          station: wx.location?.name || s.name,
+        },
+        forecast: pickForecastArray(wx),
+        historical: [],
+        meta: wx.meta || {},
+      };
+      const res = await getWeatherAdviceByBundle(bundle);
+      setAdvice(res);
+    } catch (e: any) {
+      setError(e?.message || "Failed to fetch weather/advice");
+    } finally {
+      setLoadingWeather(false);
+      setLoadingAdvice(false);
+    }
+  }, []);
 
   const forecastArray = React.useMemo(
     () => pickForecastArray(weather).slice(0, 3),
@@ -177,134 +191,158 @@ export default function WeatherPage() {
   );
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {/* Left: Weather UI */}
-      <div className="md:col-span-2 space-y-4">
-        <h2 className="text-xl font-semibold">Weather Dashboard</h2>
+    <Box display="grid" gridTemplateColumns={{ md: "2fr 1fr" }} gap={3}>
+      {/* Left */}
+      <Box>
+        <Typography variant="h5" gutterBottom fontWeight="bold">
+          Weather Dashboard
+        </Typography>
 
         {/* Field selector */}
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Field</label>
-          <select
-            className="border rounded px-2 py-1 min-w-56"
-            value={fieldId}
-            onChange={(e) => {
-              const id = e.target.value;
-              setFieldId(id);
-              if (id) fetchByField(id);
-            }}
-          >
-            <option value="">Select a field</option>
-            {fields.map((f: FieldLite) => (
-              <option key={f._id} value={f._id}>
-                {f.name || f._id}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel id="field-select-label">Field</InputLabel>
+            <Select
+              labelId="field-select-label"
+              id="field-select"
+              value={fieldId}
+              label="Field"   // ✅ important: ensures proper floating label
+              onChange={(e) => {
+                const id = e.target.value;
+                setFieldId(id);
+                if (id) fetchByField(id);
+              }}
+            >
+              <MenuItem value="">
+                <em>Select a field</em>
+              </MenuItem>
+              {fields.map((f) => (
+                <MenuItem key={f._id} value={f._id}>
+                  {f.name || f._id}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
 
-        {/* Location auto-suggest */}
-        <div className="flex items-center gap-2">
+        {/* Location search */}
+        <Box display="flex" alignItems="center" gap={2} mb={2}>
           <LocationSearch
             value={locationQuery}
             onChange={setLocationQuery}
             onPick={onPickLocation}
             placeholder="Type a location (e.g., Melbourne, VIC)"
           />
-          <span className="text-xs text-gray-500">or pick a field above</span>
-        </div>
+          <Typography variant="caption" color="text.secondary">
+            or pick a field above
+          </Typography>
+        </Box>
 
         {/* Current weather */}
-        {loadingWeather && <p>Loading weather…</p>}
+        {loadingWeather && <CircularProgress size={24} />}
         {weather && !loadingWeather && (
-          <div className="rounded border p-3 bg-white/70 dark:bg-zinc-900/50">
-            <h3 className="font-medium mb-2">
-              Current Weather {fieldName ? `(${fieldName})` : ""}
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-              <div>
-                Temp:{" "}
-                <span className="font-medium">
-                  {weather.current?.temp_c ?? "—"} °C
-                </span>
-              </div>
-              <div>
-                Wind:{" "}
-                <span className="font-medium">
-                  {weather.current?.wind_kph ?? "—"} km/h
-                </span>
-              </div>
-              <div>
-                Humidity:{" "}
-                <span className="font-medium">
-                  {weather.current?.humidity ?? "—"}%
-                </span>
-              </div>
-              <div>
-                Precip:{" "}
-                <span className="font-medium">
-                  {weather.current?.precip_mm ?? "—"} mm
-                </span>
-              </div>
-              <div className="col-span-2 md:col-span-3">
-                Condition:{" "}
-                <span className="font-medium">
-                  {weather.current?.condition?.text || "—"}
-                </span>
-              </div>
-            </div>
-          </div>
+          <Card variant="outlined" sx={{ mb: 2, p: 1 }}>
+            <CardContent>
+              <Typography variant="subtitle1" gutterBottom>
+                Current Weather {fieldName ? `(${fieldName})` : ""}
+              </Typography>
+              <Divider sx={{ mb: 1 }} />
+              <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={2}>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <ThermostatIcon color="primary" fontSize="small" />
+                  <Typography variant="body2">
+                    Temp: <strong>{weather.current?.temp_c ?? "—"} °C</strong>
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <AirIcon color="info" fontSize="small" />
+                  <Typography variant="body2">
+                    Wind: <strong>{weather.current?.wind_kph ?? "—"} km/h</strong>
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <OpacityIcon color="secondary" fontSize="small" />
+                  <Typography variant="body2">
+                    Humidity: <strong>{weather.current?.humidity ?? "—"}%</strong>
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap={1}>
+                  <GrainIcon color="success" fontSize="small" />
+                  <Typography variant="body2">
+                    Precip: <strong>{weather.current?.precip_mm ?? "—"} mm</strong>
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" gap={1} gridColumn="span 2">
+                  <WbSunnyIcon color="warning" fontSize="small" />
+                  <Typography variant="body2">
+                    Condition: <strong>{weather.current?.condition?.text || "—"}</strong>
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         )}
 
-        {/* 3-day forecast */}
+        {/* Forecast */}
         {forecastArray.length > 0 && (
-          <div className="rounded border p-3 bg-white/70 dark:bg-zinc-900/50">
-            <h3 className="font-medium mb-2">Next 3 Days</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle1" gutterBottom>
+                Next 3 Days
+              </Typography>
+              <Divider sx={{ mb: 1 }} />
+              <table style={{ width: "100%", fontSize: "0.875rem" }}>
                 <thead>
-                  <tr className="text-left border-b">
-                    <th className="py-2 pr-4">Day</th>
-                    <th className="py-2 pr-4">Max / Min (°C)</th>
-                    <th className="py-2 pr-4">Rain (mm)</th>
-                    <th className="py-2 pr-4">Wind (km/h)</th>
-                    <th className="py-2 pr-4">Condition</th>
+                  <tr>
+                    <th align="left">Day</th>
+                    <th align="left">Max / Min (°C)</th>
+                    <th align="left">Rain (mm)</th>
+                    <th align="left">Wind (km/h)</th>
+                    <th align="left">Condition</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {forecastArray.map((item: any, i: number) => (
-                    <tr key={i} className="border-b last:border-0">
-                      <td className="py-2 pr-4">{getDateLabel(item, i)}</td>
-                      <td className="py-2 pr-4">
-                        {(readMaxC(item) ?? "—")} / {(readMinC(item) ?? "—")}
+                  {forecastArray.map((item, i) => (
+                    <tr key={i}>
+                      <td>{getDateLabel(item, i)}</td>
+                      <td>
+                        {readMaxC(item) ?? "—"} / {readMinC(item) ?? "—"}
                       </td>
-                      <td className="py-2 pr-4">{readRainMM(item) ?? "—"}</td>
-                      <td className="py-2 pr-4">{readWindKPH(item) ?? "—"}</td>
-                      <td className="py-2 pr-4">{readCondition(item) ?? "—"}</td>
+                      <td>{readRainMM(item) ?? "—"}</td>
+                      <td>{readWindKPH(item) ?? "—"}</td>
+                      <td>{readCondition(item) ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              * Values shown in °C, km/h, and mm.
-            </p>
-          </div>
+              <Typography variant="caption" color="text.secondary">
+                * Values shown in °C, km/h, and mm.
+              </Typography>
+            </CardContent>
+          </Card>
         )}
 
-        {error && <p className="text-red-600">{error}</p>}
-      </div>
+        {error && (
+          <Typography color="error" variant="body2" mt={2}>
+            {error}
+          </Typography>
+        )}
+      </Box>
 
-      {/* Right: AI Advice */}
+      {/* Right */}
       <WeatherAdvicePanel
         advice={advice}
         loading={loadingAdvice}
         error={error}
-        onRefresh={() =>
-          fieldId ? fetchByField(fieldId) : undefined
-        }
+        onRefresh={() => {
+          if (fieldId) {
+            fetchByField(fieldId);
+          } else if (lastPickedLocation) {
+            onPickLocation(lastPickedLocation);
+          }
+        }}
         fieldName={fieldName}
       />
-    </div>
+    </Box>
   );
 }
