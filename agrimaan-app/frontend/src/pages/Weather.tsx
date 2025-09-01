@@ -1,14 +1,5 @@
-// src/pages/Weather.tsx
-import React from "react";
-import {
-  getWeatherAdviceByField,
-  getWeatherAdviceByBundle,
-  type WeatherAdvice,
-} from "../services/ai";
-import WeatherAdvicePanel from "../components/WeatherAdvicePanel";
-import LocationSearch from "../components/LocationSearch";
-import { api } from "../lib/api";
-
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Typography,
@@ -21,31 +12,20 @@ import {
   CircularProgress,
   Divider,
 } from "@mui/material";
-
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import AirIcon from "@mui/icons-material/Air";
 import OpacityIcon from "@mui/icons-material/Opacity";
 import GrainIcon from "@mui/icons-material/Grain";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 
-type FieldLite = {
-  _id: string;
-  name?: string;
-  location?: { lat: number; lng: number };
-};
-
-type WeatherResponse = {
-  location?: { name?: string };
-  current?: {
-    temp_c?: number;
-    wind_kph?: number;
-    condition?: { text?: string };
-    humidity?: number;
-    precip_mm?: number;
-  };
-  forecast?: any;
-  meta?: any;
-};
+import WeatherAdvicePanel from "../components/WeatherAdvicePanel";
+import LocationSearch from "../components/LocationSearch";
+import { RootState } from "../store";
+import {
+  fetchFields,
+  fetchWeatherByField,
+  fetchWeatherByLocation,
+} from "../features/weather/weatherSlice";
 
 type Suggestion = {
   id: number | string;
@@ -58,21 +38,20 @@ type Suggestion = {
 };
 
 // -------- helpers for forecast display ----------
-function pickForecastArray(wx: WeatherResponse | null): Array<any> {
+function pickForecastArray(wx: any | null): Array<any> {
   if (!wx) return [];
-  const f = (wx as any)?.forecast;
+  const f = wx?.forecast;
   if (!f) return [];
   if (Array.isArray(f?.forecastday)) return f.forecastday;
   if (Array.isArray(f)) return f;
   return [];
 }
 function getDateLabel(item: any, index: number): string {
-  const date =
-    item?.date
-      ? new Date(item.date)
-      : item?.dt
-      ? new Date(item.dt * 1000)
-      : new Date(Date.now() + index * 24 * 60 * 60 * 1000);
+  const date = item?.date
+    ? new Date(item.date)
+    : item?.dt
+    ? new Date(item.dt * 1000)
+    : new Date(Date.now() + index * 24 * 60 * 60 * 1000);
 
   return date.toLocaleDateString(undefined, {
     weekday: "short",
@@ -98,94 +77,40 @@ function readCondition(item: any): string | undefined {
 // ------------------------------------------------
 
 export default function WeatherPage() {
-  const [fields, setFields] = React.useState<FieldLite[]>([]);
-  const [fieldId, setFieldId] = React.useState<string>("");
-  const [locationQuery, setLocationQuery] = React.useState<string>("");
-  const [lastPickedLocation, setLastPickedLocation] = React.useState<Suggestion | null>(null);
+  const dispatch = useDispatch();
+  const {
+    fields,
+    weather,
+    advice,
+    loadingWeather,
+    loadingAdvice,
+    error,
+    fieldName,
+    lastPickedLocation,
+  } = useSelector((state: RootState) => state.weather);
 
-  const [fieldName, setFieldName] = React.useState<string | undefined>(undefined);
-  const [weather, setWeather] = React.useState<WeatherResponse | null>(null);
-  const [advice, setAdvice] = React.useState<WeatherAdvice | null>(null);
-  const [loadingWeather, setLoadingWeather] = React.useState(false);
-  const [loadingAdvice, setLoadingAdvice] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [fieldId, setFieldId] = useState<string>("");
+  const [locationQuery, setLocationQuery] = useState<string>("");
 
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const list = await api<FieldLite[]>("/api/fields");
-        const sorted = [...(Array.isArray(list) ? list : [])].sort((a, b) =>
-          (a.name || "").localeCompare(b.name || "")
-        );
-        setFields(sorted);
-      } catch (e: any) {
-        setError(e?.message || "Failed to load fields");
-      }
-    })();
-  }, []);
+  useEffect(() => {
+    dispatch(fetchFields() as any);
+  }, [dispatch]);
 
-  const fetchByField = React.useCallback(
-    async (id: string) => {
-      try {
-        setError(null);
-        setLoadingWeather(true);
-        setLoadingAdvice(true);
+  const handleFieldChange = (id: string) => {
+    setFieldId(id);
+    if (id) {
+      dispatch(fetchWeatherByField(id) as any);
+    }
+  };
 
-        const wx = await api<WeatherResponse>(`/api/weather/current/${id}`);
-        setWeather(wx);
-
-        const res = await getWeatherAdviceByField(id);
-        setAdvice(res);
-
-        const f = fields.find((x) => x._id === id);
-        setFieldName(f?.name || undefined);
-      } catch (e: any) {
-        setError(e?.message || "Failed to fetch weather/advice");
-      } finally {
-        setLoadingWeather(false);
-        setLoadingAdvice(false);
-      }
+  const onPickLocation = useCallback(
+    (s: Suggestion) => {
+      dispatch(fetchWeatherByLocation(s) as any);
     },
-    [fields]
+    [dispatch]
   );
 
-  const onPickLocation = React.useCallback(async (s: Suggestion) => {
-    setLastPickedLocation(s);
-    try {
-      setError(null);
-      setLoadingWeather(true);
-      setLoadingAdvice(true);
-
-      const wx = await api<WeatherResponse>(
-        `/api/weather/by-coords?lat=${encodeURIComponent(s.lat)}&lng=${encodeURIComponent(s.lng)}`
-      );
-      setWeather(wx);
-
-      setFieldId("");
-      setFieldName(s.name || s.displayName);
-
-      const bundle = {
-        current: {
-          ...wx.current,
-          temperatureUnit: "°C",
-          windUnit: "km/h",
-          station: wx.location?.name || s.name,
-        },
-        forecast: pickForecastArray(wx),
-        historical: [],
-        meta: wx.meta || {},
-      };
-      const res = await getWeatherAdviceByBundle(bundle);
-      setAdvice(res);
-    } catch (e: any) {
-      setError(e?.message || "Failed to fetch weather/advice");
-    } finally {
-      setLoadingWeather(false);
-      setLoadingAdvice(false);
-    }
-  }, []);
-
-  const forecastArray = React.useMemo(
+  const forecastArray = useMemo(
     () => pickForecastArray(weather).slice(0, 3),
     [weather]
   );
@@ -206,12 +131,8 @@ export default function WeatherPage() {
               labelId="field-select-label"
               id="field-select"
               value={fieldId}
-              label="Field"   // ✅ important: ensures proper floating label
-              onChange={(e) => {
-                const id = e.target.value;
-                setFieldId(id);
-                if (id) fetchByField(id);
-              }}
+              label="Field"
+              onChange={(e) => handleFieldChange(e.target.value)}
             >
               <MenuItem value="">
                 <em>Select a field</em>
@@ -231,7 +152,7 @@ export default function WeatherPage() {
             value={locationQuery}
             onChange={setLocationQuery}
             onPick={onPickLocation}
-            placeholder="Type a location (e.g., Melbourne, VIC)"
+            placeholder="Type a location (e.g., Barabanki, Uttar Pradesh)"
           />
           <Typography variant="caption" color="text.secondary">
             or pick a field above
@@ -336,9 +257,9 @@ export default function WeatherPage() {
         error={error}
         onRefresh={() => {
           if (fieldId) {
-            fetchByField(fieldId);
+            dispatch(fetchWeatherByField(fieldId) as any);
           } else if (lastPickedLocation) {
-            onPickLocation(lastPickedLocation);
+            dispatch(fetchWeatherByLocation(lastPickedLocation) as any);
           }
         }}
         fieldName={fieldName}

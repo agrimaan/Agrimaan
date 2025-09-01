@@ -1,198 +1,177 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { API_BASE_URL } from '../../config/apiConfig';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../../lib/api";
+import {
+  getWeatherAdviceByField,
+  getWeatherAdviceByBundle,
+  type WeatherAdvice,
+} from "../../services/ai";
 
-// Types
-interface Temperature {
-  current: number;
-  min: number;
-  max: number;
-  unit: 'celsius' | 'fahrenheit';
-}
-
-interface Precipitation {
-  amount: number;
-  type: 'rain' | 'snow' | 'sleet' | 'hail' | 'none';
-  unit: 'mm' | 'inches';
-  probability: number;
-}
-
-interface Wind {
-  speed: number;
-  direction: number;
-  unit: 'km/h' | 'mph' | 'm/s';
-}
-
-interface Pressure {
-  value: number;
-  unit: 'hPa' | 'inHg';
-}
-
-interface Visibility {
-  value: number;
-  unit: 'km' | 'miles';
-}
-
-interface Forecast {
-  date: Date;
-  temperature: {
-    min: number;
-    max: number;
-  };
-  precipitation: {
-    amount: number;
-    probability: number;
-  };
-  description: string;
-}
-
-export interface Weather {
+type FieldLite = {
   _id: string;
-  location: {
-    type: string;
-    coordinates: number[];
+  name?: string;
+  location?: { lat: number; lng: number };
+};
+
+type WeatherResponse = {
+  location?: { name?: string };
+  current?: {
+    temp_c?: number;
+    wind_kph?: number;
+    condition?: { text?: string };
+    humidity?: number;
+    precip_mm?: number;
   };
-  field?: string;
-  date: Date;
-  temperature: Temperature;
-  humidity: number;
-  precipitation: Precipitation;
-  wind: Wind;
-  pressure: Pressure;
-  cloudCover: number;
-  uvIndex: number;
-  visibility: Visibility;
-  sunrise?: Date;
-  sunset?: Date;
-  source: string;
-  forecast: Forecast[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+  forecast?: any;
+  meta?: any;
+};
+
+type Suggestion = {
+  id: number | string;
+  name: string;
+  displayName: string;
+  lat: number;
+  lng: number;
+  type?: string;
+  countryCode?: string | null;
+};
 
 interface WeatherState {
-  currentWeather: Weather | null;
-  weatherHistory: Weather[];
-  forecast: Forecast[];
-  loading: boolean;
+  fields: FieldLite[];
+  weather: WeatherResponse | null;
+  advice: WeatherAdvice | null;
+  fieldName?: string;
+  lastPickedLocation: Suggestion | null;
+  loadingWeather: boolean;
+  loadingAdvice: boolean;
   error: string | null;
 }
 
-// Get current weather for a field
-export const getCurrentWeather = createAsyncThunk(
-  'weather/getCurrentWeather',
-  async (fieldId: string, { rejectWithValue }) => {
-    try {
-      // Assuming the backend has an endpoint to get the latest weather for a field
-  const res = await axios.get(`${API_BASE_URL}/api/weather/current/${fieldId}`);
-      return res.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch current weather');
-    }
-  }
-);
-
-// Get weather history for a field
-export const getWeatherHistory = createAsyncThunk(
-  'weather/getWeatherHistory',
-  async (
-    { fieldId, startDate, endDate }: { fieldId: string; startDate: string; endDate: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/api/weather/history/${fieldId}?startDate=${startDate}&endDate=${endDate}`
-      );
-      return res.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch weather history');
-    }
-  }
-);
-
-// Get weather forecast for a field
-export const getWeatherForecast = createAsyncThunk(
-  'weather/getWeatherForecast',
-  async (fieldId: string, { rejectWithValue }) => {
-    try {
-  const res = await axios.get(`${API_BASE_URL}/api/weather/forecast/${fieldId}`);
-      return res.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch weather forecast');
-    }
-  }
-);
-
-// Initial state
 const initialState: WeatherState = {
-  currentWeather: null,
-  weatherHistory: [],
-  forecast: [],
-  loading: false,
-  error: null
+  fields: [],
+  weather: null,
+  advice: null,
+  fieldName: undefined,
+  lastPickedLocation: null,
+  loadingWeather: false,
+  loadingAdvice: false,
+  error: null,
 };
 
-// Slice
-const weatherSlice = createSlice({
-  name: 'weather',
-  initialState,
-  reducers: {
-    clearCurrentWeather: (state) => {
-      state.currentWeather = null;
-    },
-    clearWeatherHistory: (state) => {
-      state.weatherHistory = [];
-    },
-    clearForecast: (state) => {
-      state.forecast = [];
-    },
-    clearError: (state) => {
-      state.error = null;
-    }
-  },
-  extraReducers: (builder) => {
-    builder
-      // Get current weather
-      .addCase(getCurrentWeather.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getCurrentWeather.fulfilled, (state, action) => {
-        state.currentWeather = action.payload;
-        state.loading = false;
-      })
-      .addCase(getCurrentWeather.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-      
-      // Get weather history
-      .addCase(getWeatherHistory.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getWeatherHistory.fulfilled, (state, action) => {
-        state.weatherHistory = action.payload;
-        state.loading = false;
-      })
-      .addCase(getWeatherHistory.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-      
-      // Get weather forecast
-      .addCase(getWeatherForecast.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getWeatherForecast.fulfilled, (state, action) => {
-        state.forecast = action.payload;
-        state.loading = false;
-      })
-      .addCase(getWeatherForecast.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
+// Fetch fields
+export const fetchFields = createAsyncThunk("weather/fetchFields", async (_, { rejectWithValue }) => {
+  try {
+    const list = await api<FieldLite[]>("/api/fields");
+    return Array.isArray(list) ? list.sort((a, b) => (a.name || "").localeCompare(b.name || "")) : [];
+  } catch (e: any) {
+    return rejectWithValue(e?.message || "Failed to load fields");
   }
 });
 
-export const { clearCurrentWeather, clearWeatherHistory, clearForecast, clearError } = weatherSlice.actions;
+// Fetch weather by field
+export const fetchWeatherByField = createAsyncThunk(
+  "weather/fetchWeatherByField",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const wx = await api<WeatherResponse>(`/api/weather/current/${id}`);
+      const advice = await getWeatherAdviceByField(id);
+      return { wx, advice, fieldId: id };
+    } catch (e: any) {
+      return rejectWithValue(e?.message || "Failed to fetch weather/advice");
+    }
+  }
+);
 
+// Fetch weather by location
+export const fetchWeatherByLocation = createAsyncThunk(
+  "weather/fetchWeatherByLocation",
+  async (s: Suggestion, { rejectWithValue }) => {
+    try {
+      const wx = await api<WeatherResponse>(
+        `/api/weather/by-coords?lat=${encodeURIComponent(s.lat)}&lng=${encodeURIComponent(s.lng)}`
+      );
+      const bundle = {
+        current: {
+          ...wx.current,
+          temperatureUnit: "°C",
+          windUnit: "km/h",
+          station: wx.location?.name || s.name,
+        },
+        forecast: Array.isArray(wx.forecast?.forecastday)
+          ? wx.forecast.forecastday
+          : Array.isArray(wx.forecast)
+          ? wx.forecast
+          : [],
+        historical: [],
+        meta: wx.meta || {},
+      };
+      const advice = await getWeatherAdviceByBundle(bundle);
+      return { wx, advice, location: s };
+    } catch (e: any) {
+      return rejectWithValue(e?.message || "Failed to fetch weather/advice");
+    }
+  }
+);
+
+const weatherSlice = createSlice({
+  name: "weather",
+  initialState,
+  reducers: {
+    clearWeatherError: (state) => {
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fields
+      .addCase(fetchFields.fulfilled, (state, action) => {
+        state.fields = action.payload;
+      })
+      .addCase(fetchFields.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+
+      // Field weather
+      .addCase(fetchWeatherByField.pending, (state) => {
+        state.loadingWeather = true;
+        state.loadingAdvice = true;
+        state.error = null;
+      })
+      .addCase(fetchWeatherByField.fulfilled, (state, action) => {
+        state.weather = action.payload.wx;
+        state.advice = action.payload.advice;
+        state.fieldName =
+          state.fields.find((f) => f._id === action.payload.fieldId)?.name || undefined;
+        state.lastPickedLocation = null;
+        state.loadingWeather = false;
+        state.loadingAdvice = false;
+      })
+      .addCase(fetchWeatherByField.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loadingWeather = false;
+        state.loadingAdvice = false;
+      })
+
+      // Location weather
+      .addCase(fetchWeatherByLocation.pending, (state) => {
+        state.loadingWeather = true;
+        state.loadingAdvice = true;
+        state.error = null;
+      })
+      .addCase(fetchWeatherByLocation.fulfilled, (state, action) => {
+        state.weather = action.payload.wx;
+        state.advice = action.payload.advice;
+        state.fieldName = action.payload.location.name || action.payload.location.displayName;
+        state.lastPickedLocation = action.payload.location;
+        state.loadingWeather = false;
+        state.loadingAdvice = false;
+      })
+      .addCase(fetchWeatherByLocation.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.loadingWeather = false;
+        state.loadingAdvice = false;
+      });
+  },
+});
+
+export const { clearWeatherError } = weatherSlice.actions;
 export default weatherSlice.reducer;

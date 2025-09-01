@@ -175,7 +175,7 @@ const FieldForm: React.FC<FieldFormProps> = ({
   return (
     <Paper elevation={2} sx={{ p: 3 }}>
       <Typography variant="h5" gutterBottom>
-        {isEdit ? 'Edit Field' : 'Add New Field'}
+        {isEdit ? 'Edit Land Details' : 'Add Land Details'}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>

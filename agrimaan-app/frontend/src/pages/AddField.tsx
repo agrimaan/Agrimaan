@@ -43,7 +43,7 @@ const AddField: React.FC = () => {
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Add New Field
+        Land Registry
       </Typography>
 
       {error && (
@@ -54,7 +54,7 @@ const AddField: React.FC = () => {
 
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Field created successfully! Redirecting...
+          Land created successfully! Redirecting...
         </Alert>
       )}
 
