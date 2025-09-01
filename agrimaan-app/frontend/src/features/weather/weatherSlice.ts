@@ -6,13 +6,23 @@ import {
   type WeatherAdvice,
 } from "../../services/ai";
 
+export type Suggestion = {
+  id: number | string;
+  name: string;
+  displayName: string;
+  lat: number;
+  lng: number;
+  type?: string;
+  countryCode?: string | null;
+};
+
 type FieldLite = {
   _id: string;
   name?: string;
   location?: { lat: number; lng: number };
 };
 
-type WeatherResponse = {
+export type WeatherResponse = {
   location?: { name?: string };
   current?: {
     temp_c?: number;
@@ -23,16 +33,6 @@ type WeatherResponse = {
   };
   forecast?: any;
   meta?: any;
-};
-
-type Suggestion = {
-  id: number | string;
-  name: string;
-  displayName: string;
-  lat: number;
-  lng: number;
-  type?: string;
-  countryCode?: string | null;
 };
 
 interface WeatherState {
@@ -57,17 +57,24 @@ const initialState: WeatherState = {
   error: null,
 };
 
-// Fetch fields
-export const fetchFields = createAsyncThunk("weather/fetchFields", async (_, { rejectWithValue }) => {
-  try {
-    const list = await api<FieldLite[]>("/api/fields");
-    return Array.isArray(list) ? list.sort((a, b) => (a.name || "").localeCompare(b.name || "")) : [];
-  } catch (e: any) {
-    return rejectWithValue(e?.message || "Failed to load fields");
-  }
-});
+// -------------------- Thunks --------------------
 
-// Fetch weather by field
+// Fetch all fields
+export const fetchFields = createAsyncThunk(
+  "weather/fetchFields",
+  async (_, { rejectWithValue }) => {
+    try {
+      const list = await api<FieldLite[]>("/api/fields");
+      return Array.isArray(list)
+        ? list.sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+        : [];
+    } catch (e: any) {
+      return rejectWithValue(e?.message || "Failed to load fields");
+    }
+  }
+);
+
+// Fetch weather by field ID
 export const fetchWeatherByField = createAsyncThunk(
   "weather/fetchWeatherByField",
   async (id: string, { rejectWithValue }) => {
@@ -87,8 +94,11 @@ export const fetchWeatherByLocation = createAsyncThunk(
   async (s: Suggestion, { rejectWithValue }) => {
     try {
       const wx = await api<WeatherResponse>(
-        `/api/weather/by-coords?lat=${encodeURIComponent(s.lat)}&lng=${encodeURIComponent(s.lng)}`
+        `/api/weather/by-coords?lat=${encodeURIComponent(
+          s.lat
+        )}&lng=${encodeURIComponent(s.lng)}`
       );
+
       const bundle = {
         current: {
           ...wx.current,
@@ -104,6 +114,7 @@ export const fetchWeatherByLocation = createAsyncThunk(
         historical: [],
         meta: wx.meta || {},
       };
+
       const advice = await getWeatherAdviceByBundle(bundle);
       return { wx, advice, location: s };
     } catch (e: any) {
@@ -112,11 +123,21 @@ export const fetchWeatherByLocation = createAsyncThunk(
   }
 );
 
+// -------------------- Slice --------------------
 const weatherSlice = createSlice({
   name: "weather",
   initialState,
   reducers: {
     clearWeatherError: (state) => {
+      state.error = null;
+    },
+    clearWeather: (state) => {
+      state.weather = null;
+      state.advice = null;
+      state.fieldName = undefined;
+      state.lastPickedLocation = null;
+      state.loadingWeather = false;
+      state.loadingAdvice = false;
       state.error = null;
     },
   },
@@ -137,10 +158,11 @@ const weatherSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchWeatherByField.fulfilled, (state, action) => {
-        state.weather = action.payload.wx;
+        state.weather = { ...action.payload.wx }; // ✅ clone
         state.advice = action.payload.advice;
         state.fieldName =
-          state.fields.find((f) => f._id === action.payload.fieldId)?.name || undefined;
+          state.fields.find((f) => f._id === action.payload.fieldId)?.name ||
+          undefined;
         state.lastPickedLocation = null;
         state.loadingWeather = false;
         state.loadingAdvice = false;
@@ -158,9 +180,11 @@ const weatherSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchWeatherByLocation.fulfilled, (state, action) => {
-        state.weather = action.payload.wx;
+        state.weather = { ...action.payload.wx }; // ✅ clone
         state.advice = action.payload.advice;
-        state.fieldName = action.payload.location.name || action.payload.location.displayName;
+        state.fieldName =
+          action.payload.location.name ||
+          action.payload.location.displayName;
         state.lastPickedLocation = action.payload.location;
         state.loadingWeather = false;
         state.loadingAdvice = false;
@@ -173,5 +197,5 @@ const weatherSlice = createSlice({
   },
 });
 
-export const { clearWeatherError } = weatherSlice.actions;
+export const { clearWeatherError, clearWeather } = weatherSlice.actions;
 export default weatherSlice.reducer;
