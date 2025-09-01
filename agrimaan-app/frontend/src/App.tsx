@@ -26,6 +26,8 @@ import Register from './pages/Register';
 import NotFound from './pages/NotFound';
 import { loadUser } from './features/auth/authSlice';
 import { RootState } from './store';
+import Marketplace from './pages/Marketplace';
+
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -70,6 +72,10 @@ const App: React.FC = () => {
             <Route path="weather" element={<Weather />} />
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+
+
+            
           </Route>
           
           <Route path="*" element={<NotFound />} />
