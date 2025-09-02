@@ -243,10 +243,6 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
           {/* Location */}
           <Grid item xs={12}>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
-              Location
-            </Typography>
-
             <Box display="flex" alignItems="center" gap={2} mb={2}>
               <LocationSearch
                 value={locationQuery}
