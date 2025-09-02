@@ -22,17 +22,6 @@ const FieldSchema = new mongoose.Schema({
       required: true
     }
   },
-  boundaries: {
-    type: {
-      type: String,
-      enum: ['Polygon'],
-      default: 'Polygon'
-    },
-    coordinates: {
-      type: [[[Number]]], // Array of arrays of coordinates forming polygons
-      required: true
-    }
-  },
   area: {
     value: {
       type: Number,
