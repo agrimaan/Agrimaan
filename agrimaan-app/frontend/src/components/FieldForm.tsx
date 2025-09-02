@@ -205,22 +205,31 @@ const FieldForm: React.FC<FieldFormProps> = ({
           {/* Area */}
           <Grid item xs={12} md={3}>
             <TextField
-              fullWidth
               label="Area"
-              value={formData.area.value}
-              onChange={handleAreaValueChange}
-              error={!!errors.area}
-              helperText={errors.area}
-              required
               type="number"
-              inputProps={{ step: '0.1', min: '0' }}
+              value={formData.area.value === 0 ? "" : formData.area.value}
+              onChange={(e) => {
+                const val = e.target.value;
+                setFormData({
+                  ...formData,
+                  area: {
+                    ...formData.area,
+                    value: val === "" ? 0 : Number(val)
+                  }
+                });
+              }}
+              fullWidth
+              required
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <FormControl fullWidth>
-              <InputLabel>Unit</InputLabel>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="unit-label">Unit</InputLabel>
               <Select
+                labelId="unit-label"
+                id="unit-select"
                 value={formData.area.unit}
+                label="Unit"
                 onChange={handleAreaUnitChange}
               >
                 {areaUnits.map((unit) => (
@@ -272,10 +281,13 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
           {/* Soil Type */}
           <Grid item xs={12} md={6}>
-            <FormControl fullWidth error={!!errors.soilType}>
-              <InputLabel>Soil Type</InputLabel>
+            <FormControl fullWidth variant="outlined" error={!!errors.soilType}>
+              <InputLabel id="soil-label">Soil Type</InputLabel>
               <Select
+                labelId="soil-label"
+                id="soil-select"
                 value={formData.soilType}
+                label="Soil Type"
                 onChange={handleSelectChange('soilType')}
                 required
               >
@@ -293,12 +305,15 @@ const FieldForm: React.FC<FieldFormProps> = ({
             </FormControl>
           </Grid>
 
-          {/* Irrigation System */}
+          {/* Irrigation */}
           <Grid item xs={12} md={6}>
-            <FormControl fullWidth error={!!errors.irrigationSystem}>
-              <InputLabel>Irrigation Type</InputLabel>
+            <FormControl fullWidth variant="outlined" error={!!errors.irrigationSystem}>
+              <InputLabel id="irrigation-label">Irrigation Type</InputLabel>
               <Select
+                labelId="irrigation-label"
+                id="irrigation-select"
                 value={formData.irrigationSystem}
+                label="Irrigation Type"
                 onChange={handleSelectChange('irrigationSystem')}
                 required
               >
