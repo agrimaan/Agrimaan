@@ -29,6 +29,9 @@ import { RootState } from './store';
 import Marketplace from './pages/Marketplace';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashborad';
+//import FarmerDashboard from './pages/Dashboard';
+import BuyerDashboard from './pages/BuyerDashboard';
+import LogisticsDashboard from './pages/LogisticsDashboard';
 
 
 const App: React.FC = () => {
@@ -61,6 +64,9 @@ const App: React.FC = () => {
           <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
+          <Route path="/logistics-dashboard" element={<LogisticsDashboard />} />
+          
           <Route path="/" element={isAuthenticated ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<Dashboard />} />
             <Route path="fields" element={<Fields />} />
@@ -76,7 +82,9 @@ const App: React.FC = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
             <Route path="/marketplace" element={<Marketplace />} />
-
+            <Route path="/dashboard/buyer" element={<BuyerDashboard />} />
+            <Route path="/dashboard/logistics" element={<LogisticsDashboard />} />
+            <Route path="/dashboard/admin" element={<AdminDashboard />} />  
 
             
           </Route>
