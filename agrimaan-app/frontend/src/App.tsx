@@ -27,6 +27,8 @@ import NotFound from './pages/NotFound';
 import { loadUser } from './features/auth/authSlice';
 import { RootState } from './store';
 import Marketplace from './pages/Marketplace';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashborad';
 
 
 const App: React.FC = () => {
@@ -57,7 +59,8 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
           <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
-          
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/" element={isAuthenticated ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<Dashboard />} />
             <Route path="fields" element={<Fields />} />
