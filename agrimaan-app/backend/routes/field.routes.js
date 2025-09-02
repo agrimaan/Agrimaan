@@ -83,7 +83,6 @@ router.post(
     ],
   ],
   async (req, res) => {
-    console.log('1 is', req);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -108,7 +107,6 @@ router.post(
         irrigationSystem,
         notes,
       });
-      console.log('Test is', newField);
       const field = await newField.save();
 
       await User.findByIdAndUpdate(
