@@ -58,7 +58,7 @@ export const getFields = createAsyncThunk(
   'field/getFields',
   async (_, { rejectWithValue }) => {
     try {
-  const res = await axios.get(`${API_BASE_URL}/api/fields`);
+      const res = await axios.get(`${API_BASE_URL}/api/fields/getAll`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch fields');

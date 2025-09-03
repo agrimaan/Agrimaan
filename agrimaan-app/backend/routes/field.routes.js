@@ -8,7 +8,7 @@ const auth = require('../middleware/auth');
 // @route   GET api/fields
 // @desc    Get all fields for a user
 // @access  Private
-router.get('/', auth, async (req, res) => {
+router.get('/getAll', auth, async (req, res) => {
   try {
     // If admin, can get all fields or filter by user
     if (req.user.role === 'admin' && req.query.userId) {
