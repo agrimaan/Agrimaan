@@ -10,25 +10,22 @@ import {
   Select,
   MenuItem,
   Paper,
-  CircularProgress,
-  Divider,
-  SelectChangeEvent,
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LocationSearch from '../components/LocationSearch';
 
 interface FieldFormData {
   name: string;
-  location: {
-    coordinates: [number, number]; // [lng, lat]
-  };
-  area: {
-    value: number;
-    unit: string; // ✅ changed from 'acre' | 'hectare' to string
-  };
+  area: string;
+  location: string;
   soilType: string;
-  irrigationSystem: string;
-  notes: string;
+  irrigationType: string;
+  description: string;
+  coordinates: {
+    latitude: string;
+    longitude: string;
+  };
 }
 
 interface FieldFormProps {
@@ -38,61 +35,94 @@ interface FieldFormProps {
   isEdit?: boolean;
 }
 
-const soilTypes = ['clay', 'sandy', 'loamy', 'silty', 'peaty', 'chalky', 'other'];
+const soilTypes = [
+  'Clay',
+  'Sandy',
+  'Loam',
+  'Silt',
+  'Peaty',
+  'Chalky'
+];
 
-const irrigationTypes = ['drip', 'sprinkler', 'flood', 'center pivot', 'none'];
+const irrigationTypes = [
+  'Drip Irrigation',
+  'Sprinkler',
+  'Surface Irrigation',
+  'Subsurface Irrigation',
+  'Rain Fed'
+];
 
-const areaUnits = ['acre', 'hectare']; // ✅ centralized dropdown values
-
-const FieldForm: React.FC<FieldFormProps> = ({
-  initialData,
-  onSubmit,
-  isLoading = false,
-  isEdit = false,
+const FieldForm: React.FC<FieldFormProps> = ({ 
+  initialData, 
+  onSubmit, 
+  isLoading = false, 
+  isEdit = false 
 }) => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState<FieldFormData>({
     name: '',
-    location: { coordinates: [0, 0] },
-    area: { value: 0, unit: 'acre' },
+    area: '',
+    location: '',
     soilType: '',
-    irrigationSystem: '',
-    notes: '',
+    irrigationType: '',
+    description: '',
+    coordinates: {
+      latitude: '',
+      longitude: ''
+    }
   });
 
-  const [locationQuery, setLocationQuery] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         name: initialData.name || '',
-        location: {
-          coordinates: initialData.location?.coordinates || [0, 0],
-        },
-        area: {
-          value: initialData.area?.value || 0,
-          unit: initialData.area?.unit || 'acre',
-        },
+        area: initialData.area || '',
+        location: initialData.location || '',
         soilType: initialData.soilType || '',
-        irrigationSystem: initialData.irrigationSystem || '',
-        notes: initialData.notes || '',
+        irrigationType: initialData.irrigationType || '',
+        description: initialData.description || '',
+        coordinates: {
+          latitude: initialData.coordinates?.latitude || '',
+          longitude: initialData.coordinates?.longitude || ''
+        }
       });
-      setLocationQuery(initialData.location?.label || '');
     }
   }, [initialData]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = 'Field name is required';
-    if (!formData.area.value || isNaN(Number(formData.area.value))) {
-      newErrors.area = 'Valid area is required';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Field name is required';
     }
-    if (!formData.soilType) newErrors.soilType = 'Soil type is required';
-    if (!formData.irrigationSystem)
-      newErrors.irrigationSystem = 'Irrigation type is required';
+
+    if (!formData.area.trim()) {
+      newErrors.area = 'Area is required';
+    } else if (isNaN(Number(formData.area))) {
+      newErrors.area = 'Area must be a valid number';
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = 'Location is required';
+    }
+
+    if (!formData.soilType) {
+      newErrors.soilType = 'Soil type is required';
+    }
+
+    if (!formData.irrigationType) {
+      newErrors.irrigationType = 'Irrigation type is required';
+    }
+
+    if (formData.coordinates.latitude && isNaN(Number(formData.coordinates.latitude))) {
+      newErrors.latitude = 'Latitude must be a valid number';
+    }
+
+    if (formData.coordinates.longitude && isNaN(Number(formData.coordinates.longitude))) {
+      newErrors.longitude = 'Longitude must be a valid number';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -100,7 +130,11 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       await onSubmit(formData);
     } catch (error) {
@@ -108,77 +142,34 @@ const FieldForm: React.FC<FieldFormProps> = ({
     }
   };
 
-  const handleInputChange =
-    (field: keyof FieldFormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
-
-  const handleSelectChange =
-    (field: keyof FieldFormData) => (e: SelectChangeEvent) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
-    };
-
-  const handleAreaValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
+  const handleInputChange = (field: keyof FieldFormData) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData(prev => ({
       ...prev,
-      area: {
-        ...prev.area,
-        value: Number(e.target.value),
-      },
+      [field]: e.target.value
     }));
   };
 
-  const handleAreaUnitChange = (e: SelectChangeEvent) => {
-    setFormData((prev) => ({
+  const handleCoordinateChange = (coord: 'latitude' | 'longitude') => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFormData(prev => ({
       ...prev,
-      area: {
-        ...prev.area,
-        unit: e.target.value, // ✅ directly takes selected dropdown value
-      },
+      coordinates: {
+        ...prev.coordinates,
+        [coord]: e.target.value
+      }
     }));
   };
 
-  const onPickLocation = (place: any) => {
-    const label: string =
-      place?.label ??
-      place?.description ??
-      place?.formatted_address ??
-      place?.name ??
-      '';
-
-    const lat =
-      place?.latitude ??
-      place?.lat ??
-      place?.coords?.lat ??
-      (typeof place?.geometry?.location?.lat === 'function'
-        ? place.geometry.location.lat()
-        : place?.geometry?.location?.lat);
-
-    const lng =
-      place?.longitude ??
-      place?.lng ??
-      place?.coords?.lng ??
-      (typeof place?.geometry?.location?.lng === 'function'
-        ? place.geometry.location.lng()
-        : place?.geometry?.location?.lng);
-
-    if (lat != null && lng != null) {
-      setFormData((prev) => ({
-        ...prev,
-        location: {
-          coordinates: [Number(lng), Number(lat)],
-        },
-      }));
-    }
-
-    if (label) setLocationQuery(label);
+  const handleSelectChange = (field: keyof FieldFormData) => (
+    e: any
+  ) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: e.target.value
+    }));
   };
 
   return (
@@ -189,7 +180,13 @@ const FieldForm: React.FC<FieldFormProps> = ({
 
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
         <Grid container spacing={3}>
-          {/* Field Name */}
+          {/* Basic Information */}
+          <Grid item xs={12}>
+            <Typography variant="h6" color="primary" gutterBottom>
+              Basic Information
+            </Typography>
+          </Grid>
+
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
@@ -202,94 +199,52 @@ const FieldForm: React.FC<FieldFormProps> = ({
             />
           </Grid>
 
-          {/* Area */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={6}>
             <TextField
-              label="Area"
-              type="number"
-              value={formData.area.value === 0 ? "" : formData.area.value}
-              onChange={(e) => {
-                const val = e.target.value;
-                setFormData({
-                  ...formData,
-                  area: {
-                    ...formData.area,
-                    value: val === "" ? 0 : Number(val)
-                  }
-                });
-              }}
               fullWidth
+              label="Area (acres)"
+              value={formData.area}
+              onChange={handleInputChange('area')}
+              error={!!errors.area}
+              helperText={errors.area}
               required
+              type="number"
+              inputProps={{ step: "0.1", min: "0" }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="unit-label">Unit</InputLabel>
-              <Select
-                labelId="unit-label"
-                id="unit-select"
-                value={formData.area.unit}
-                label="Unit"
-                onChange={handleAreaUnitChange}
-              >
-                {areaUnits.map((unit) => (
-                  <MenuItem key={unit} value={unit}>
-                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
 
-          {/* Location */}
           <Grid item xs={12}>
-            <Box display="flex" alignItems="center" gap={2} mb={2}>
-              <LocationSearch
-                value={locationQuery}
-                onChange={setLocationQuery}
-                onPick={onPickLocation}
-                placeholder="Type a location"
-              />
-              <Typography variant="caption" color="text.secondary">
-                Picking a result will auto-fill coordinates
-              </Typography>
-            </Box>
-          </Grid>
-
-          {/* Coordinates (Lat/Lng) */}
-          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Latitude"
-              value={formData.location.coordinates[1] || ''}
-              InputProps={{ readOnly: true }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <TextField
-              fullWidth
-              label="Longitude"
-              value={formData.location.coordinates[0] || ''}
-              InputProps={{ readOnly: true }}
+              label="Location"
+              value={formData.location}
+              onChange={handleInputChange('location')}
+              error={!!errors.location}
+              helperText={errors.location}
+              required
+              placeholder="e.g., Village Name, District, State"
             />
           </Grid>
 
+          {/* Soil and Irrigation */}
+          <Grid item xs={12}>
+            <Typography variant="h6" color="primary" gutterBottom sx={{ mt: 2 }}>
+              Soil & Irrigation Details
+            </Typography>
+          </Grid>
 
-          {/* Soil Type */}
           <Grid item xs={12} md={6}>
-            <FormControl fullWidth variant="outlined" error={!!errors.soilType}>
-              <InputLabel id="soil-label">Soil Type</InputLabel>
+            <FormControl fullWidth error={!!errors.soilType}>
+              <InputLabel>Soil Type</InputLabel>
               <Select
-                labelId="soil-label"
-                id="soil-select"
                 value={formData.soilType}
-                label="Soil Type"
                 onChange={handleSelectChange('soilType')}
+                label="Soil Type"
                 required
               >
                 {soilTypes.map((type) => (
                   <MenuItem key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {type}
                   </MenuItem>
                 ))}
               </Select>
@@ -301,46 +256,84 @@ const FieldForm: React.FC<FieldFormProps> = ({
             </FormControl>
           </Grid>
 
-          {/* Irrigation */}
           <Grid item xs={12} md={6}>
-            <FormControl fullWidth variant="outlined" error={!!errors.irrigationSystem}>
-              <InputLabel id="irrigation-label">Irrigation Type</InputLabel>
+            <FormControl fullWidth error={!!errors.irrigationType}>
+              <InputLabel>Irrigation Type</InputLabel>
               <Select
-                labelId="irrigation-label"
-                id="irrigation-select"
-                value={formData.irrigationSystem}
+                value={formData.irrigationType}
+                onChange={handleSelectChange('irrigationType')}
                 label="Irrigation Type"
-                onChange={handleSelectChange('irrigationSystem')}
                 required
               >
                 {irrigationTypes.map((type) => (
                   <MenuItem key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {type}
                   </MenuItem>
                 ))}
               </Select>
-              {errors.irrigationSystem && (
+              {errors.irrigationType && (
                 <Typography variant="caption" color="error" sx={{ mt: 1, ml: 2 }}>
-                  {errors.irrigationSystem}
+                  {errors.irrigationType}
                 </Typography>
               )}
             </FormControl>
           </Grid>
 
-          {/* Notes */}
+          {/* Coordinates */}
+          <Grid item xs={12}>
+            <Typography variant="h6" color="primary" gutterBottom sx={{ mt: 2 }}>
+              GPS Coordinates (Optional)
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Latitude"
+              value={formData.coordinates.latitude}
+              onChange={handleCoordinateChange('latitude')}
+              error={!!errors.latitude}
+              helperText={errors.latitude}
+              type="number"
+              inputProps={{ step: "any" }}
+              placeholder="e.g., 28.6139"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Longitude"
+              value={formData.coordinates.longitude}
+              onChange={handleCoordinateChange('longitude')}
+              error={!!errors.longitude}
+              helperText={errors.longitude}
+              type="number"
+              inputProps={{ step: "any" }}
+              placeholder="e.g., 77.2090"
+            />
+          </Grid>
+
+          {/* Description */}
+          <Grid item xs={12}>
+            <Typography variant="h6" color="primary" gutterBottom sx={{ mt: 2 }}>
+              Additional Information
+            </Typography>
+          </Grid>
+
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Description / Notes"
-              value={formData.notes}
-              onChange={handleInputChange('notes')}
+              label="Description"
+              value={formData.description}
+              onChange={handleInputChange('description')}
               multiline
               rows={4}
               placeholder="Any additional notes about the field..."
             />
           </Grid>
 
-          {/* Buttons */}
+          {/* Action Buttons */}
           <Grid item xs={12}>
             <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
               <Button
