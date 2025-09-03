@@ -228,9 +228,10 @@ const Register: React.FC = () => {
                 required
               >
                 <MenuItem value="farmer">Farmer</MenuItem>
+                <MenuItem value="buyer">Buyer</MenuItem>
+                <MenuItem value="logistics">Logistics Provider</MenuItem>
                 <MenuItem value="agronomist">Agronomist</MenuItem>
                 <MenuItem value="investor">Investor</MenuItem>
-                <MenuItem value="researcher">Researcher</MenuItem>
               </Select>
               {formErrors.role && (
                 <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 2 }}>

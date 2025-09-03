@@ -401,7 +401,7 @@ const Marketplace: React.FC = () => {
           onClick={handleOpenListingDialog}
           disabled={getAvailableCropsForListing().length === 0}
         >
-          List Crop
+          List for Sale
         </Button>
       </Box>
 
@@ -575,7 +575,7 @@ const Marketplace: React.FC = () => {
         </Box>
       )}
 
-      {/* List Crop Dialog */}
+      {/* List for Sale Dialog */}
       <Dialog 
         open={listingDialog} 
         onClose={handleCloseListingDialog}
@@ -586,7 +586,7 @@ const Marketplace: React.FC = () => {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <SellIcon />
-              List Your Crop
+              List for Sale
             </Box>
             <IconButton onClick={handleCloseListingDialog}>
               <CloseIcon />
@@ -719,7 +719,7 @@ const Marketplace: React.FC = () => {
             variant="contained"
             disabled={!isListingFormValid()}
           >
-            List Crop for Sale
+            Confirm Listing
           </Button>
         </DialogActions>
       </Dialog>

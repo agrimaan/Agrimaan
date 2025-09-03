@@ -20,12 +20,22 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['farmer', 'agronomist', 'admin', 'investor'],
+    enum: ['farmer', 'agronomist', 'admin', 'investor', 'buyer', 'logistics'],
     default: 'farmer'
   },
   phone: {
-    type: String,
-    trim: true
+    number: {
+      type: String,
+      trim: true
+    },
+    verified: {
+      type: Boolean,
+      default: false
+    },
+    verificationCode: {
+      code: String,
+      expiresAt: Date
+    }
   },
   address: {
     street: String,
@@ -41,6 +51,52 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Field'
   }],
+  // New fields for buyer role
+  purchaseHistory: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order'
+  }],
+  // New fields for logistics provider role
+  logistics: {
+    vehicleTypes: [{
+      type: String,
+      enum: ['truck', 'van', 'pickup', 'refrigerated', 'mini-truck', 'other']
+    }],
+    serviceAreas: [{
+      state: String,
+      districts: [String]
+    }],
+    capacity: {
+      maxWeight: Number, // in kg
+      maxVolume: Number, // in cubic meters
+    },
+    services: [{
+      type: String,
+      enum: ['transportation', 'storage', 'cold-chain', 'packaging', 'distribution']
+    }],
+    verified: {
+      type: Boolean,
+      default: false
+    },
+    rating: {
+      average: {
+        type: Number,
+        default: 0
+      },
+      count: {
+        type: Number,
+        default: 0
+      }
+    }
+  },
+  // New fields for admin role
+  isSystemAdmin: {
+    type: Boolean,
+    default: false
+  },
+  lastLogin: {
+    type: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now

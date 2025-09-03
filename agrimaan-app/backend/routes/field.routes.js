@@ -78,9 +78,10 @@ router.post(
     [
       body('name', 'Name is required').not().isEmpty(),
       body('location.coordinates', 'Location coordinates are required').isArray(),
+      body('boundaries.coordinates', 'Field boundaries are required').isArray(),
       body('area.value', 'Area value is required').isNumeric(),
-      body('area.unit', 'Area unit is required').isIn(['hectare', 'acre']),
-    ],
+      body('area.unit', 'Area unit is required').isIn(['hectare', 'acre'])
+    ]
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -92,23 +93,30 @@ router.post(
       const {
         name,
         location,
+        boundaries,
         area,
         soilType,
+        weather,
         irrigationSystem,
-        notes,
+        notes
       } = req.body;
 
+      // Create new field
       const newField = new Field({
         name,
         owner: req.user.id,
         location,
+        boundaries,
         area,
         soilType: soilType || 'other',
+        weather,
         irrigationSystem,
-        notes,
+        notes
       });
+
       const field = await newField.save();
 
+      // Add field to user's fields array
       await User.findByIdAndUpdate(
         req.user.id,
         { $push: { fields: field._id } },
