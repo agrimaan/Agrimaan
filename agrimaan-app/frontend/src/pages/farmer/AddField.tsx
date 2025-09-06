@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import FieldForm from '../components/FieldForm';
+import FieldForm from '../../components/FieldForm';
 // import { createField } from '../features/fields/fieldSlice'; // Uncomment when slice is ready
 
 const AddField: React.FC = () => {

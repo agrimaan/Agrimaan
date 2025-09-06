@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
@@ -19,18 +18,18 @@ import { loadUser } from './features/auth/authSlice';
 import { RootState } from './store';
 
 // Farmer Components
-import Dashboard from './pages/Dashboard';
-import Fields from './pages/Fields';
-import FieldDetail from './pages/FieldDetail';
-import AddField from './pages/AddField';
-import EditField from './pages/EditField';
-import Crops from './pages/Crops';
-import CropDetail from './pages/CropDetail';
-import Sensors from './pages/Sensors';
-import SensorDetail from './pages/SensorDetail';
-import Analytics from './pages/Analytics';
-import Weather from './pages/Weather';
-import Settings from './pages/Settings';
+import Dashboard from './pages/FarmerDashboard';
+import Fields from './pages/farmer/Fields';
+import FieldDetail from './pages/farmer/FieldDetail';
+import AddField from './pages/farmer/AddField';
+import EditField from './pages/farmer/EditField';
+import Crops from './pages/farmer/Crops';
+import CropDetail from './pages/farmer/CropDetail';
+import Sensors from './pages/farmer/Sensors';
+import SensorDetail from './pages/farmer/SensorDetail';
+import Analytics from './pages/farmer/Analytics';
+import Weather from './pages/farmer/Weather';
+import Settings from './pages/farmer/Settings';
 import Profile from './pages/Profile';
 import Marketplace from './pages/Marketplace';
 
@@ -58,6 +57,11 @@ import AdminSettings from './pages/admin/Settings';
 import LogisticsDashboard from './pages/LogisticsDashboard';
 import Deliveries from './pages/logistics/Deliveries';
 import AvailableRequests from './pages/logistics/AvailableRequests';
+
+// Agronomist Components
+import AgronomistDashboard from './pages/AgronomistDashboard';
+import FieldAnalysis from './pages/agronomist/FieldAnalysis';
+import Recommendations from './pages/agronomist/Recommendations';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -94,7 +98,7 @@ const App: React.FC = () => {
       case 'logistics':
         return '/logistics';
       case 'agronomist':
-        return '/';
+        return '/agronomist';
       case 'investor':
         return '/';
       default:
@@ -161,6 +165,15 @@ const App: React.FC = () => {
             <Route index element={<LogisticsDashboard />} />
             <Route path="deliveries" element={<Deliveries />} />
             <Route path="available-requests" element={<AvailableRequests />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+          
+          {/* Agronomist Routes */}
+          <Route path="/agronomist" element={isAuthenticated && user?.role === 'agronomist' ? <Layout /> : <Navigate to="/login" />}>
+            <Route index element={<AgronomistDashboard />} />
+            <Route path="fields/:id" element={<FieldAnalysis />} />
+            <Route path="recommendations" element={<Recommendations />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
           </Route>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Alert, CircularProgress } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import FieldForm from '../components/FieldForm';
+import FieldForm from '../../components/FieldForm';
 
 // Mock data for demonstration
 const mockField = {

@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   
   try {
     // Check if admin user already exists
-    const existingAdmin = await User.findOne({ email: 'agmadmin@agrimaan.com' });
+    const existingAdmin = await User.findOne({ email: 'agmadmin@agrimaan.io' });
     
     if (existingAdmin) {
       console.log('Admin user already exists');
@@ -30,16 +30,16 @@ mongoose.connect(process.env.MONGODB_URI, {
     // Create admin user
     const adminUser = new User({
       name: 'Agrimaan Admin',
-      email: 'agmadmin@agrimaan.com',
+      email: 'agmadmin@agrimaan.io',
       password: 'agmadmin', // Will be hashed by the pre-save hook
       role: 'admin',
       isSystemAdmin: true,
       address: {
         street: 'Admin Office',
-        city: 'Agrimaan HQ',
-        state: 'Karnataka',
+        city: 'Rohini',
+        state: 'New Delhi',
         country: 'India',
-        zipCode: '560001'
+        zipCode: '110085'
       }
     });
     

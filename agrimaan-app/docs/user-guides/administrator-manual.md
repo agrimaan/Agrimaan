@@ -517,7 +517,7 @@ After installation, perform these initial setup steps:
 
 6. **Verify system health:**
    ```bash
-   curl http://localhost:3000/api/health
+   curl http://localhost:3001/api/health
    # Should return {"status":"ok","services":[...]}
    ```
 

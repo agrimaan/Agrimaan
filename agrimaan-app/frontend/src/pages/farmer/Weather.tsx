@@ -18,16 +18,16 @@ import OpacityIcon from "@mui/icons-material/Opacity";
 import GrainIcon from "@mui/icons-material/Grain";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 
-import WeatherAdvicePanel from "../components/WeatherAdvicePanel";
-import LocationSearch from "../components/LocationSearch";
-import { Suggestion } from "../features/weather/weatherSlice";
-import { RootState } from "../store";
+import WeatherAdvicePanel from "../../components/WeatherAdvicePanel";
+import LocationSearch from "../../components/LocationSearch";
+import { Suggestion } from "../../features/weather/weatherSlice";
+import { RootState } from "../../store";
 import {
   fetchFields,
   fetchWeatherByField,
   fetchWeatherByLocation,
   clearWeather,
-} from "../features/weather/weatherSlice";
+} from "../../features/weather/weatherSlice";
 
 // Forecast helpers
 function pickForecastArray(wx: any | null): any[] {

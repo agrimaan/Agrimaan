@@ -22,8 +22,8 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store'; // adjust path to your store
-import { getFields, deleteField } from '../features/fields/fieldSlice';
+import { AppDispatch, RootState } from '../../store'; // adjust path to your store
+import { getFields, deleteField } from '../../features/fields/fieldSlice';
 
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';

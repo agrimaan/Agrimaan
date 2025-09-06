@@ -96,8 +96,92 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/admin/dashboard`);
-        setDashboardData(res.data);
+        // For development, use mock data instead of API call
+        const mockData: DashboardData = {
+          counts: {
+            users: 45,
+            fields: 120,
+            crops: 350,
+            sensors: 78,
+            orders: 230
+          },
+          usersByRole: {
+            farmers: 25,
+            buyers: 15,
+            agronomists: 3,
+            investors: 1,
+            admins: 1
+          },
+          recentOrders: [
+            {
+              _id: 'order1',
+              buyer: {
+                _id: 'b1',
+                name: 'Buyer Kumar'
+              },
+              seller: {
+                _id: 'f1',
+                name: 'Farmer Singh'
+              },
+              totalAmount: 1500,
+              status: 'pending',
+              createdAt: new Date().toISOString()
+            },
+            {
+              _id: 'order2',
+              buyer: {
+                _id: 'b2',
+                name: 'Buyer Sharma'
+              },
+              seller: {
+                _id: 'f2',
+                name: 'Farmer Patel'
+              },
+              totalAmount: 2300,
+              status: 'confirmed',
+              createdAt: new Date(Date.now() - 86400000).toISOString()
+            },
+            {
+              _id: 'order3',
+              buyer: {
+                _id: 'b3',
+                name: 'Buyer Gupta'
+              },
+              seller: {
+                _id: 'f3',
+                name: 'Farmer Reddy'
+              },
+              totalAmount: 1800,
+              status: 'shipped',
+              createdAt: new Date(Date.now() - 172800000).toISOString()
+            }
+          ],
+          recentUsers: [
+            {
+              _id: 'user1',
+              name: 'New Farmer',
+              email: 'farmer@example.com',
+              role: 'farmer',
+              createdAt: new Date().toISOString()
+            },
+            {
+              _id: 'user2',
+              name: 'New Buyer',
+              email: 'buyer@example.com',
+              role: 'buyer',
+              createdAt: new Date(Date.now() - 86400000).toISOString()
+            },
+            {
+              _id: 'user3',
+              name: 'New Agronomist',
+              email: 'agronomist@example.com',
+              role: 'agronomist',
+              createdAt: new Date(Date.now() - 172800000).toISOString()
+            }
+          ]
+        };
+        
+        setDashboardData(mockData);
         setLoading(false);
       } catch (err: any) {
         console.error('Error fetching dashboard data:', err);
