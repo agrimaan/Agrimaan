@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 const AnalyticsSchema = new mongoose.Schema({
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field',
+    ref: 'Fields',
     required: true
   },
   crop: {

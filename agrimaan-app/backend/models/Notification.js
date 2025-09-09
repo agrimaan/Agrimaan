@@ -26,12 +26,12 @@ const NotificationSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['system', 'weather', 'crop', 'field', 'sensor', 'analytics', 'blockchain', 'marketplace', 'other'],
+    enum: ['system', 'weather', 'crop', 'Fields', 'sensor', 'analytics', 'blockchain', 'marketplace', 'other'],
     default: 'system'
   },
-  relatedField: {
+  relatedFields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
+    ref: 'Fields'
   },
   relatedCrop: {
     type: mongoose.Schema.Types.ObjectId,

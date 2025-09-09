@@ -48,9 +48,9 @@ const IoTDeviceSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
+    ref: 'Fields'
   },
   location: {
     type: {
@@ -199,9 +199,9 @@ const SensorReadingSchema = new mongoose.Schema({
   metadata: {
     type: mongoose.Schema.Types.Mixed
   },
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
+    ref: 'Fields'
   },
   crop: {
     type: mongoose.Schema.Types.ObjectId,
@@ -230,8 +230,8 @@ const SensorReadingSchema = new mongoose.Schema({
 
 // Create a compound index for efficient queries by device and timestamp
 SensorReadingSchema.index({ device: 1, timestamp: -1 });
-// Create a compound index for field and timestamp
-SensorReadingSchema.index({ field: 1, timestamp: -1 });
+// Create a compound index for Fields and timestamp
+SensorReadingSchema.index({ Fields: 1, timestamp: -1 });
 // Create a compound index for readingType and timestamp
 SensorReadingSchema.index({ readingType: 1, timestamp: -1 });
 
@@ -240,9 +240,9 @@ const IoTAlertSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'IoTDevice'
   },
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
+    ref: 'Fields'
   },
   crop: {
     type: mongoose.Schema.Types.ObjectId,
@@ -322,7 +322,7 @@ const IoTAlertSchema = new mongoose.Schema({
 
 // Create indexes for efficient queries
 IoTAlertSchema.index({ device: 1, timestamp: -1 });
-IoTAlertSchema.index({ field: 1, timestamp: -1 });
+IoTAlertSchema.index({ Fields: 1, timestamp: -1 });
 IoTAlertSchema.index({ status: 1, severity: 1 });
 
 const MaintenanceLogSchema = new mongoose.Schema({
@@ -429,9 +429,9 @@ const EdgeDeviceSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
+    ref: 'Fields'
   },
   location: {
     type: {

@@ -28,11 +28,11 @@
    - [Investment Filtering and Search](#investment-filtering-and-search)
    - [Due Diligence Tools](#due-diligence-tools)
    - [Making an Investment](#making-an-investment)
-7. [Land Tokenization](#land-tokenization)
-   - [Understanding Land Tokens](#understanding-land-tokens)
-   - [Investing in Land Tokens](#investing-in-land-tokens)
-   - [Land Token Marketplace](#land-token-marketplace)
-   - [Land Token Valuation](#land-token-valuation)
+7. [Fields Tokenization](#Fields-tokenization)
+   - [Understanding Fields Tokens](#understanding-Fields-tokens)
+   - [Investing in Fields Tokens](#investing-in-Fields-tokens)
+   - [Fields Token Marketplace](#Fields-token-marketplace)
+   - [Fields Token Valuation](#Fields-token-valuation)
 8. [Farmhouse Tokenization](#farmhouse-tokenization)
    - [Understanding Farmhouse Tokens](#understanding-farmhouse-tokens)
    - [Investing in Farmhouse Tokens](#investing-in-farmhouse-tokens)
@@ -77,7 +77,7 @@
 
 Welcome to the agrimaan Platform's Investor Guide. This comprehensive resource is designed to help you navigate the innovative investment opportunities available through our agricultural technology platform. By connecting investors with farmers, agrimaan creates a mutually beneficial ecosystem that supports sustainable agriculture while providing attractive investment returns.
 
-The agrimaan Platform leverages blockchain technology to tokenize agricultural assets, creating transparency, security, and liquidity in what has traditionally been an illiquid market. Whether you're interested in land ownership, equipment financing, or supporting sustainable farming initiatives, our platform provides the tools and information you need to make informed investment decisions.
+The agrimaan Platform leverages blockchain technology to tokenize agricultural assets, creating transparency, security, and liquidity in what has traditionally been an illiquid market. Whether you're interested in Fields ownership, equipment financing, or supporting sustainable farming initiatives, our platform provides the tools and information you need to make informed investment decisions.
 
 This guide will walk you through every aspect of the investment process, from setting up your account and wallet to analyzing opportunities, managing your portfolio, and tracking returns. We've designed the platform to be accessible to both experienced agricultural investors and newcomers to the space.
 
@@ -139,7 +139,7 @@ The agrimaan mobile app provides access to all investor features with a mobile-o
 
 The agrimaan Platform offers several investment categories:
 
-1. **Land Tokens**: Fractional ownership of agricultural land.
+1. **Fields Tokens**: Fractional ownership of agricultural Fields.
 2. **Farmhouse Tokens**: Fractional ownership of farm buildings and infrastructure.
 3. **Equipment Financing**: Funding for agricultural machinery and equipment.
 4. **Infrastructure Projects**: Investments in irrigation systems, processing facilities, and other farm infrastructure.
@@ -185,7 +185,7 @@ Agricultural investments typically fall into these timeframe categories:
 
 1. **Short-term** (3-12 months): Seasonal crop financing, equipment rentals.
 2. **Medium-term** (1-3 years): Equipment purchases, infrastructure improvements, multi-season crops.
-3. **Long-term** (3+ years): Land acquisition, major infrastructure development, orchard/vineyard establishment.
+3. **Long-term** (3+ years): Fields acquisition, major infrastructure development, orchard/vineyard establishment.
 
 Consider your liquidity needs when selecting investments, as some options have minimum holding periods or limited secondary market liquidity.
 
@@ -219,7 +219,7 @@ The total supply of AGM tokens is capped at 1 billion, with a portion held in re
 Smart contracts are self-executing agreements with terms directly written into code:
 
 1. **Investment Contracts**: Define investment terms, distribution schedules, and exit conditions.
-2. **Land Token Contracts**: Establish ownership rights, revenue sharing, and governance for tokenized land.
+2. **Fields Token Contracts**: Establish ownership rights, revenue sharing, and governance for tokenized Fields.
 3. **Loan Agreements**: Automate equipment financing terms, payments, and collateral management.
 4. **Revenue Sharing**: Distribute returns to investors based on predefined formulas and triggers.
 
@@ -347,7 +347,7 @@ Your wallet provides tools to manage your AGM tokens:
 Narrow down investment options based on your preferences:
 
 1. Use the filter panel to refine by:
-   - Investment type (land, equipment, infrastructure, etc.)
+   - Investment type (Fields, equipment, infrastructure, etc.)
    - Geographic region
    - Investment amount range
    - Expected return range
@@ -371,12 +371,12 @@ The platform provides comprehensive tools to evaluate investment opportunities:
    - Business plans
    - Financial projections
    - Legal documents
-   - Land surveys and soil reports
+   - Fields surveys and soil reports
    - Equipment specifications
    - Sustainability certifications
 
 2. **Interactive Maps**:
-   - View precise location of land and assets
+   - View precise location of Fields and assets
    - Analyze soil quality and topography
    - Access historical satellite imagery
    - Review climate data for the region
@@ -416,64 +416,64 @@ Once you've selected an opportunity, the investment process is straightforward:
 6. Receive confirmation of your investment and a digital certificate.
 7. The investment will now appear in your portfolio.
 
-## Land Tokenization
+## Fields Tokenization
 
-### Understanding Land Tokens
+### Understanding Fields Tokens
 
-Land tokens represent fractional ownership of agricultural land:
+Fields tokens represent fractional ownership of agricultural Fields:
 
 1. **Token Fundamentals**:
-   - Each token represents a specific percentage of ownership in a particular land parcel.
-   - Tokens are backed by legally binding agreements that connect digital tokens to physical land rights.
-   - Land tokens are compliant with relevant securities regulations.
+   - Each token represents a specific percentage of ownership in a particular Fields parcel.
+   - Tokens are backed by legally binding agreements that connect digital tokens to physical Fields rights.
+   - Fields tokens are compliant with relevant securities regulations.
 
 2. **Benefits of Tokenization**:
    - Fractional ownership allows investment with smaller amounts.
-   - Increased liquidity compared to traditional land investments.
+   - Increased liquidity compared to traditional Fields investments.
    - Transparent ownership records on the blockchain.
    - Automated revenue distributions.
    - Potential for capital appreciation.
 
 3. **Token Economics**:
-   - Token value is based on the underlying land value.
-   - Revenue from the land (leasing, crop sales, etc.) is distributed proportionally to token holders.
-   - Land appreciation directly impacts token value.
+   - Token value is based on the underlying Fields value.
+   - Revenue from the Fields (leasing, crop sales, etc.) is distributed proportionally to token holders.
+   - Fields appreciation directly impacts token value.
 
-### Investing in Land Tokens
+### Investing in Fields Tokens
 
-1. Navigate to "Investments" > "Land Tokens".
-2. Browse available land token offerings.
+1. Navigate to "Investments" > "Fields Tokens".
+2. Browse available Fields token offerings.
 3. Each listing includes:
-   - Location and size of the land
+   - Location and size of the Fields
    - Soil quality and agricultural potential
    - Current use and crop history
    - Token price and total supply
    - Expected yield (from leasing or revenue sharing)
    - Management arrangements
-4. Select a land token opportunity and click "View Details".
-5. Review the comprehensive land report, including:
+4. Select a Fields token opportunity and click "View Details".
+5. Review the comprehensive Fields report, including:
    - Legal documentation
-   - Land surveys and soil analysis
+   - Fields surveys and soil analysis
    - Water rights and access
    - Historical productivity
    - Future development plans
 6. Click "Invest" and specify the number of tokens you wish to purchase.
 7. Confirm the transaction from your wallet.
-8. Receive your land tokens and ownership certificate.
+8. Receive your Fields tokens and ownership certificate.
 
-### Land Token Marketplace
+### Fields Token Marketplace
 
-The secondary market for land tokens provides liquidity options:
+The secondary market for Fields tokens provides liquidity options:
 
-1. **Buying Land Tokens**:
-   - Navigate to "Marketplace" > "Land Tokens".
+1. **Buying Fields Tokens**:
+   - Navigate to "Marketplace" > "Fields Tokens".
    - Browse available tokens listed by other investors.
-   - Filter by location, price, land type, etc.
+   - Filter by location, price, Fields type, etc.
    - Place buy orders at your desired price.
    - Complete purchases directly through the platform.
 
-2. **Selling Land Tokens**:
-   - Navigate to "Portfolio" > "Land Tokens".
+2. **Selling Fields Tokens**:
+   - Navigate to "Portfolio" > "Fields Tokens".
    - Select the tokens you wish to sell.
    - Set your asking price and listing duration.
    - Publish your listing to the marketplace.
@@ -486,12 +486,12 @@ The secondary market for land tokens provides liquidity options:
    - Set price alerts for specific tokens.
    - Place limit orders for automatic execution.
 
-### Land Token Valuation
+### Fields Token Valuation
 
-Land tokens are valued based on several factors:
+Fields tokens are valued based on several factors:
 
-1. **Underlying Land Value**:
-   - Professional land appraisals are conducted annually.
+1. **Underlying Fields Value**:
+   - Professional Fields appraisals are conducted annually.
    - Market comparables are analyzed quarterly.
    - Improvements and developments are factored into valuations.
 
@@ -529,7 +529,7 @@ Farmhouse tokens represent fractional ownership of agricultural buildings and in
 2. **Benefits of Tokenization**:
    - Access to real estate investments with agricultural focus.
    - Income generation through leasing and operational use.
-   - Portfolio diversification beyond land and crops.
+   - Portfolio diversification beyond Fields and crops.
    - Potential for capital appreciation through improvements and market changes.
 
 3. **Token Economics**:
@@ -561,7 +561,7 @@ Farmhouse tokens represent fractional ownership of agricultural buildings and in
 
 ### Farmhouse Token Marketplace
 
-Similar to land tokens, farmhouse tokens can be traded on the secondary market:
+Similar to Fields tokens, farmhouse tokens can be traded on the secondary market:
 
 1. **Buying Farmhouse Tokens**:
    - Navigate to "Marketplace" > "Farmhouse Tokens".
@@ -635,7 +635,7 @@ Fund critical infrastructure development on farms:
 Support farm growth and development:
 
 1. **Initiative Types**:
-   - Land acquisition
+   - Fields acquisition
    - Crop diversification
    - Market expansion
    - Vertical integration
@@ -790,12 +790,12 @@ Agricultural investments generate returns through various mechanisms:
    - Secured by collateral in many cases
 
 3. **Capital Appreciation**:
-   - Increase in land or asset value over time
+   - Increase in Fields or asset value over time
    - Realized upon token sale or project exit
    - Influenced by agricultural market trends and improvements
 
 4. **Lease Income**:
-   - Regular payments from land or equipment leasing
+   - Regular payments from Fields or equipment leasing
    - Fixed or variable rates depending on the agreement
    - Typically distributed monthly or quarterly
 
@@ -906,7 +906,7 @@ Agricultural investments face several risk categories:
 5. **Regulatory Risks**:
    - Changes in agricultural policies
    - Environmental regulations
-   - Land use restrictions
+   - Fields use restrictions
    - Water rights changes
 
 The platform provides detailed risk assessments for each investment opportunity and implements various risk mitigation strategies.
@@ -928,7 +928,7 @@ Protect your portfolio through strategic diversification:
    - Consider crop rotation and intercropping strategies
 
 3. **Investment Type Diversification**:
-   - Combine land, equipment, and project investments
+   - Combine Fields, equipment, and project investments
    - Balance fixed-return and variable-return opportunities
    - Mix short-term and long-term investments
    - Include both conventional and innovative agricultural approaches
@@ -1129,7 +1129,7 @@ Stay informed about your investments:
    - Data visualizations
    - Interactive dashboards
 
-3. **Field Monitoring**:
+3. **Fields Monitoring**:
    - Satellite imagery updates
    - IoT sensor data feeds
    - Weather impact reports
@@ -1172,7 +1172,7 @@ Participate in exclusive investor activities:
    - Farm visits for major investors
    - Regional investor meetups
    - Annual investor conference
-   - Harvest celebrations and field days
+   - Harvest celebrations and Fields days
 
 3. **Educational Programs**:
    - Agricultural investment masterclasses

@@ -23,8 +23,8 @@ import LocationSearch from "../../components/LocationSearch";
 import { Suggestion } from "../../features/weather/weatherSlice";
 import { RootState } from "../../store";
 import {
-  fetchFields,
-  fetchWeatherByField,
+  fetchfields,
+  fetchWeatherByFields,
   fetchWeatherByLocation,
   clearWeather,
 } from "../../features/weather/weatherSlice";
@@ -50,19 +50,19 @@ function readCondition(item: any): string | undefined { return item?.day?.condit
 
 export default function WeatherPage() {
   const dispatch = useDispatch();
-  const { fields, weather, advice, loadingWeather, loadingAdvice, error, fieldName, lastPickedLocation } = useSelector((state: RootState) => state.weather);
+  const { fields, weather, advice, loadingWeather, loadingAdvice, error, FieldsName, lastPickedLocation } = useSelector((state: RootState) => state.weather);
 
-  const [fieldId, setFieldId] = useState<string>("");
+  const [FieldsId, setFieldsId] = useState<string>("");
   const [locationQuery, setLocationQuery] = useState<string>("");
 
   useEffect(() => {
-    dispatch(fetchFields() as any);
+    dispatch(fetchfields() as any);
     return () => { dispatch(clearWeather()); };
   }, [dispatch]);
 
-  const handleFieldChange = (id: string) => {
-    setFieldId(id);
-    if (id) dispatch(fetchWeatherByField(id) as any);
+  const handleFieldsChange = (id: string) => {
+    setFieldsId(id);
+    if (id) dispatch(fetchWeatherByFields(id) as any);
   };
 
   const onPickLocation = useCallback((s: Suggestion) => {
@@ -80,9 +80,9 @@ export default function WeatherPage() {
 
         <Box display="flex" alignItems="center" gap={2} mb={2}>
           <FormControl size="small" sx={{ minWidth: 200 }}>
-            <InputLabel id="field-select-label">Field</InputLabel>
-            <Select labelId="field-select-label" value={fieldId} label="Field" onChange={(e) => handleFieldChange(e.target.value)}>
-              <MenuItem value=""><em>Select a field</em></MenuItem>
+            <InputLabel id="Fields-select-label">Fields</InputLabel>
+            <Select labelId="Fields-select-label" value={FieldsId} label="Fields" onChange={(e) => handleFieldsChange(e.target.value)}>
+              <MenuItem value=""><em>Select a Fields</em></MenuItem>
               {fields.map((f) => (<MenuItem key={f._id} value={f._id}>{f.name || f._id}</MenuItem>))}
             </Select>
           </FormControl>
@@ -90,14 +90,14 @@ export default function WeatherPage() {
 
         <Box display="flex" alignItems="center" gap={2} mb={2}>
           <LocationSearch value={locationQuery} onChange={setLocationQuery} onPick={onPickLocation} placeholder="Type a location" />
-          <Typography variant="caption" color="text.secondary">or pick a field above</Typography>
+          <Typography variant="caption" color="text.secondary">or pick a Fields above</Typography>
         </Box>
 
         {loadingWeather && <CircularProgress size={24} />}
         {weather && !loadingWeather && (
           <Card variant="outlined" sx={{ mb: 2, p: 1 }}>
             <CardContent>
-              <Typography variant="subtitle1" gutterBottom>Current Weather {fieldName ? `(${fieldName})` : ""}</Typography>
+              <Typography variant="subtitle1" gutterBottom>Current Weather {FieldsName ? `(${FieldsName})` : ""}</Typography>
               <Divider sx={{ mb: 1 }} />
               <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={2}>
                 <Box display="flex" alignItems="center" gap={1}><ThermostatIcon color="primary" fontSize="small" /><Typography variant="body2">Temp: <strong>{weather.current?.temp_c ?? "—"} °C</strong></Typography></Box>
@@ -143,10 +143,10 @@ export default function WeatherPage() {
         loading={loadingAdvice}
         error={error}
         onRefresh={() => {
-          if (fieldId) dispatch(fetchWeatherByField(fieldId) as any);
+          if (FieldsId) dispatch(fetchWeatherByFields(FieldsId) as any);
           else if (lastPickedLocation) dispatch(fetchWeatherByLocation(lastPickedLocation) as any);
         }}
-        fieldName={fieldName}
+        FieldsName={FieldsName}
       />
     </Box>
   );

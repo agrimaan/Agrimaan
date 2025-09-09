@@ -41,7 +41,7 @@ module.exports = {
   async down(mongoose) {
     const db = mongoose.connection;
     
-    // Remove preferences field from all users
+    // Remove preferences Fields from all users
     await db.collection('users').updateMany(
       {},
       { $unset: { preferences: "" } }
@@ -50,6 +50,6 @@ module.exports = {
     // Drop the index
     await db.collection('users').dropIndex({ 'preferences.language': 1 });
     
-    console.log('Removed preferences field and index');
+    console.log('Removed preferences Fields and index');
   }
 };

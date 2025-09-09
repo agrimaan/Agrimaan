@@ -29,6 +29,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
+//import fieldscapeIcon from '@mui/icons-material/Grass';
 import LandscapeIcon from '@mui/icons-material/Landscape';
 import SensorsIcon from '@mui/icons-material/Sensors';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
@@ -62,7 +63,7 @@ interface ResponsiveLayoutProps {
 // Define navigation items
 const mainNavItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Fields', icon: <LandscapeIcon />, path: '/fields' },
+  { text: 'fields', icon: <LandscapeIcon />, path: '/fields' },
   { text: 'Crops', icon: <AgricultureIcon />, path: '/crops' },
   { text: 'Sensors', icon: <SensorsIcon />, path: '/sensors' },
   { text: 'Weather', icon: <WaterDropIcon />, path: '/weather' },

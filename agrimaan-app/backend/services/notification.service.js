@@ -48,11 +48,11 @@ class NotificationService {
    * @param {string} userId - User ID
    * @param {string} title - Notification title
    * @param {string} message - Notification message
-   * @param {string} fieldId - Related field ID
+   * @param {string} FieldsId - Related Fields ID
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} Created notification
    */
-  async createWeatherNotification(userId, title, message, fieldId, options = {}) {
+  async createWeatherNotification(userId, title, message, FieldsId, options = {}) {
     const notificationData = {
       user: userId,
       title,
@@ -60,9 +60,9 @@ class NotificationService {
       type: options.type || 'warning',
       priority: options.priority || 'high',
       category: 'weather',
-      relatedField: fieldId,
+      relatedFields: FieldsId,
       actionRequired: options.actionRequired || true,
-      actionLink: options.actionLink || `/fields/${fieldId}/weather`,
+      actionLink: options.actionLink || `/fields/${FieldsId}/weather`,
       expiresAt: options.expiresAt || null
     };
     
@@ -75,11 +75,11 @@ class NotificationService {
    * @param {string} title - Notification title
    * @param {string} message - Notification message
    * @param {string} cropId - Related crop ID
-   * @param {string} fieldId - Related field ID
+   * @param {string} FieldsId - Related Fields ID
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} Created notification
    */
-  async createCropNotification(userId, title, message, cropId, fieldId, options = {}) {
+  async createCropNotification(userId, title, message, cropId, FieldsId, options = {}) {
     const notificationData = {
       user: userId,
       title,
@@ -88,7 +88,7 @@ class NotificationService {
       priority: options.priority || 'medium',
       category: 'crop',
       relatedCrop: cropId,
-      relatedField: fieldId,
+      relatedFields: FieldsId,
       actionRequired: options.actionRequired || false,
       actionLink: options.actionLink || `/crops/${cropId}`,
       expiresAt: options.expiresAt || null
@@ -103,11 +103,11 @@ class NotificationService {
    * @param {string} title - Notification title
    * @param {string} message - Notification message
    * @param {string} sensorId - Related sensor ID
-   * @param {string} fieldId - Related field ID
+   * @param {string} FieldsId - Related Fields ID
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} Created notification
    */
-  async createSensorNotification(userId, title, message, sensorId, fieldId, options = {}) {
+  async createSensorNotification(userId, title, message, sensorId, FieldsId, options = {}) {
     const notificationData = {
       user: userId,
       title,
@@ -116,7 +116,7 @@ class NotificationService {
       priority: options.priority || 'high',
       category: 'sensor',
       relatedSensor: sensorId,
-      relatedField: fieldId,
+      relatedFields: FieldsId,
       actionRequired: options.actionRequired || true,
       actionLink: options.actionLink || `/sensors/${sensorId}`,
       expiresAt: options.expiresAt || null
@@ -130,11 +130,11 @@ class NotificationService {
    * @param {string} userId - User ID
    * @param {string} title - Notification title
    * @param {string} message - Notification message
-   * @param {string} fieldId - Related field ID
+   * @param {string} FieldsId - Related Fields ID
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} Created notification
    */
-  async createAnalyticsNotification(userId, title, message, fieldId, options = {}) {
+  async createAnalyticsNotification(userId, title, message, FieldsId, options = {}) {
     const notificationData = {
       user: userId,
       title,
@@ -142,9 +142,9 @@ class NotificationService {
       type: options.type || 'info',
       priority: options.priority || 'medium',
       category: 'analytics',
-      relatedField: fieldId,
+      relatedFields: FieldsId,
       actionRequired: options.actionRequired || false,
-      actionLink: options.actionLink || `/fields/${fieldId}/analytics`,
+      actionLink: options.actionLink || `/fields/${FieldsId}/analytics`,
       expiresAt: options.expiresAt || null
     };
     
@@ -246,7 +246,7 @@ class NotificationService {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('relatedField', 'name location')
+        .populate('relatedFields', 'name location')
         .populate('relatedCrop', 'name type status')
         .populate('relatedSensor', 'name type status');
       

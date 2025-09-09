@@ -6,9 +6,9 @@ const CropSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field',
+    ref: 'Fields',
     required: true
   },
   variety: {

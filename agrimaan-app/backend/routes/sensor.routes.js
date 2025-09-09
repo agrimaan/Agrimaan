@@ -2,34 +2,34 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Sensor = require('../models/Sensor');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const auth = require('../middleware/auth');
 
 // @route   GET api/sensors
-// @desc    Get all sensors (filtered by field if provided)
+// @desc    Get all sensors (filtered by Fields if provided)
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     let query = {};
     
-    // Filter by field if provided
-    if (req.query.fieldId) {
-      query.field = req.query.fieldId;
+    // Filter by Fields if provided
+    if (req.query.FieldsId) {
+      query.Fields = req.query.FieldsId;
       
-      // Check if user has access to this field
-      const field = await Field.findById(req.query.fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if user has access to this Fields
+      const Fields = await Fields.findById(req.query.FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
     } else if (req.user.role !== 'admin') {
-      // If no field is specified and user is not admin, get all sensors from user's fields
-      const userFields = await Field.find({ owner: req.user.id }).select('_id');
-      const fieldIds = userFields.map(field => field._id);
-      query.field = { $in: fieldIds };
+      // If no Fields is specified and user is not admin, get all sensors from user's fields
+      const userfields = await Fields.find({ owner: req.user.id }).select('_id');
+      const FieldsIds = userfields.map(Fields => Fields._id);
+      query.Fields = { $in: FieldsIds };
     }
     
     // Filter by type if provided
@@ -43,7 +43,7 @@ router.get('/', auth, async (req, res) => {
     }
     
     const sensors = await Sensor.find(query)
-      .populate('field', ['name', 'location'])
+      .populate('Fields', ['name', 'location'])
       .sort({ installationDate: -1 });
       
     res.json(sensors);
@@ -59,14 +59,14 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', auth, async (req, res) => {
   try {
     const sensor = await Sensor.findById(req.params.id)
-      .populate('field', ['name', 'location', 'owner']);
+      .populate('Fields', ['name', 'location', 'owner']);
     
     if (!sensor) {
       return res.status(404).json({ message: 'Sensor not found' });
     }
 
-    // Check if user has access to this sensor's field
-    if (sensor.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this sensor's Fields
+    if (sensor.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -90,7 +90,7 @@ router.post(
     [
       body('name', 'Name is required').not().isEmpty(),
       body('type', 'Type is required').isIn(['soil_moisture', 'temperature', 'humidity', 'rainfall', 'light', 'wind', 'soil_nutrient', 'water_level', 'other']),
-      body('field', 'Field ID is required').not().isEmpty(),
+      body('Fields', 'Fields ID is required').not().isEmpty(),
       body('location.coordinates', 'Location coordinates are required').isArray(),
       body('serialNumber', 'Serial number is required').not().isEmpty()
     ]
@@ -105,7 +105,7 @@ router.post(
       const {
         name,
         type,
-        field: fieldId,
+        Fields: FieldsId,
         location,
         manufacturer,
         model,
@@ -122,13 +122,13 @@ router.post(
         notes
       } = req.body;
 
-      // Check if field exists and user has access
-      const field = await Field.findById(fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if Fields exists and user has access
+      const Fields = await Fields.findById(FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -142,7 +142,7 @@ router.post(
       const newSensor = new Sensor({
         name,
         type,
-        field: fieldId,
+        Fields: FieldsId,
         location,
         manufacturer,
         model,
@@ -161,9 +161,9 @@ router.post(
 
       const sensor = await newSensor.save();
 
-      // Add sensor to field's sensors array
-      await Field.findByIdAndUpdate(
-        fieldId,
+      // Add sensor to Fields's sensors array
+      await Fields.findByIdAndUpdate(
+        FieldsId,
         { $push: { sensors: sensor._id } },
         { new: true }
       );
@@ -197,14 +197,14 @@ router.put(
     }
 
     try {
-      let sensor = await Sensor.findById(req.params.id).populate('field', 'owner');
+      let sensor = await Sensor.findById(req.params.id).populate('Fields', 'owner');
       
       if (!sensor) {
         return res.status(404).json({ message: 'Sensor not found' });
       }
 
-      // Check if user has access to this sensor's field
-      if (sensor.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this sensor's Fields
+      if (sensor.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -263,20 +263,20 @@ router.put(
 // @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const sensor = await Sensor.findById(req.params.id).populate('field', 'owner');
+    const sensor = await Sensor.findById(req.params.id).populate('Fields', 'owner');
     
     if (!sensor) {
       return res.status(404).json({ message: 'Sensor not found' });
     }
 
-    // Check if user has access to this sensor's field
-    if (sensor.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this sensor's Fields
+    if (sensor.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    // Remove sensor from field's sensors array
-    await Field.findByIdAndUpdate(
-      sensor.field._id,
+    // Remove sensor from Fields's sensors array
+    await Fields.findByIdAndUpdate(
+      sensor.Fields._id,
       { $pull: { sensors: sensor._id } }
     );
 
@@ -311,14 +311,14 @@ router.post(
     }
 
     try {
-      const sensor = await Sensor.findById(req.params.id).populate('field', 'owner');
+      const sensor = await Sensor.findById(req.params.id).populate('Fields', 'owner');
       
       if (!sensor) {
         return res.status(404).json({ message: 'Sensor not found' });
       }
 
-      // Check if user has access to this sensor's field
-      if (sensor.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this sensor's Fields
+      if (sensor.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -371,14 +371,14 @@ router.post(
     }
 
     try {
-      const sensor = await Sensor.findById(req.params.id).populate('field', 'owner');
+      const sensor = await Sensor.findById(req.params.id).populate('Fields', 'owner');
       
       if (!sensor) {
         return res.status(404).json({ message: 'Sensor not found' });
       }
 
-      // Check if user has access to this sensor's field
-      if (sensor.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this sensor's Fields
+      if (sensor.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -413,14 +413,14 @@ router.put(
   auth,
   async (req, res) => {
     try {
-      const sensor = await Sensor.findById(req.params.id).populate('field', 'owner');
+      const sensor = await Sensor.findById(req.params.id).populate('Fields', 'owner');
       
       if (!sensor) {
         return res.status(404).json({ message: 'Sensor not found' });
       }
 
-      // Check if user has access to this sensor's field
-      if (sensor.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this sensor's Fields
+      if (sensor.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -471,12 +471,12 @@ router.get('/nearby/:distance', auth, async (req, res) => {
         }
       }
     })
-    .populate('field', ['name', 'owner']);
+    .populate('Fields', ['name', 'owner']);
 
     // Filter sensors based on user role
     const filteredSensors = req.user.role === 'admin' 
       ? sensors 
-      : sensors.filter(sensor => sensor.field.owner.toString() === req.user.id);
+      : sensors.filter(sensor => sensor.Fields.owner.toString() === req.user.id);
 
     res.json(filteredSensors);
   } catch (err) {

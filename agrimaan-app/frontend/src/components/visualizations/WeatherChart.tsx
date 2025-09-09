@@ -15,8 +15,8 @@ import CloudIcon from '@mui/icons-material/Cloud';
 
 // Define prop types for the component
 interface WeatherChartProps {
-  fieldId: string;
-  fieldName: string;
+  FieldsId: string;
+  FieldsName: string;
   weatherData: {
     current: {
       temperature: number;
@@ -57,8 +57,8 @@ interface WeatherChartProps {
 }
 
 const WeatherChart: React.FC<WeatherChartProps> = ({
-  fieldId,
-  fieldName,
+  FieldsId,
+  FieldsName,
   weatherData,
   historicalData = [],
   loading = false,
@@ -161,7 +161,7 @@ const WeatherChart: React.FC<WeatherChartProps> = ({
       <Paper elevation={2} sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h5" gutterBottom>{fieldName} - Current Weather</Typography>
+            <Typography variant="h5" gutterBottom>{FieldsName} - Current Weather</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Box sx={{ mr: 1, fontSize: '2rem' }}>
                 {getWeatherIcon(current.condition)}

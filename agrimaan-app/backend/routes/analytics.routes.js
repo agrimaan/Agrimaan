@@ -2,37 +2,37 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Analytics = require('../models/Analytics');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const Crop = require('../models/Crop');
 const Sensor = require('../models/Sensor');
 const Weather = require('../models/Weather');
 const auth = require('../middleware/auth');
 
 // @route   GET api/analytics
-// @desc    Get all analytics (filtered by field and/or type if provided)
+// @desc    Get all analytics (filtered by Fields and/or type if provided)
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     let query = {};
     
-    // Filter by field if provided
-    if (req.query.fieldId) {
-      query.field = req.query.fieldId;
+    // Filter by Fields if provided
+    if (req.query.FieldsId) {
+      query.Fields = req.query.FieldsId;
       
-      // Check if user has access to this field
-      const field = await Field.findById(req.query.fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if user has access to this Fields
+      const Fields = await Fields.findById(req.query.FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
     } else if (req.user.role !== 'admin') {
-      // If no field is specified and user is not admin, get all analytics from user's fields
-      const userFields = await Field.find({ owner: req.user.id }).select('_id');
-      const fieldIds = userFields.map(field => field._id);
-      query.field = { $in: fieldIds };
+      // If no Fields is specified and user is not admin, get all analytics from user's fields
+      const userfields = await Fields.find({ owner: req.user.id }).select('_id');
+      const FieldsIds = userfields.map(Fields => Fields._id);
+      query.Fields = { $in: FieldsIds };
     }
     
     // Filter by crop if provided
@@ -58,7 +58,7 @@ router.get('/', auth, async (req, res) => {
     }
     
     const analytics = await Analytics.find(query)
-      .populate('field', ['name', 'location'])
+      .populate('Fields', ['name', 'location'])
       .populate('crop', ['name', 'status'])
       .sort({ date: -1 });
       
@@ -75,15 +75,15 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', auth, async (req, res) => {
   try {
     const analytics = await Analytics.findById(req.params.id)
-      .populate('field', ['name', 'location', 'owner'])
+      .populate('Fields', ['name', 'location', 'owner'])
       .populate('crop', ['name', 'status', 'plantingDate', 'harvestDate']);
     
     if (!analytics) {
       return res.status(404).json({ message: 'Analytics not found' });
     }
 
-    // Check if user has access to this analytics' field
-    if (analytics.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this analytics' Fields
+    if (analytics.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -105,7 +105,7 @@ router.post(
   [
     auth,
     [
-      body('field', 'Field ID is required').not().isEmpty(),
+      body('Fields', 'Fields ID is required').not().isEmpty(),
       body('type', 'Type is required').isIn(['yield_prediction', 'pest_risk', 'disease_risk', 'irrigation_recommendation', 'fertilizer_recommendation', 'harvest_timing', 'planting_recommendation', 'other']),
       body('data', 'Data is required').not().isEmpty(),
       body('confidence', 'Confidence must be a number between 0 and 100').optional().isFloat({ min: 0, max: 100 })
@@ -119,7 +119,7 @@ router.post(
 
     try {
       const {
-        field: fieldId,
+        Fields: FieldsId,
         crop: cropId,
         type,
         data,
@@ -132,31 +132,31 @@ router.post(
         notes
       } = req.body;
 
-      // Check if field exists and user has access
-      const field = await Field.findById(fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if Fields exists and user has access
+      const Fields = await Fields.findById(FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
-      // Check if crop exists and belongs to the field if provided
+      // Check if crop exists and belongs to the Fields if provided
       if (cropId) {
         const crop = await Crop.findById(cropId);
         if (!crop) {
           return res.status(404).json({ message: 'Crop not found' });
         }
         
-        if (crop.field.toString() !== fieldId) {
-          return res.status(400).json({ message: 'Crop does not belong to the specified field' });
+        if (crop.Fields.toString() !== FieldsId) {
+          return res.status(400).json({ message: 'Crop does not belong to the specified Fields' });
         }
       }
 
       // Create new analytics
       const newAnalytics = new Analytics({
-        field: fieldId,
+        Fields: FieldsId,
         crop: cropId,
         type,
         data,
@@ -200,14 +200,14 @@ router.put(
     }
 
     try {
-      let analytics = await Analytics.findById(req.params.id).populate('field', 'owner');
+      let analytics = await Analytics.findById(req.params.id).populate('Fields', 'owner');
       
       if (!analytics) {
         return res.status(404).json({ message: 'Analytics not found' });
       }
 
-      // Check if user has access to this analytics' field
-      if (analytics.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this analytics' Fields
+      if (analytics.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -250,14 +250,14 @@ router.put(
 // @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const analytics = await Analytics.findById(req.params.id).populate('field', 'owner');
+    const analytics = await Analytics.findById(req.params.id).populate('Fields', 'owner');
     
     if (!analytics) {
       return res.status(404).json({ message: 'Analytics not found' });
     }
 
-    // Check if user has access to this analytics' field
-    if (analytics.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this analytics' Fields
+    if (analytics.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -273,26 +273,26 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/analytics/field/:fieldId/summary
-// @desc    Get analytics summary for a field
+// @route   GET api/analytics/Fields/:FieldsId/summary
+// @desc    Get analytics summary for a Fields
 // @access  Private
-router.get('/field/:fieldId/summary', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/summary', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
     // Get latest analytics for each type
     const latestAnalytics = await Analytics.aggregate([
-      { $match: { field: field._id } },
+      { $match: { Fields: Fields._id } },
       { $sort: { date: -1 } },
       { $group: { 
         _id: '$type', 
@@ -302,7 +302,7 @@ router.get('/field/:fieldId/summary', auth, async (req, res) => {
     ]);
     
     // Get sensor data summary
-    const sensors = await Sensor.find({ field: fieldId });
+    const sensors = await Sensor.find({ Fields: FieldsId });
     const sensorSummary = {
       count: sensors.length,
       types: {},
@@ -324,7 +324,7 @@ router.get('/field/:fieldId/summary', auth, async (req, res) => {
     });
     
     // Get crop data summary
-    const crops = await Crop.find({ field: fieldId });
+    const crops = await Crop.find({ Fields: FieldsId });
     const cropSummary = {
       count: crops.length,
       status: {},
@@ -346,15 +346,15 @@ router.get('/field/:fieldId/summary', auth, async (req, res) => {
     });
     
     // Get latest weather data
-    const latestWeather = await Weather.findOne({ field: fieldId }).sort({ date: -1 });
+    const latestWeather = await Weather.findOne({ Fields: FieldsId }).sort({ date: -1 });
     
     // Compile summary
     const summary = {
-      field: {
-        id: field._id,
-        name: field.name,
-        area: field.area,
-        soilType: field.soilType
+      Fields: {
+        id: Fields._id,
+        name: Fields.name,
+        area: Fields.area,
+        soilType: Fields.soilType
       },
       analytics: latestAnalytics,
       sensors: sensorSummary,
@@ -377,13 +377,13 @@ router.get('/crop/:cropId/predictions', auth, async (req, res) => {
     const cropId = req.params.cropId;
     
     // Check if crop exists
-    const crop = await Crop.findById(cropId).populate('field', 'owner');
+    const crop = await Crop.findById(cropId).populate('Fields', 'owner');
     if (!crop) {
       return res.status(404).json({ message: 'Crop not found' });
     }
     
-    // Check if user has access to this crop's field
-    if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this crop's Fields
+    if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
@@ -409,15 +409,15 @@ router.get('/crop/:cropId/predictions', auth, async (req, res) => {
 router.get('/recommendations', auth, async (req, res) => {
   try {
     // Get user's fields
-    const userFields = await Field.find({ owner: req.user.id }).select('_id');
-    const fieldIds = userFields.map(field => field._id);
+    const userfields = await Fields.find({ owner: req.user.id }).select('_id');
+    const FieldsIds = userfields.map(Fields => Fields._id);
     
     // Get analytics with recommendations
     const analyticsWithRecommendations = await Analytics.find({
-      field: { $in: fieldIds },
+      Fields: { $in: FieldsIds },
       'recommendations.0': { $exists: true } // Has at least one recommendation
     })
-    .populate('field', ['name', 'location'])
+    .populate('Fields', ['name', 'location'])
     .populate('crop', ['name', 'status'])
     .sort({ date: -1 });
     
@@ -429,7 +429,7 @@ router.get('/recommendations', auth, async (req, res) => {
         recommendations.push({
           id: rec._id,
           analyticsId: analytics._id,
-          field: analytics.field,
+          Fields: analytics.Fields,
           crop: analytics.crop,
           type: analytics.type,
           action: rec.action,

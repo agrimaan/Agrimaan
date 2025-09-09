@@ -258,12 +258,12 @@ class BlockchainService {
   }
   
   /**
-   * Create a land token
+   * Create a Fields token
    * @param {string} userId - User ID
-   * @param {Object} landData - Land data
+   * @param {Object} FieldsData - Fields data
    * @returns {Promise<Object>} Created token
    */
-  async createLandToken(userId, landData) {
+  async createFieldsToken(userId, FieldsData) {
     try {
       // Get user's wallet
       const wallet = await Blockchain.Wallet.findOne({ owner: userId });
@@ -276,23 +276,23 @@ class BlockchainService {
       // For now, we'll simulate token creation
       
       // Generate a token ID
-      const tokenId = `LAND-${crypto.randomBytes(8).toString('hex')}`;
+      const tokenId = `Fields-${crypto.randomBytes(8).toString('hex')}`;
       
       // Create token record
       const token = new Blockchain.Token({
         tokenId,
-        tokenType: 'LAND',
+        tokenType: 'Fields',
         owner: userId,
         ownerAddress: wallet.address,
         metadata: {
-          name: landData.name,
-          description: landData.description,
-          location: landData.location,
-          area: landData.area,
-          coordinates: landData.coordinates,
-          propertyType: landData.propertyType,
-          soilType: landData.soilType,
-          documents: landData.documents || []
+          name: FieldsData.name,
+          description: FieldsData.description,
+          location: FieldsData.location,
+          area: FieldsData.area,
+          coordinates: FieldsData.coordinates,
+          propertyType: FieldsData.propertyType,
+          soilType: FieldsData.soilType,
+          documents: FieldsData.documents || []
         },
         status: 'active',
         createdAt: new Date(),
@@ -304,8 +304,8 @@ class BlockchainService {
       // Create notification for user
       await notificationService.createBlockchainNotification(
         userId,
-        'Land Token Created',
-        `Your land token for ${landData.name} has been created successfully.`,
+        'Fields Token Created',
+        `Your Fields token for ${FieldsData.name} has been created successfully.`,
         {
           type: 'success',
           priority: 'medium',
@@ -322,8 +322,8 @@ class BlockchainService {
         createdAt: token.createdAt
       };
     } catch (error) {
-      console.error('Error creating land token:', error);
-      throw new Error('Failed to create land token');
+      console.error('Error creating Fields token:', error);
+      throw new Error('Failed to create Fields token');
     }
   }
   

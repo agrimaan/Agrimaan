@@ -9,17 +9,19 @@ import { Box, CircularProgress } from '@mui/material';
 
 // Layout and Common Components
 import Layout from './components/layout/Layout';
-import NotFound from './pages/NotFound';
+import NotFound from './pages/common/NotFound';
 
 // Authentication Components
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/common/Login';
+import Register from './pages/common/Register';
 import { loadUser } from './features/auth/authSlice';
 import { RootState } from './store';
+import Help from './pages/Help';
+
 
 // Farmer Components
-import Dashboard from './pages/FarmerDashboard';
-import Fields from './pages/farmer/Fields';
+import FarmerDashboard from './pages/farmer/FarmerDashboard';
+import FarmerFields from './pages/farmer/Fields';
 import FieldDetail from './pages/farmer/FieldDetail';
 import AddField from './pages/farmer/AddField';
 import EditField from './pages/farmer/EditField';
@@ -29,39 +31,64 @@ import Sensors from './pages/farmer/Sensors';
 import SensorDetail from './pages/farmer/SensorDetail';
 import Analytics from './pages/farmer/Analytics';
 import Weather from './pages/farmer/Weather';
-import Settings from './pages/farmer/Settings';
-import Profile from './pages/Profile';
-import Marketplace from './pages/Marketplace';
+import Settings from './pages/common/Settings';
+import Profile from './pages/common/Profile';
+import Marketplace from './pages/common/Marketplace';
+
+// Test Components
+import TestPage from './pages/common/TestPage';
 
 // Buyer Components
-import BuyerDashboard from './pages/BuyerDashboard';
-import Orders from './pages/Orders';
+import BuyerDashboard from './pages/buyer/BuyerDashboard';
+import BuyerMarketplace from './pages/buyer/BuyerMarketplace';
+import BuyerCart from './pages/buyer/BuyerCart';
+import BuyerSavedItems from './pages/buyer/BuyerSavedItems';
+import Orders from './pages/buyer/Orders';
+import OrderHistory from './pages/buyer/OrderHistory';
+import Payments from './pages/buyer/Payments';
+import Notifications from './pages/buyer/Notifications';
 
 // Admin Components
-import AdminDashboard from './pages/AdminDashboard';
-import Users from './pages/admin/Users';
-import AdminUserDetail from './pages/admin/UserDetail';
-import AdminUserEdit from './pages/admin/UserEdit';
-import AdminUserCreate from './pages/admin/UserCreate';
-import AdminFields from './pages/admin/Fields';
-import AdminFieldDetail from './pages/admin/FieldDetail';
-import AdminCrops from './pages/admin/Crops';
-import AdminCropDetail from './pages/admin/CropDetail';
-import AdminSensors from './pages/admin/Sensors';
-import AdminSensorDetail from './pages/admin/SensorDetail';
-import AdminOrders from './pages/admin/Orders';
-import AdminOrderDetail from './pages/admin/OrderDetail';
-import AdminSettings from './pages/admin/Settings';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import Users from './pages/admin/AdminUsers';
+import AdminUserDetail from './pages/admin/AdminUserDetail';
+import AdminUserEdit from './pages/admin/AdminUserEdit';
+import AdminUserCreate from './pages/admin/AdminUserCreate';
+import AdminFields from './pages/admin/AdminFields';
+import AdminFieldDetail from './pages/admin/AdminFieldDetail';
+import AdminCrops from './pages/admin/AdminCrops';
+import AdminCropDetail from './pages/admin/AdminCropDetail';
+import AdminSensors from './pages/admin/AdminSensors';
+import AdminSensorDetail from './pages/admin/AdminSensorDetail';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminOrderDetail from './pages/admin/AdminOrderDetail';
+import AdminSettings from './pages/admin/AdminSettings';
 
 // Logistics Components
-import LogisticsDashboard from './pages/LogisticsDashboard';
+import LogisticsDashboard from './pages/logistics/LogisticsDashboard';
 import Deliveries from './pages/logistics/Deliveries';
 import AvailableRequests from './pages/logistics/AvailableRequests';
+import Earnings from './pages/logistics/Earnings';
+import Reviews from './pages/logistics/Reviews';
 
 // Agronomist Components
-import AgronomistDashboard from './pages/AgronomistDashboard';
+import AgronomistDashboard from './pages/agronomist/AgronomistDashboard';
 import FieldAnalysis from './pages/agronomist/FieldAnalysis';
 import Recommendations from './pages/agronomist/Recommendations';
+import AgromonistFields from './pages/agronomist/Fields';
+import Consultations from './pages/agronomist/Consultations';
+import CropIssues from './pages/agronomist/CropIssues';
+
+// Investor Components
+import InvestorDashboard from './pages/investor/InvestorDashboard';
+import AgronomistFields from './pages/agronomist/Fields';
+import InvestorReturns from './pages/investor/InvestorReturns';
+import InvestorPortfolio from './pages/investor/InvestorPortfolio';
+import FarmProjects from './pages/investor/FarmProjects';
+import AgronomistAnalytics from './pages/agronomist/AgronomistAnalytics';
+import ProjectDetail from './pages/investor/ProjectDetail';
+
+//import AgronomistSettings from './pages/agronomist/AgronomistSettings';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -100,7 +127,7 @@ const App: React.FC = () => {
       case 'agronomist':
         return '/agronomist';
       case 'investor':
-        return '/';
+        return '/investor';
       default:
         return '/';
     }
@@ -115,9 +142,9 @@ const App: React.FC = () => {
           <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to={getHomeRoute()} />} />
           
           {/* Farmer Routes */}
-          <Route path="/" element={isAuthenticated && user?.role === 'farmer' ? <Layout /> : <Navigate to="/login" />}>
-            <Route index element={<Dashboard />} />
-            <Route path="fields" element={<Fields />} />
+          <Route path="/" element={isAuthenticated && user?.role === 'farmer' ? <Layout /> : <Navigate to="/login" replace />}>
+            <Route index element={<FarmerDashboard />} />
+            <Route path="fields" element={<FarmerFields />} />
             <Route path="fields/new" element={<AddField />} />
             <Route path="fields/:id/edit" element={<EditField />} />
             <Route path="fields/:id" element={<FieldDetail />} />
@@ -130,15 +157,22 @@ const App: React.FC = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
             <Route path="marketplace" element={<Marketplace />} />
+            <Route path="help" element={<Help />} />
           </Route>
           
           {/* Buyer Routes */}
           <Route path="/buyer" element={isAuthenticated && user?.role === 'buyer' ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<BuyerDashboard />} />
-            <Route path="marketplace" element={<Marketplace />} />
+            <Route path="marketplace" element={<BuyerMarketplace />} />
+            <Route path="cart" element={<BuyerCart />} />
+            <Route path="saved" element={<BuyerSavedItems />} />
             <Route path="orders" element={<Orders />} />
+            <Route path="history" element={<OrderHistory />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="notifications" element={<Notifications />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="help" element={<Help />} />
           </Route>
           
           {/* Admin Routes */}
@@ -158,6 +192,7 @@ const App: React.FC = () => {
             <Route path="orders/:id" element={<AdminOrderDetail />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="help" element={<Help />} />
           </Route>
           
           {/* Logistics Routes */}
@@ -165,18 +200,44 @@ const App: React.FC = () => {
             <Route index element={<LogisticsDashboard />} />
             <Route path="deliveries" element={<Deliveries />} />
             <Route path="available-requests" element={<AvailableRequests />} />
+            <Route path="earnings" element={<Earnings />} />
+            <Route path="reviews" element={<Reviews />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="help" element={<Help />} />
           </Route>
           
-          {/* Agronomist Routes */}
-          <Route path="/agronomist" element={isAuthenticated && user?.role === 'agronomist' ? <Layout /> : <Navigate to="/login" />}>
+    {/* Agronomist Routes */}
+    <Route path="/agronomist" element={isAuthenticated && user?.role === 'agronomist' ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<AgronomistDashboard />} />
+            <Route path="fields" element={<AgronomistFields />} />
             <Route path="fields/:id" element={<FieldAnalysis />} />
             <Route path="recommendations" element={<Recommendations />} />
+            <Route path="consultations" element={<Consultations />} />
+            <Route path="crop-issues" element={<CropIssues />} />
+            <Route path="analytics" element={<AgronomistAnalytics />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="help" element={<Help />} />
           </Route>
+
+          
+          {/* Investor Routes */}
+          <Route path="/investor" element={isAuthenticated && user?.role === 'investor' ? <Layout /> : <Navigate to="/login" />}>
+            <Route index element={<InvestorDashboard />} />
+            <Route path="investments" element={<InvestorDashboard />} />
+            <Route path="projects" element={<FarmProjects />} />
+            <Route path="projects/:id" element={<ProjectDetail />} />
+            <Route path="portfolio" element={<InvestorPortfolio />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="returns" element={<InvestorReturns />} />
+            <Route path="trends" element={<InvestorDashboard />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="help" element={<Help />} />
+          </Route>
+          
+          {/* Test Route - accessible to all authenticated users */}
+          <Route path="/test" element={isAuthenticated ? <TestPage /> : <Navigate to="/login" />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

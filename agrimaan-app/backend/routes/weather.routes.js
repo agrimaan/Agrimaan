@@ -3,38 +3,38 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Weather = require('../models/Weather');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const auth = require('../middleware/auth');
 const weatherService = require('../services/weather.service');
 
-// @route   GET api/weather/field/:fieldId/current
-// @desc    Get current weather for a field
+// @route   GET api/weather/Fields/:FieldsId/current
+// @desc    Get current weather for a Fields
 // @access  Private
-router.get('/field/:fieldId/current', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/current', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get field location
-    const { location } = field;
+    // Get Fields location
+    const { location } = Fields;
     if (!location || !location.lat || !location.lng) {
-      return res.status(400).json({ message: 'Field location not available' });
+      return res.status(400).json({ message: 'Fields location not available' });
     }
     
     // Get current weather data
     const weatherData = await weatherService.getCurrentWeather(location.lat, location.lng);
     
     // Save weather data to database
-    const savedWeather = await weatherService.saveWeatherData(fieldId, weatherData);
+    const savedWeather = await weatherService.saveWeatherData(FieldsId, weatherData);
     
     res.json({
       weather: weatherData,
@@ -46,21 +46,21 @@ router.get('/field/:fieldId/current', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/weather/field/:fieldId/history
-// @desc    Get historical weather data for a field
+// @route   GET api/weather/Fields/:FieldsId/history
+// @desc    Get historical weather data for a Fields
 // @access  Private
-router.get('/field/:fieldId/history', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/history', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     const { startDate, endDate } = req.query;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
@@ -82,7 +82,7 @@ router.get('/field/:fieldId/history', auth, async (req, res) => {
     
     // Get historical weather data
     const weatherHistory = await weatherService.getHistoricalWeather(
-      fieldId, 
+      FieldsId, 
       parsedStartDate, 
       parsedEndDate
     );
@@ -94,27 +94,27 @@ router.get('/field/:fieldId/history', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/weather/field/:fieldId/forecast
-// @desc    Get weather forecast for a field
+// @route   GET api/weather/Fields/:FieldsId/forecast
+// @desc    Get weather forecast for a Fields
 // @access  Private
-router.get('/field/:fieldId/forecast', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/forecast', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get field location
-    const { location } = field;
+    // Get Fields location
+    const { location } = Fields;
     if (!location || !location.lat || !location.lng) {
-      return res.status(400).json({ message: 'Field location not available' });
+      return res.status(400).json({ message: 'Fields location not available' });
     }
     
     // Get current weather data which includes forecast
@@ -129,25 +129,25 @@ router.get('/field/:fieldId/forecast', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/weather/field/:fieldId/alerts
-// @desc    Get weather alerts for a field
+// @route   GET api/weather/Fields/:FieldsId/alerts
+// @desc    Get weather alerts for a Fields
 // @access  Private
-router.get('/field/:fieldId/alerts', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/alerts', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
     // Get weather alerts
-    const alerts = await weatherService.getWeatherAlerts(fieldId, field);
+    const alerts = await weatherService.getWeatherAlerts(FieldsId, Fields);
     
     res.json(alerts);
   } catch (err) {
@@ -162,28 +162,28 @@ router.get('/field/:fieldId/alerts', auth, async (req, res) => {
 router.get('/fields/summary', auth, async (req, res) => {
   try {
     // Get user's fields
-    const fields = await Field.find({ owner: req.user.id });
+    const fields = await Fields.find({ owner: req.user.id });
     
     if (fields.length === 0) {
       return res.json([]);
     }
     
-    // Get latest weather data for each field
+    // Get latest weather data for each Fields
     const weatherSummaries = [];
     
-    for (const field of fields) {
+    for (const Fields of fields) {
       // Get latest weather record
-      const latestWeather = await Weather.findOne({ field: field._id })
+      const latestWeather = await Weather.findOne({ Fields: Fields._id })
         .sort({ date: -1 })
         .limit(1);
       
       // If no weather data exists, get current weather
       let weatherData;
       if (!latestWeather) {
-        // Only fetch if field has location
-        if (field.location && field.location.lat && field.location.lng) {
-          weatherData = await weatherService.getCurrentWeather(field.location.lat, field.location.lng);
-          await weatherService.saveWeatherData(field._id, weatherData);
+        // Only fetch if Fields has location
+        if (Fields.location && Fields.location.lat && Fields.location.lng) {
+          weatherData = await weatherService.getCurrentWeather(Fields.location.lat, Fields.location.lng);
+          await weatherService.saveWeatherData(Fields._id, weatherData);
         }
       } else {
         weatherData = {
@@ -200,13 +200,13 @@ router.get('/fields/summary', auth, async (req, res) => {
       }
       
       // Get alerts
-      const alerts = await weatherService.getWeatherAlerts(field._id, field);
+      const alerts = await weatherService.getWeatherAlerts(Fields._id, Fields);
       
       weatherSummaries.push({
-        field: {
-          id: field._id,
-          name: field.name,
-          location: field.location
+        Fields: {
+          id: Fields._id,
+          name: Fields.name,
+          location: Fields.location
         },
         weather: weatherData,
         alerts,
@@ -221,37 +221,37 @@ router.get('/fields/summary', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/weather/field/:fieldId/refresh
-// @desc    Refresh weather data for a field
+// @route   POST api/weather/Fields/:FieldsId/refresh
+// @desc    Refresh weather data for a Fields
 // @access  Private
-router.post('/field/:fieldId/refresh', auth, async (req, res) => {
+router.post('/Fields/:FieldsId/refresh', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get field location
-    const { location } = field;
+    // Get Fields location
+    const { location } = Fields;
     if (!location || !location.lat || !location.lng) {
-      return res.status(400).json({ message: 'Field location not available' });
+      return res.status(400).json({ message: 'Fields location not available' });
     }
     
     // Get current weather data
     const weatherData = await weatherService.getCurrentWeather(location.lat, location.lng);
     
     // Save weather data to database
-    const savedWeather = await weatherService.saveWeatherData(fieldId, weatherData);
+    const savedWeather = await weatherService.saveWeatherData(FieldsId, weatherData);
     
     // Get alerts
-    const alerts = await weatherService.getWeatherAlerts(fieldId, field);
+    const alerts = await weatherService.getWeatherAlerts(FieldsId, Fields);
     
     res.json({
       weather: weatherData,

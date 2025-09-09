@@ -63,7 +63,7 @@ const mockCategories = [
   'Tools',
   'Irrigation',
   'Livestock',
-  'Farmland',
+  'FarmFields',
   'Services'
 ];
 
@@ -98,7 +98,7 @@ const mockProducts = Array(24).fill(null).map((_, index) => ({
     'Palo Alto, CA',
     'Sacramento, CA',
     'Fresno, CA',
-    'Bakersfield, CA',
+    'BakersFields, CA',
     'San Jose, CA',
     'Modesto, CA'
   ][index % 6],

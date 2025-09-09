@@ -195,7 +195,7 @@ const Header: React.FC<HeaderProps> = ({ open, toggleDrawer }) => {
         
         <MenuItem onClick={handleMenuClose}>
           <Box>
-            <Typography variant="body2">Soil moisture low in Field 1</Typography>
+            <Typography variant="body2">Soil moisture low in Fields 1</Typography>
             <Typography variant="caption" color="text.secondary">
               10 minutes ago
             </Typography>

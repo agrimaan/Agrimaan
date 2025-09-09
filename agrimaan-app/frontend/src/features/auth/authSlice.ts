@@ -11,6 +11,23 @@ interface User {
   role: string;
   fields?: string[];
   profileImage?: string;
+  logistics?: {
+    vehicleTypes: string[];
+    serviceAreas: Array<{
+      state: string;
+      districts: string[];
+    }>;
+    capacity: {
+      maxWeight: number;
+      maxVolume: number;
+    };
+    services: string[];
+    verified: boolean;
+    rating: {
+      average: number;
+      count: number;
+    };
+  };
 }
 
 interface AuthState {
@@ -55,7 +72,7 @@ export const loadUser = createAsyncThunk(
     }
     setAuthToken(token);
     try {
-  const res = await axios.get(`${API_BASE_URL}/api/auth/me`);
+      const res = await axios.get(`${API_BASE_URL}/api/auth/me`);
       return res.data;
     } catch (err: any) {
       setAuthToken(null);
@@ -69,16 +86,16 @@ export const register = createAsyncThunk(
   'auth/register',
   async (formData: RegisterData, { dispatch, rejectWithValue }) => {
     try {
-  const res = await axios.post(`${API_BASE_URL}/api/auth/register`, formData);
+      const res = await axios.post(`${API_BASE_URL}/api/auth/register`, formData);
       
       dispatch(setAlert({
         message: 'Registration successful! Welcome to agrimaan.',
         type: 'success'
       }) as any);
       
-  // Set token in axios headers and localStorage after registration
-  setAuthToken(res.data.token);
-  return res.data;
+      // Set token in axios headers and localStorage after registration
+      setAuthToken(res.data.token);
+      return res.data;
     } catch (err: any) {
       const errors = err.response?.data?.errors;
       
@@ -101,7 +118,8 @@ export const login = createAsyncThunk(
   'auth/login',
   async (formData: LoginCredentials, { rejectWithValue }) => {
     try {
-  const res = await axios.post(`${API_BASE_URL}/api/auth/login`, formData);
+      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, formData);
+      console.log('Login response:', res.data);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Invalid credentials');
@@ -119,7 +137,7 @@ export const updateProfile = createAsyncThunk(
       if (!userId) {
         return rejectWithValue('User not authenticated');
       }
-  const res = await axios.put(`${API_BASE_URL}/api/users/${userId}`, formData);
+      const res = await axios.put(`${API_BASE_URL}/api/users/${userId}`, formData);
       dispatch(setAlert({
         message: 'Profile updated successfully',
         type: 'success'
@@ -127,6 +145,28 @@ export const updateProfile = createAsyncThunk(
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update profile');
+    }
+  }
+);
+
+// Update logistics profile
+export const updateLogisticsProfile = createAsyncThunk(
+  'auth/updateLogisticsProfile',
+  async (formData: any, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const state = getState() as { auth: AuthState };
+      const userId = state.auth.user?.id;
+      if (!userId) {
+        return rejectWithValue('User not authenticated');
+      }
+      const res = await axios.put(`${API_BASE_URL}/api/users/${userId}/logistics`, formData);
+      dispatch(setAlert({
+        message: 'Logistics profile updated successfully',
+        type: 'success'
+      }) as any);
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to update logistics profile');
     }
   }
 );
@@ -144,7 +184,7 @@ export const changePassword = createAsyncThunk(
       if (!userId) {
         return rejectWithValue('User not authenticated');
       }
-  await axios.put(`${API_BASE_URL}/api/users/${userId}/change-password`, {
+      await axios.put(`${API_BASE_URL}/api/users/${userId}/change-password`, {
         currentPassword,
         newPassword
       });
@@ -161,7 +201,7 @@ export const changePassword = createAsyncThunk(
 
 // Initial state
 const initialState: AuthState = {
-  token: localStorage.getItem('token'),
+ token: localStorage.getItem('token'),
   isAuthenticated: false,
   // Note: If you do not call loadUser on app mount, set loading to false
   loading: true,
@@ -197,12 +237,12 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(loadUser.rejected, (state, action) => {
-      state.token = null;
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.user = null;
-      // Only set error if there is a real error message
-      state.error = action.payload ? (action.payload as string) : null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.loading = false;
+        state.user = null;
+        // Only set error if there is a real error message
+        state.error = action.payload ? (action.payload as string) : null;
       })
       
       // Register
@@ -243,6 +283,14 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(updateProfile.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+      
+      // Update logistics profile
+      .addCase(updateLogisticsProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(updateLogisticsProfile.rejected, (state, action) => {
         state.error = action.payload as string;
       })
       

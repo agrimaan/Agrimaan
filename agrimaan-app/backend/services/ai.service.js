@@ -2,7 +2,23 @@
 require('dotenv').config();
 const OpenAI = require('openai');
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Check if API key is valid (not a placeholder)
+const isValidApiKey = (key) => {
+  return key && typeof key === 'string' && !key.includes('placeholder');
+};
+
+// Create client only if API key is valid
+let client = null;
+try {
+  if (isValidApiKey(process.env.OPENAI_API_KEY)) {
+    client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  } else {
+    console.warn('[AI] Invalid or placeholder API key - AI features will use fallback responses');
+  }
+} catch (error) {
+  console.error('[AI] Error initializing OpenAI client:', error.message);
+}
+
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
 // Detect 429 / quota / rate-limit from various shapes
@@ -44,14 +60,14 @@ function heuristicWeatherAdvice(bundle = {}) {
   const warns = [];
 
   if (windMax >= 35) risks.push('Strong wind risk (≥35 km/h) for spraying/harvest.');
-  if (rainSum >= 10) risks.push(`Rain expected (~${Math.round(rainSum)} mm) — field access may be limited.`);
+  if (rainSum >= 10) risks.push(`Rain expected (~${Math.round(rainSum)} mm) — Fields access may be limited.`);
   if (maxTemp >= 35) risks.push('Heat stress risk in afternoons (≥35°C).');
   if (minTemp <= 2)  risks.push('Possible frost early mornings (≤2°C).');
 
   if (windMax < 20) recs.push('Prefer spraying in the calm window (<20 km/h).');
   if (rainSum === 0) recs.push('Irrigate in cool hours if soil moisture is low.');
   if (rainSum > 0)  recs.push('Avoid spraying close to rain; aim for dry breaks.');
-  recs.push('Plan harvest/field work in driest, light-wind periods.');
+  recs.push('Plan harvest/Fields work in driest, light-wind periods.');
 
   const station = current.station || bundle?.meta?.station || 'local station';
   const nowTemp = current.temp_c ?? current.temperature ?? '—';
@@ -83,22 +99,40 @@ function buildWeatherMessages(bundle) {
 }
 
 async function gptChat({ messages = [], system, temperature = 0.7 }) {
-  if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY missing');
-  const result = await client.chat.completions.create({
-    model: MODEL,
-    messages: [...(system ? [{ role: 'system', content: system }] : []), ...messages],
-    temperature,
-  });
-  return {
-    content: result.choices?.[0]?.message?.content ?? '',
-    usage: result.usage || null,
-    model: result.model,
-  };
+  // No client or invalid API key? Return a fallback response
+  if (!client || !isValidApiKey(process.env.OPENAI_API_KEY)) {
+    return {
+      content: 'AI features are currently unavailable. Please check your API configuration.',
+      usage: null,
+      model: 'fallback',
+    };
+  }
+
+  try {
+    const result = await client.chat.completions.create({
+      model: MODEL,
+      messages: [...(system ? [{ role: 'system', content: system }] : []), ...messages],
+      temperature,
+    });
+    return {
+      content: result.choices?.[0]?.message?.content ?? '',
+      usage: result.usage || null,
+      model: result.model,
+    };
+  } catch (error) {
+    console.error('[AI] Error in gptChat:', error.message);
+    return {
+      content: 'An error occurred while processing your request.',
+      usage: null,
+      model: 'error',
+    };
+  }
 }
 
 async function gptWeatherAdvice(bundle) {
-  // No key? Go straight to heuristic
-  if (!process.env.OPENAI_API_KEY) {
+  // No client or invalid API key? Go straight to heuristic
+  if (!client || !isValidApiKey(process.env.OPENAI_API_KEY)) {
+    console.warn('[AI] No valid API key - using heuristic fallback');
     return heuristicWeatherAdvice(bundle);
   }
 
@@ -126,7 +160,8 @@ async function gptWeatherAdvice(bundle) {
       return heuristicWeatherAdvice(bundle);
     }
     // Anything else bubbles up to the route (to become 4xx/5xx)
-    throw err;
+    console.error('[AI] Error in gptWeatherAdvice:', err.message);
+    return heuristicWeatherAdvice(bundle);
   }
 }
 

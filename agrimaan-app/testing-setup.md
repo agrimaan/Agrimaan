@@ -144,8 +144,8 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.json([
-        { id: '1', name: 'Field 1', area: 25.4 },
-        { id: '2', name: 'Field 2', area: 18.7 },
+        { id: '1', name: 'Fields 1', area: 25.4 },
+        { id: '2', name: 'Fields 2', area: 18.7 },
       ])
     );
   }),
@@ -330,21 +330,21 @@ describe('DashboardWidget', () => {
 
 ### 4.2 Backend API Test Example
 
-Create `backend/src/controllers/__tests__/fieldController.test.ts`:
+Create `backend/src/controllers/__tests__/FieldsController.test.ts`:
 
 ```typescript
 import { expect } from 'chai';
 import sinon from 'sinon';
 import request from 'supertest';
 import { app } from '../../app';
-import { Field } from '../../models/Field';
+import { Fields } from '../../models/Fields';
 
-describe('Field Controller', () => {
+describe('Fields Controller', () => {
   let findStub: sinon.SinonStub;
   
   beforeEach(() => {
-    // Stub the Field model's find method
-    findStub = sinon.stub(Field, 'find');
+    // Stub the Fields model's find method
+    findStub = sinon.stub(Fields, 'find');
   });
   
   afterEach(() => {
@@ -355,18 +355,18 @@ describe('Field Controller', () => {
   describe('GET /api/fields', () => {
     it('should return all fields', async () => {
       // Setup the stub to return test data
-      const mockFields = [
-        { id: '1', name: 'Field 1', area: 25.4 },
-        { id: '2', name: 'Field 2', area: 18.7 },
+      const mockfields = [
+        { id: '1', name: 'Fields 1', area: 25.4 },
+        { id: '2', name: 'Fields 2', area: 18.7 },
       ];
-      findStub.resolves(mockFields);
+      findStub.resolves(mockfields);
       
       // Make the request
       const response = await request(app).get('/api/fields');
       
       // Assertions
       expect(response.status).to.equal(200);
-      expect(response.body).to.deep.equal(mockFields);
+      expect(response.body).to.deep.equal(mockfields);
       expect(findStub.calledOnce).to.be.true;
     });
     
@@ -550,7 +550,7 @@ jobs:
 - Day 5: Write tests for API endpoints
 
 ### Week 3: Feature Tests
-- Day 1-2: Write tests for field management and mapping
+- Day 1-2: Write tests for Fields management and mapping
 - Day 3-4: Write tests for marketplace features
 - Day 5: Write end-to-end tests for critical user flows
 

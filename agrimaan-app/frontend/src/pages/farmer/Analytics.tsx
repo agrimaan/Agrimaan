@@ -51,7 +51,7 @@ function TabPanel(props: TabPanelProps) {
 const Analytics: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [timeRange, setTimeRange] = useState('7days');
-  const [selectedField, setSelectedField] = useState('all');
+  const [selectedFields, setSelectedFields] = useState('all');
   const [selectedCrop, setSelectedCrop] = useState('all');
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -62,8 +62,8 @@ const Analytics: React.FC = () => {
     setTimeRange(event.target.value);
   };
 
-  const handleFieldChange = (event: SelectChangeEvent) => {
-    setSelectedField(event.target.value);
+  const handleFieldsChange = (event: SelectChangeEvent) => {
+    setSelectedFields(event.target.value);
   };
 
   const handleCropChange = (event: SelectChangeEvent) => {
@@ -107,19 +107,19 @@ const Analytics: React.FC = () => {
         </Grid>
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth>
-            <InputLabel id="field-select-label">Field</InputLabel>
+            <InputLabel id="Fields-select-label">Fields</InputLabel>
             <Select
-              labelId="field-select-label"
-              id="field-select"
-              value={selectedField}
-              label="Field"
-              onChange={handleFieldChange}
+              labelId="Fields-select-label"
+              id="Fields-select"
+              value={selectedFields}
+              label="Fields"
+              onChange={handleFieldsChange}
             >
-              <MenuItem value="all">All Fields</MenuItem>
-              <MenuItem value="north">North Field</MenuItem>
-              <MenuItem value="south">South Field</MenuItem>
-              <MenuItem value="east">East Field</MenuItem>
-              <MenuItem value="west">West Field</MenuItem>
+              <MenuItem value="all">All fields</MenuItem>
+              <MenuItem value="north">North Fields</MenuItem>
+              <MenuItem value="south">South Fields</MenuItem>
+              <MenuItem value="east">East Fields</MenuItem>
+              <MenuItem value="west">West Fields</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -225,7 +225,7 @@ const Analytics: React.FC = () => {
                       <CardContent>
                         <Typography variant="subtitle1">Pest Alert</Typography>
                         <Typography variant="body2">
-                          Early detection of aphid population in the South Field. 
+                          Early detection of aphid population in the South Fields. 
                           Recommended action: targeted treatment in affected areas.
                         </Typography>
                       </CardContent>
@@ -362,7 +362,7 @@ const Analytics: React.FC = () => {
             </Grid>
             <Grid item xs={12}>
               <Paper sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom>Yield Comparison by Field</Typography>
+                <Typography variant="h6" gutterBottom>Yield Comparison by Fields</Typography>
                 <Box sx={{ 
                   height: 300, 
                   bgcolor: 'grey.100', 

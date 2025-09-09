@@ -37,8 +37,8 @@ function TabPanel(props: TabPanelProps) {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`field-tabpanel-${index}`}
-      aria-labelledby={`field-tab-${index}`}
+      id={`Fields-tabpanel-${index}`}
+      aria-labelledby={`Fields-tab-${index}`}
       {...other}
     >
       {value === index && (
@@ -50,10 +50,10 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-// Mock field data
-const mockField = {
+// Mock Fields data
+const mockFields = {
   id: 1,
-  name: 'North Field',
+  name: 'North Fields',
   area: '12.5 acres',
   location: '34.0522° N, 118.2437° W',
   soilType: 'Loamy',
@@ -90,12 +90,12 @@ const mockField = {
 
 const FieldDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [field] = useState(mockField);
+  const [Fields] = useState(mockFields);
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
-    // In a real app, you would fetch the field data based on the ID
-    console.log(`Fetching field with ID: ${id}`);
+    // In a real app, you would fetch the Fields data based on the ID
+    console.log(`Fetching Fields with ID: ${id}`);
     // For now, we're using mock data
   }, [id]);
 
@@ -112,49 +112,49 @@ const FieldDetail: React.FC = () => {
           startIcon={<ArrowBackIcon />}
           sx={{ mb: 2 }}
         >
-          Back to Fields
+          Back to fields
         </Button>
         <Button
           variant="contained"
           startIcon={<EditIcon />}
         >
-          Edit Field
+          Edit Fields
         </Button>
       </Box>
 
       <Typography variant="h4" gutterBottom>
-        {field.name}
+        {Fields.name}
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Field Information</Typography>
+            <Typography variant="h6" gutterBottom>Fields Information</Typography>
             <List dense>
               <ListItem>
-                <ListItemText primary="Area" secondary={field.area} />
+                <ListItemText primary="Area" secondary={Fields.area} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Location" secondary={field.location} />
+                <ListItemText primary="Location" secondary={Fields.location} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Soil Type" secondary={field.soilType} />
+                <ListItemText primary="Soil Type" secondary={Fields.soilType} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Current Crop" secondary={field.currentCrop} />
+                <ListItemText primary="Current Crop" secondary={Fields.currentCrop} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Planting Date" secondary={field.plantingDate} />
+                <ListItemText primary="Planting Date" secondary={Fields.plantingDate} />
               </ListItem>
               <ListItem>
-                <ListItemText primary="Expected Harvest" secondary={field.expectedHarvestDate} />
+                <ListItemText primary="Expected Harvest" secondary={Fields.expectedHarvestDate} />
               </ListItem>
             </List>
           </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom>Field Map</Typography>
+            <Typography variant="h6" gutterBottom>Fields Map</Typography>
             <Box sx={{ 
               height: 300, 
               bgcolor: 'grey.200', 
@@ -170,7 +170,7 @@ const FieldDetail: React.FC = () => {
 
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="field details tabs">
+          <Tabs value={tabValue} onChange={handleTabChange} aria-label="Fields details tabs">
             <Tab label="Soil Health" icon={<GrassIcon />} iconPosition="start" />
             <Tab label="Irrigation" icon={<WaterDropIcon />} iconPosition="start" />
             <Tab label="Sensors" icon={<WbSunnyIcon />} iconPosition="start" />
@@ -180,7 +180,7 @@ const FieldDetail: React.FC = () => {
         </Box>
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={2}>
-            {Object.entries(field.soilHealth).map(([key, value]) => (
+            {Object.entries(Fields.soilHealth).map(([key, value]) => (
               <Grid item xs={12} sm={6} md={4} key={key}>
                 <Card>
                   <CardContent>
@@ -200,7 +200,7 @@ const FieldDetail: React.FC = () => {
               <Card>
                 <CardContent>
                   <Typography variant="h6">System Type</Typography>
-                  <Typography variant="body1">{field.irrigation.system}</Typography>
+                  <Typography variant="body1">{Fields.irrigation.system}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -208,7 +208,7 @@ const FieldDetail: React.FC = () => {
               <Card>
                 <CardContent>
                   <Typography variant="h6">Schedule</Typography>
-                  <Typography variant="body1">{field.irrigation.schedule}</Typography>
+                  <Typography variant="body1">{Fields.irrigation.schedule}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -216,7 +216,7 @@ const FieldDetail: React.FC = () => {
               <Card>
                 <CardContent>
                   <Typography variant="h6">Water Usage</Typography>
-                  <Typography variant="body1">{field.irrigation.waterUsage}</Typography>
+                  <Typography variant="body1">{Fields.irrigation.waterUsage}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -224,7 +224,7 @@ const FieldDetail: React.FC = () => {
         </TabPanel>
         <TabPanel value={tabValue} index={2}>
           <Grid container spacing={2}>
-            {field.sensors.map((sensor) => (
+            {Fields.sensors.map((sensor) => (
               <Grid item xs={12} sm={6} md={4} key={sensor.id}>
                 <Card>
                   <CardContent>
@@ -250,7 +250,7 @@ const FieldDetail: React.FC = () => {
         </TabPanel>
         <TabPanel value={tabValue} index={3}>
           <List>
-            {field.issues.map((issue) => (
+            {Fields.issues.map((issue) => (
               <Paper key={issue.id} sx={{ mb: 2, p: 2 }}>
                 <Typography variant="h6" color={
                   issue.severity === 'High' ? 'error.main' : 
@@ -267,7 +267,7 @@ const FieldDetail: React.FC = () => {
         </TabPanel>
         <TabPanel value={tabValue} index={4}>
           <List>
-            {field.cropHistory.map((history, index) => (
+            {Fields.cropHistory.map((history, index) => (
               <React.Fragment key={index}>
                 <ListItem>
                   <ListItemIcon>
@@ -278,7 +278,7 @@ const FieldDetail: React.FC = () => {
                     secondary={`Yield: ${history.yield}`} 
                   />
                 </ListItem>
-                {index < field.cropHistory.length - 1 && <Divider />}
+                {index < Fields.cropHistory.length - 1 && <Divider />}
               </React.Fragment>
             ))}
           </List>

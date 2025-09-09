@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Request, Response } from 'express';
-import * as fieldController from '../fieldController';
-import Field from '../../models/Field';
+import * as FieldsController from '../FieldsController';
+import Fields from '../../models/Fields';
 import mongoose from 'mongoose';
 
-describe('Field Controller', () => {
+describe('Fields Controller', () => {
   // Create stubs for req, res objects
   let req: Partial<Request>;
   let res: Partial<Response>;
@@ -28,11 +28,11 @@ describe('Field Controller', () => {
     };
 
     // Setup database model stubs
-    findStub = sinon.stub(Field, 'find');
-    findByIdStub = sinon.stub(Field, 'findById');
-    createStub = sinon.stub(Field, 'create');
-    findByIdAndUpdateStub = sinon.stub(Field, 'findByIdAndUpdate');
-    findByIdAndDeleteStub = sinon.stub(Field, 'findByIdAndDelete');
+    findStub = sinon.stub(Fields, 'find');
+    findByIdStub = sinon.stub(Fields, 'findById');
+    createStub = sinon.stub(Fields, 'create');
+    findByIdAndUpdateStub = sinon.stub(Fields, 'findByIdAndUpdate');
+    findByIdAndDeleteStub = sinon.stub(Fields, 'findByIdAndDelete');
   });
 
   afterEach(() => {
@@ -40,13 +40,13 @@ describe('Field Controller', () => {
     sinon.restore();
   });
 
-  describe('getAllFields', () => {
+  describe('getAllfields', () => {
     it('should return all fields', async () => {
       // Mock data
-      const mockFields = [
+      const mockfields = [
         {
           _id: '60d21b4667d0d8992e610c85',
-          name: 'North Field',
+          name: 'North Fields',
           area: 25.4,
           location: {
             type: 'Point',
@@ -58,7 +58,7 @@ describe('Field Controller', () => {
         },
         {
           _id: '60d21b4667d0d8992e610c86',
-          name: 'South Field',
+          name: 'South Fields',
           area: 18.7,
           location: {
             type: 'Point',
@@ -71,15 +71,15 @@ describe('Field Controller', () => {
       ];
 
       // Setup the stub to return mock data
-      findStub.resolves(mockFields);
+      findStub.resolves(mockfields);
 
       // Call the controller method
-      await fieldController.getAllFields(req as Request, res as Response);
+      await FieldsController.getAllfields(req as Request, res as Response);
 
       // Verify the results
       expect(findStub.calledOnce).to.be.true;
       expect(statusStub.calledWith(200)).to.be.true;
-      expect(jsonStub.calledWith(mockFields)).to.be.true;
+      expect(jsonStub.calledWith(mockfields)).to.be.true;
     });
 
     it('should handle errors', async () => {
@@ -88,7 +88,7 @@ describe('Field Controller', () => {
       findStub.rejects(error);
 
       // Call the controller method
-      await fieldController.getAllFields(req as Request, res as Response);
+      await FieldsController.getAllfields(req as Request, res as Response);
 
       // Verify the results
       expect(findStub.calledOnce).to.be.true;
@@ -97,12 +97,12 @@ describe('Field Controller', () => {
     });
   });
 
-  describe('getFieldById', () => {
-    it('should return a field by ID', async () => {
+  describe('getFieldsById', () => {
+    it('should return a Fields by ID', async () => {
       // Mock data
-      const mockField = {
+      const mockFields = {
         _id: '60d21b4667d0d8992e610c85',
-        name: 'North Field',
+        name: 'North Fields',
         area: 25.4,
         location: {
           type: 'Point',
@@ -114,34 +114,34 @@ describe('Field Controller', () => {
       };
 
       // Setup request params
-      req.params = { id: mockField._id };
+      req.params = { id: mockFields._id };
 
       // Setup the stub to return mock data
-      findByIdStub.resolves(mockField);
+      findByIdStub.resolves(mockFields);
 
       // Call the controller method
-      await fieldController.getFieldById(req as Request, res as Response);
+      await FieldsController.getFieldsById(req as Request, res as Response);
 
       // Verify the results
-      expect(findByIdStub.calledWith(mockField._id)).to.be.true;
+      expect(findByIdStub.calledWith(mockFields._id)).to.be.true;
       expect(statusStub.calledWith(200)).to.be.true;
-      expect(jsonStub.calledWith(mockField)).to.be.true;
+      expect(jsonStub.calledWith(mockFields)).to.be.true;
     });
 
-    it('should return 404 if field not found', async () => {
+    it('should return 404 if Fields not found', async () => {
       // Setup request params
       req.params = { id: '60d21b4667d0d8992e610c85' };
 
-      // Setup the stub to return null (field not found)
+      // Setup the stub to return null (Fields not found)
       findByIdStub.resolves(null);
 
       // Call the controller method
-      await fieldController.getFieldById(req as Request, res as Response);
+      await FieldsController.getFieldsById(req as Request, res as Response);
 
       // Verify the results
       expect(findByIdStub.calledWith(req.params.id)).to.be.true;
       expect(statusStub.calledWith(404)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Field not found' })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Fields not found' })).to.be.true;
     });
 
     it('should handle invalid ID format', async () => {
@@ -152,11 +152,11 @@ describe('Field Controller', () => {
       findByIdStub.rejects(new mongoose.Error.CastError('ObjectId', 'invalid-id', 'id'));
 
       // Call the controller method
-      await fieldController.getFieldById(req as Request, res as Response);
+      await FieldsController.getFieldsById(req as Request, res as Response);
 
       // Verify the results
       expect(statusStub.calledWith(400)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Invalid field ID format' })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Invalid Fields ID format' })).to.be.true;
     });
 
     it('should handle other errors', async () => {
@@ -168,20 +168,20 @@ describe('Field Controller', () => {
       findByIdStub.rejects(error);
 
       // Call the controller method
-      await fieldController.getFieldById(req as Request, res as Response);
+      await FieldsController.getFieldsById(req as Request, res as Response);
 
       // Verify the results
       expect(findByIdStub.calledWith(req.params.id)).to.be.true;
       expect(statusStub.calledWith(500)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Failed to fetch field', details: error.message })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Failed to fetch Fields', details: error.message })).to.be.true;
     });
   });
 
-  describe('createField', () => {
-    it('should create a new field', async () => {
+  describe('createFields', () => {
+    it('should create a new Fields', async () => {
       // Mock request body
-      const fieldData = {
-        name: 'East Field',
+      const FieldsData = {
+        name: 'East Fields',
         area: 15.2,
         location: {
           type: 'Point',
@@ -192,31 +192,31 @@ describe('Field Controller', () => {
         owner: '60d21b4667d0d8992e610c80'
       };
 
-      // Mock created field
-      const createdField = {
+      // Mock created Fields
+      const createdFields = {
         _id: '60d21b4667d0d8992e610c87',
-        ...fieldData
+        ...FieldsData
       };
 
       // Setup request body
-      req.body = fieldData;
+      req.body = FieldsData;
 
-      // Setup the stub to return the created field
-      createStub.resolves(createdField);
+      // Setup the stub to return the created Fields
+      createStub.resolves(createdFields);
 
       // Call the controller method
-      await fieldController.createField(req as Request, res as Response);
+      await FieldsController.createFields(req as Request, res as Response);
 
       // Verify the results
-      expect(createStub.calledWith(fieldData)).to.be.true;
+      expect(createStub.calledWith(FieldsData)).to.be.true;
       expect(statusStub.calledWith(201)).to.be.true;
-      expect(jsonStub.calledWith(createdField)).to.be.true;
+      expect(jsonStub.calledWith(createdFields)).to.be.true;
     });
 
     it('should handle validation errors', async () => {
-      // Mock request with invalid data (missing required field)
+      // Mock request with invalid data (missing required Fields)
       req.body = {
-        // Missing name field
+        // Missing name Fields
         area: 15.2,
         location: {
           type: 'Point',
@@ -232,7 +232,7 @@ describe('Field Controller', () => {
       createStub.rejects(validationError);
 
       // Call the controller method
-      await fieldController.createField(req as Request, res as Response);
+      await FieldsController.createFields(req as Request, res as Response);
 
       // Verify the results
       expect(statusStub.calledWith(400)).to.be.true;
@@ -245,7 +245,7 @@ describe('Field Controller', () => {
     it('should handle other errors', async () => {
       // Setup request body
       req.body = {
-        name: 'East Field',
+        name: 'East Fields',
         area: 15.2
       };
 
@@ -254,67 +254,67 @@ describe('Field Controller', () => {
       createStub.rejects(error);
 
       // Call the controller method
-      await fieldController.createField(req as Request, res as Response);
+      await FieldsController.createFields(req as Request, res as Response);
 
       // Verify the results
       expect(createStub.calledWith(req.body)).to.be.true;
       expect(statusStub.calledWith(500)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Failed to create field', details: error.message })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Failed to create Fields', details: error.message })).to.be.true;
     });
   });
 
-  describe('updateField', () => {
-    it('should update a field', async () => {
-      // Mock field ID and update data
-      const fieldId = '60d21b4667d0d8992e610c85';
+  describe('updateFields', () => {
+    it('should update a Fields', async () => {
+      // Mock Fields ID and update data
+      const FieldsId = '60d21b4667d0d8992e610c85';
       const updateData = {
-        name: 'Updated North Field',
+        name: 'Updated North Fields',
         crop: 'Soybeans'
       };
 
-      // Mock updated field
-      const updatedField = {
-        _id: fieldId,
-        name: 'Updated North Field',
+      // Mock updated Fields
+      const updatedFields = {
+        _id: FieldsId,
+        name: 'Updated North Fields',
         area: 25.4,
         crop: 'Soybeans',
         soilType: 'Clay Loam'
       };
 
       // Setup request params and body
-      req.params = { id: fieldId };
+      req.params = { id: FieldsId };
       req.body = updateData;
 
-      // Setup the stub to return the updated field
-      findByIdAndUpdateStub.resolves(updatedField);
+      // Setup the stub to return the updated Fields
+      findByIdAndUpdateStub.resolves(updatedFields);
 
       // Call the controller method
-      await fieldController.updateField(req as Request, res as Response);
+      await FieldsController.updateFields(req as Request, res as Response);
 
       // Verify the results
       expect(findByIdAndUpdateStub.calledWith(
-        fieldId,
+        FieldsId,
         updateData,
         { new: true, runValidators: true }
       )).to.be.true;
       expect(statusStub.calledWith(200)).to.be.true;
-      expect(jsonStub.calledWith(updatedField)).to.be.true;
+      expect(jsonStub.calledWith(updatedFields)).to.be.true;
     });
 
-    it('should return 404 if field not found', async () => {
+    it('should return 404 if Fields not found', async () => {
       // Setup request params and body
       req.params = { id: '60d21b4667d0d8992e610c85' };
-      req.body = { name: 'Updated Field' };
+      req.body = { name: 'Updated Fields' };
 
-      // Setup the stub to return null (field not found)
+      // Setup the stub to return null (Fields not found)
       findByIdAndUpdateStub.resolves(null);
 
       // Call the controller method
-      await fieldController.updateField(req as Request, res as Response);
+      await FieldsController.updateFields(req as Request, res as Response);
 
       // Verify the results
       expect(statusStub.calledWith(404)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Field not found' })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Fields not found' })).to.be.true;
     });
 
     it('should handle validation errors', async () => {
@@ -330,7 +330,7 @@ describe('Field Controller', () => {
       findByIdAndUpdateStub.rejects(validationError);
 
       // Call the controller method
-      await fieldController.updateField(req as Request, res as Response);
+      await FieldsController.updateFields(req as Request, res as Response);
 
       // Verify the results
       expect(statusStub.calledWith(400)).to.be.true;
@@ -343,62 +343,62 @@ describe('Field Controller', () => {
     it('should handle other errors', async () => {
       // Setup request params and body
       req.params = { id: '60d21b4667d0d8992e610c85' };
-      req.body = { name: 'Updated Field' };
+      req.body = { name: 'Updated Fields' };
 
       // Setup the stub to throw a generic error
       const error = new Error('Database error');
       findByIdAndUpdateStub.rejects(error);
 
       // Call the controller method
-      await fieldController.updateField(req as Request, res as Response);
+      await FieldsController.updateFields(req as Request, res as Response);
 
       // Verify the results
       expect(statusStub.calledWith(500)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Failed to update field', details: error.message })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Failed to update Fields', details: error.message })).to.be.true;
     });
   });
 
-  describe('deleteField', () => {
-    it('should delete a field', async () => {
-      // Mock field ID
-      const fieldId = '60d21b4667d0d8992e610c85';
+  describe('deleteFields', () => {
+    it('should delete a Fields', async () => {
+      // Mock Fields ID
+      const FieldsId = '60d21b4667d0d8992e610c85';
       
-      // Mock deleted field
-      const deletedField = {
-        _id: fieldId,
-        name: 'North Field',
+      // Mock deleted Fields
+      const deletedFields = {
+        _id: FieldsId,
+        name: 'North Fields',
         area: 25.4
       };
 
       // Setup request params
-      req.params = { id: fieldId };
+      req.params = { id: FieldsId };
 
-      // Setup the stub to return the deleted field
-      findByIdAndDeleteStub.resolves(deletedField);
+      // Setup the stub to return the deleted Fields
+      findByIdAndDeleteStub.resolves(deletedFields);
 
       // Call the controller method
-      await fieldController.deleteField(req as Request, res as Response);
+      await FieldsController.deleteFields(req as Request, res as Response);
 
       // Verify the results
-      expect(findByIdAndDeleteStub.calledWith(fieldId)).to.be.true;
+      expect(findByIdAndDeleteStub.calledWith(FieldsId)).to.be.true;
       expect(statusStub.calledWith(200)).to.be.true;
-      expect(jsonStub.calledWith({ message: 'Field deleted successfully', field: deletedField })).to.be.true;
+      expect(jsonStub.calledWith({ message: 'Fields deleted successfully', Fields: deletedFields })).to.be.true;
     });
 
-    it('should return 404 if field not found', async () => {
+    it('should return 404 if Fields not found', async () => {
       // Setup request params
       req.params = { id: '60d21b4667d0d8992e610c85' };
 
-      // Setup the stub to return null (field not found)
+      // Setup the stub to return null (Fields not found)
       findByIdAndDeleteStub.resolves(null);
 
       // Call the controller method
-      await fieldController.deleteField(req as Request, res as Response);
+      await FieldsController.deleteFields(req as Request, res as Response);
 
       // Verify the results
       expect(findByIdAndDeleteStub.calledWith(req.params.id)).to.be.true;
       expect(statusStub.calledWith(404)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Field not found' })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Fields not found' })).to.be.true;
     });
 
     it('should handle errors', async () => {
@@ -410,12 +410,12 @@ describe('Field Controller', () => {
       findByIdAndDeleteStub.rejects(error);
 
       // Call the controller method
-      await fieldController.deleteField(req as Request, res as Response);
+      await FieldsController.deleteFields(req as Request, res as Response);
 
       // Verify the results
       expect(findByIdAndDeleteStub.calledWith(req.params.id)).to.be.true;
       expect(statusStub.calledWith(500)).to.be.true;
-      expect(jsonStub.calledWith({ error: 'Failed to delete field', details: error.message })).to.be.true;
+      expect(jsonStub.calledWith({ error: 'Failed to delete Fields', details: error.message })).to.be.true;
     });
   });
 });

@@ -71,7 +71,7 @@ router.post(
     [
       body('toAddress', 'Recipient address is required').not().isEmpty(),
       body('amount', 'Amount must be a positive number').isFloat({ min: 0.000001 }),
-      body('tokenType', 'Token type is required').isIn(['AGM', 'LAND', 'FARMHOUSE', 'OTHER'])
+      body('tokenType', 'Token type is required').isIn(['AGM', 'Fields', 'FARMHOUSE', 'OTHER'])
     ]
   ],
   async (req, res) => {
@@ -236,7 +236,7 @@ router.post(
     auth,
     [
       body('contractName', 'Contract name is required').not().isEmpty(),
-      body('contractType', 'Contract type is required').isIn(['token', 'marketplace', 'supply_chain', 'yield_sharing', 'land_ownership', 'other']),
+      body('contractType', 'Contract type is required').isIn(['token', 'marketplace', 'supply_chain', 'yield_sharing', 'Fields_ownership', 'other']),
       body('abi', 'Contract ABI is required').not().isEmpty(),
       body('network', 'Network is required').isIn(['mainnet', 'testnet', 'polygon', 'polygon_testnet', 'private'])
     ]
@@ -355,11 +355,11 @@ router.get('/tokens/:id', auth, async (req, res) => {
   }
 });
 
-// @route   POST api/blockchain/tokens/land
-// @desc    Create a land token
+// @route   POST api/blockchain/tokens/Fields
+// @desc    Create a Fields token
 // @access  Private
 router.post(
-  '/tokens/land',
+  '/tokens/Fields',
   [
     auth,
     [
@@ -378,7 +378,7 @@ router.post(
     try {
       const { name, description, location, area, coordinates, propertyType, soilType, documents } = req.body;
       
-      const landData = {
+      const FieldsData = {
         name,
         description,
         location,
@@ -389,7 +389,7 @@ router.post(
         documents
       };
       
-      const token = await blockchainService.createLandToken(req.user.id, landData);
+      const token = await blockchainService.createFieldsToken(req.user.id, FieldsData);
       res.json(token);
     } catch (err) {
       console.error(err.message);
@@ -458,7 +458,7 @@ router.post(
     [
       body('tokenType', 'Token type is required').isIn(['ERC20', 'ERC721', 'ERC1155']),
       body('contractAddress', 'Contract address is required').not().isEmpty(),
-      body('assetType', 'Asset type is required').isIn(['land', 'farmhouse', 'equipment', 'crop_yield', 'other']),
+      body('assetType', 'Asset type is required').isIn(['Fields', 'farmhouse', 'equipment', 'crop_yield', 'other']),
       body('metadata', 'Metadata is required').not().isEmpty()
     ]
   ],
@@ -758,7 +758,7 @@ router.get('/market', auth, async (req, res) => {
       .limit(10);
     
     // Get token stats
-    const landTokens = await Blockchain.Token.countDocuments({ tokenType: 'LAND' });
+    const FieldsTokens = await Blockchain.Token.countDocuments({ tokenType: 'Fields' });
     const farmhouseTokens = await Blockchain.Token.countDocuments({ tokenType: 'FARMHOUSE' });
     const fractionalizedTokens = await Blockchain.Token.countDocuments({ fractionalized: true });
     
@@ -786,7 +786,7 @@ router.get('/market', auth, async (req, res) => {
         shares: tx.metadata.shares
       })),
       stats: {
-        landTokens,
+        FieldsTokens,
         farmhouseTokens,
         fractionalizedTokens,
         totalAGM: totalAGM.length > 0 ? totalAGM[0].total : 0

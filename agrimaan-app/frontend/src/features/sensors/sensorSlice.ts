@@ -33,7 +33,7 @@ export interface Sensor {
   _id: string;
   name: string;
   type: 'soil_moisture' | 'temperature' | 'humidity' | 'rainfall' | 'light' | 'wind' | 'soil_nutrient' | 'water_level' | 'other';
-  field: string;
+  Fields: string;
   location: Location;
   manufacturer?: string;
   model?: string;
@@ -68,14 +68,14 @@ interface SensorState {
 export const getSensors = createAsyncThunk(
   'sensor/getSensors',
   async (
-    { fieldId, type, status }: { fieldId?: string; type?: string; status?: string } = {},
+    { FieldsId, type, status }: { FieldsId?: string; type?: string; status?: string } = {},
     { rejectWithValue }
   ) => {
     try {
   let url = `${API_BASE_URL}/api/sensors`;
       const params = [];
       
-      if (fieldId) params.push(`fieldId=${fieldId}`);
+      if (FieldsId) params.push(`FieldsId=${FieldsId}`);
       if (type) params.push(`type=${type}`);
       if (status) params.push(`status=${status}`);
       

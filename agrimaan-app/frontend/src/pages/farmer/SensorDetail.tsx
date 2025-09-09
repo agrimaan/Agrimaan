@@ -61,7 +61,7 @@ const mockSensor = {
   type: 'Moisture',
   model: 'AgroSense MS-200',
   serialNumber: 'MS2-2024-1234',
-  field: 'North Field',
+  Fields: 'North Fields',
   location: '34.0522° N, 118.2437° W',
   installDate: '2024-01-15',
   status: 'Active',
@@ -126,29 +126,29 @@ const SensorDetail: React.FC = () => {
     setEditMode(!editMode);
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (Fields: string, value: any) => {
     setEditedSensor({
       ...editedSensor,
-      [field]: value
+      [Fields]: value
     });
   };
 
-  const handleThresholdChange = (field: string, value: string) => {
+  const handleThresholdChange = (Fields: string, value: string) => {
     setEditedSensor({
       ...editedSensor,
       thresholds: {
         ...editedSensor.thresholds,
-        [field]: value
+        [Fields]: value
       }
     });
   };
 
-  const handleAlertChange = (field: string, checked: boolean) => {
+  const handleAlertChange = (Fields: string, checked: boolean) => {
     setEditedSensor({
       ...editedSensor,
       alerts: {
         ...editedSensor.alerts,
-        [field]: checked
+        [Fields]: checked
       }
     });
   };
@@ -258,22 +258,22 @@ const SensorDetail: React.FC = () => {
               </ListItem>
               <ListItem>
                 <ListItemText 
-                  primary="Field" 
+                  primary="Fields" 
                   secondary={editMode ? 
                     <TextField 
                       select
-                      value={editedSensor.field} 
-                      onChange={(e) => handleInputChange('field', e.target.value)}
+                      value={editedSensor.Fields} 
+                      onChange={(e) => handleInputChange('Fields', e.target.value)}
                       variant="standard"
                       size="small"
                       fullWidth
                     >
-                      <MenuItem value="North Field">North Field</MenuItem>
-                      <MenuItem value="South Field">South Field</MenuItem>
-                      <MenuItem value="East Field">East Field</MenuItem>
-                      <MenuItem value="West Field">West Field</MenuItem>
+                      <MenuItem value="North Fields">North Fields</MenuItem>
+                      <MenuItem value="South Fields">South Fields</MenuItem>
+                      <MenuItem value="East Fields">East Fields</MenuItem>
+                      <MenuItem value="West Fields">West Fields</MenuItem>
                     </TextField> : 
-                    sensor.field
+                    sensor.Fields
                   } 
                 />
               </ListItem>

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../lib/api";
 import {
-  getWeatherAdviceByField,
+  getWeatherAdviceByFields,
   getWeatherAdviceByBundle,
   type WeatherAdvice,
 } from "../../services/ai";
@@ -16,7 +16,7 @@ export type Suggestion = {
   countryCode?: string | null;
 };
 
-type FieldLite = {
+type FieldsLite = {
   _id: string;
   name?: string;
   location?: { lat: number; lng: number };
@@ -36,10 +36,10 @@ export type WeatherResponse = {
 };
 
 interface WeatherState {
-  fields: FieldLite[];
+  fields: FieldsLite[];
   weather: WeatherResponse | null;
   advice: WeatherAdvice | null;
-  fieldName?: string;
+  FieldsName?: string;
   lastPickedLocation: Suggestion | null;
   loadingWeather: boolean;
   loadingAdvice: boolean;
@@ -50,7 +50,7 @@ const initialState: WeatherState = {
   fields: [],
   weather: null,
   advice: null,
-  fieldName: undefined,
+  FieldsName: undefined,
   lastPickedLocation: null,
   loadingWeather: false,
   loadingAdvice: false,
@@ -60,11 +60,11 @@ const initialState: WeatherState = {
 // -------------------- Thunks --------------------
 
 // Fetch all fields
-export const fetchFields = createAsyncThunk(
-  "weather/fetchFields",
+export const fetchfields = createAsyncThunk(
+  "weather/fetchfields",
   async (_, { rejectWithValue }) => {
     try {
-      const list = await api<FieldLite[]>("/api/fields");
+      const list = await api<FieldsLite[]>("/api/fields");
       return Array.isArray(list)
         ? list.sort((a, b) => (a.name || "").localeCompare(b.name || ""))
         : [];
@@ -74,14 +74,14 @@ export const fetchFields = createAsyncThunk(
   }
 );
 
-// Fetch weather by field ID
-export const fetchWeatherByField = createAsyncThunk(
-  "weather/fetchWeatherByField",
+// Fetch weather by Fields ID
+export const fetchWeatherByFields = createAsyncThunk(
+  "weather/fetchWeatherByFields",
   async (id: string, { rejectWithValue }) => {
     try {
       const wx = await api<WeatherResponse>(`/api/weather/current/${id}`);
-      const advice = await getWeatherAdviceByField(id);
-      return { wx, advice, fieldId: id };
+      const advice = await getWeatherAdviceByFields(id);
+      return { wx, advice, FieldsId: id };
     } catch (e: any) {
       return rejectWithValue(e?.message || "Failed to fetch weather/advice");
     }
@@ -134,7 +134,7 @@ const weatherSlice = createSlice({
     clearWeather: (state) => {
       state.weather = null;
       state.advice = null;
-      state.fieldName = undefined;
+      state.FieldsName = undefined;
       state.lastPickedLocation = null;
       state.loadingWeather = false;
       state.loadingAdvice = false;
@@ -143,31 +143,31 @@ const weatherSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fields
-      .addCase(fetchFields.fulfilled, (state, action) => {
+      // fields
+      .addCase(fetchfields.fulfilled, (state, action) => {
         state.fields = action.payload;
       })
-      .addCase(fetchFields.rejected, (state, action) => {
+      .addCase(fetchfields.rejected, (state, action) => {
         state.error = action.payload as string;
       })
 
-      // Field weather
-      .addCase(fetchWeatherByField.pending, (state) => {
+      // Fields weather
+      .addCase(fetchWeatherByFields.pending, (state) => {
         state.loadingWeather = true;
         state.loadingAdvice = true;
         state.error = null;
       })
-      .addCase(fetchWeatherByField.fulfilled, (state, action) => {
+      .addCase(fetchWeatherByFields.fulfilled, (state, action) => {
         state.weather = { ...action.payload.wx }; // ✅ clone
         state.advice = action.payload.advice;
-        state.fieldName =
-          state.fields.find((f) => f._id === action.payload.fieldId)?.name ||
+        state.FieldsName =
+          state.fields.find((f) => f._id === action.payload.FieldsId)?.name ||
           undefined;
         state.lastPickedLocation = null;
         state.loadingWeather = false;
         state.loadingAdvice = false;
       })
-      .addCase(fetchWeatherByField.rejected, (state, action) => {
+      .addCase(fetchWeatherByFields.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loadingWeather = false;
         state.loadingAdvice = false;
@@ -182,7 +182,7 @@ const weatherSlice = createSlice({
       .addCase(fetchWeatherByLocation.fulfilled, (state, action) => {
         state.weather = { ...action.payload.wx }; // ✅ clone
         state.advice = action.payload.advice;
-        state.fieldName =
+        state.FieldsName =
           action.payload.location.name ||
           action.payload.location.displayName;
         state.lastPickedLocation = action.payload.location;

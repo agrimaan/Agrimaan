@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: agrimaan API
   description: |
-    API documentation for the agrimaan application, providing endpoints for field management, crop monitoring, IoT device integration, weather data, analytics, and blockchain functionality.
+    API documentation for the agrimaan application, providing endpoints for Fields management, crop monitoring, IoT device integration, weather data, analytics, and blockchain functionality.
   version: 1.0.0
   contact:
     name: NinjaTech AI
@@ -19,8 +19,8 @@ servers:
 tags:
   - name: Authentication
     description: User authentication and authorization
-  - name: Fields
-    description: Field management operations
+  - name: fields
+    description: Fields management operations
   - name: Crops
     description: Crop management and monitoring
   - name: Sensors
@@ -157,12 +157,12 @@ paths:
                 $ref: '#/components/schemas/Error'
   
   #
-  # Fields Endpoints
+  # fields Endpoints
   #
   /fields:
     get:
       tags:
-        - Fields
+        - fields
       summary: Get all fields
       description: Returns a list of all fields belonging to the authenticated user
       security:
@@ -182,7 +182,7 @@ paths:
             default: 0
         - name: sort
           in: query
-          description: Field to sort by
+          description: Fields to sort by
           schema:
             type: string
             enum: [name, area, createdAt]
@@ -202,7 +202,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Field'
+                  $ref: '#/components/schemas/Fields'
         '401':
           description: Unauthorized
           content:
@@ -212,9 +212,9 @@ paths:
     
     post:
       tags:
-        - Fields
-      summary: Create a new field
-      description: Creates a new field with the provided information
+        - fields
+      summary: Create a new Fields
+      description: Creates a new Fields with the provided information
       security:
         - bearerAuth: []
       requestBody:
@@ -222,14 +222,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FieldInput'
+              $ref: '#/components/schemas/FieldsInput'
       responses:
         '201':
-          description: Field created successfully
+          description: Fields created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Field'
+                $ref: '#/components/schemas/Fields'
         '400':
           description: Invalid input or validation error
           content:
@@ -246,27 +246,27 @@ paths:
   /fields/{id}:
     get:
       tags:
-        - Fields
-      summary: Get field by ID
-      description: Returns a specific field by its ID
+        - fields
+      summary: Get Fields by ID
+      description: Returns a specific Fields by its ID
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
       responses:
         '200':
-          description: Field details
+          description: Fields details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Field'
+                $ref: '#/components/schemas/Fields'
         '404':
-          description: Field not found
+          description: Fields not found
           content:
             application/json:
               schema:
@@ -280,16 +280,16 @@ paths:
     
     put:
       tags:
-        - Fields
-      summary: Update field
-      description: Updates an existing field with the provided information
+        - fields
+      summary: Update Fields
+      description: Updates an existing Fields with the provided information
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
       requestBody:
@@ -297,14 +297,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FieldInput'
+              $ref: '#/components/schemas/FieldsInput'
       responses:
         '200':
-          description: Field updated successfully
+          description: Fields updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Field'
+                $ref: '#/components/schemas/Fields'
         '400':
           description: Invalid input or validation error
           content:
@@ -312,7 +312,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Field not found
+          description: Fields not found
           content:
             application/json:
               schema:
@@ -326,21 +326,21 @@ paths:
     
     delete:
       tags:
-        - Fields
-      summary: Delete field
-      description: Deletes a specific field by its ID
+        - fields
+      summary: Delete Fields
+      description: Deletes a specific Fields by its ID
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
       responses:
         '200':
-          description: Field deleted successfully
+          description: Fields deleted successfully
           content:
             application/json:
               schema:
@@ -348,11 +348,11 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Field deleted successfully
-                  field:
-                    $ref: '#/components/schemas/Field'
+                    example: Fields deleted successfully
+                  Fields:
+                    $ref: '#/components/schemas/Fields'
         '404':
-          description: Field not found
+          description: Fields not found
           content:
             application/json:
               schema:
@@ -367,27 +367,27 @@ paths:
   /fields/{id}/boundaries:
     get:
       tags:
-        - Fields
-      summary: Get field boundaries
-      description: Returns the GeoJSON boundaries of a specific field
+        - fields
+      summary: Get Fields boundaries
+      description: Returns the GeoJSON boundaries of a specific Fields
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
       responses:
         '200':
-          description: Field boundaries
+          description: Fields boundaries
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FieldBoundaries'
+                $ref: '#/components/schemas/FieldsBoundaries'
         '404':
-          description: Field not found
+          description: Fields not found
           content:
             application/json:
               schema:
@@ -401,16 +401,16 @@ paths:
     
     put:
       tags:
-        - Fields
-      summary: Update field boundaries
-      description: Updates the GeoJSON boundaries of a specific field
+        - fields
+      summary: Update Fields boundaries
+      description: Updates the GeoJSON boundaries of a specific Fields
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
       requestBody:
@@ -418,14 +418,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FieldBoundariesInput'
+              $ref: '#/components/schemas/FieldsBoundariesInput'
       responses:
         '200':
-          description: Field boundaries updated successfully
+          description: Fields boundaries updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FieldBoundaries'
+                $ref: '#/components/schemas/FieldsBoundaries'
         '400':
           description: Invalid input or validation error
           content:
@@ -433,7 +433,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: Field not found
+          description: Fields not found
           content:
             application/json:
               schema:
@@ -475,9 +475,9 @@ paths:
           schema:
             type: string
             enum: [planned, planted, growing, harvested, failed]
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Filter by field ID
+          description: Filter by Fields ID
           schema:
             type: string
       responses:
@@ -685,9 +685,9 @@ paths:
           description: Filter by sensor type
           schema:
             type: string
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Filter by field ID
+          description: Filter by Fields ID
           schema:
             type: string
       responses:
@@ -1138,9 +1138,9 @@ paths:
           schema:
             type: number
             format: float
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Field ID (alternative to lat/lon)
+          description: Fields ID (alternative to lat/lon)
           schema:
             type: string
       responses:
@@ -1184,9 +1184,9 @@ paths:
           schema:
             type: number
             format: float
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Field ID (alternative to lat/lon)
+          description: Fields ID (alternative to lat/lon)
           schema:
             type: string
         - name: days
@@ -1238,9 +1238,9 @@ paths:
           schema:
             type: number
             format: float
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Field ID (alternative to lat/lon)
+          description: Fields ID (alternative to lat/lon)
           schema:
             type: string
         - name: startDate
@@ -1298,9 +1298,9 @@ paths:
           schema:
             type: number
             format: float
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Field ID (alternative to lat/lon)
+          description: Fields ID (alternative to lat/lon)
           schema:
             type: string
       responses:
@@ -1333,14 +1333,14 @@ paths:
       tags:
         - Analytics
       summary: Get yield prediction
-      description: Returns yield prediction data for a specific field and crop
+      description: Returns yield prediction data for a specific Fields and crop
       security:
         - bearerAuth: []
       parameters:
-        - name: fieldId
+        - name: FieldsId
           in: query
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
         - name: cropId
@@ -1374,14 +1374,14 @@ paths:
       tags:
         - Analytics
       summary: Get pest risk assessment
-      description: Returns pest risk assessment data for a specific field and crop
+      description: Returns pest risk assessment data for a specific Fields and crop
       security:
         - bearerAuth: []
       parameters:
-        - name: fieldId
+        - name: FieldsId
           in: query
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
         - name: cropId
@@ -1415,14 +1415,14 @@ paths:
       tags:
         - Analytics
       summary: Get soil health analysis
-      description: Returns soil health analysis data for a specific field
+      description: Returns soil health analysis data for a specific Fields
       security:
         - bearerAuth: []
       parameters:
-        - name: fieldId
+        - name: FieldsId
           in: query
           required: true
-          description: Field ID
+          description: Fields ID
           schema:
             type: string
       responses:
@@ -1466,9 +1466,9 @@ paths:
                   type: string
                   format: binary
                   description: Crop image file
-                fieldId:
+                FieldsId:
                   type: string
-                  description: Field ID
+                  description: Fields ID
                 cropId:
                   type: string
                   description: Crop ID
@@ -1548,9 +1548,9 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: fieldId
+        - name: FieldsId
           in: query
-          description: Filter by field ID
+          description: Filter by Fields ID
           schema:
             type: string
         - name: cropId
@@ -1664,7 +1664,7 @@ paths:
           description: Filter by transaction type
           schema:
             type: string
-            enum: [token, land, farmhouse, investment]
+            enum: [token, Fields, farmhouse, investment]
         - name: status
           in: query
           description: Filter by transaction status
@@ -1742,23 +1742,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   
-  /blockchain/land-tokens:
+  /blockchain/Fields-tokens:
     get:
       tags:
         - Blockchain
-      summary: Get land tokens
-      description: Returns a list of land tokens owned by the user
+      summary: Get Fields tokens
+      description: Returns a list of Fields tokens owned by the user
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: List of land tokens
+          description: List of Fields tokens
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LandToken'
+                  $ref: '#/components/schemas/FieldsToken'
         '401':
           description: Unauthorized
           content:
@@ -1769,8 +1769,8 @@ paths:
     post:
       tags:
         - Blockchain
-      summary: Create land token
-      description: Creates a new land token for a field
+      summary: Create Fields token
+      description: Creates a new Fields token for a Fields
       security:
         - bearerAuth: []
       requestBody:
@@ -1778,14 +1778,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LandTokenInput'
+              $ref: '#/components/schemas/FieldsTokenInput'
       responses:
         '201':
-          description: Land token created successfully
+          description: Fields token created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LandToken'
+                $ref: '#/components/schemas/FieldsToken'
         '400':
           description: Invalid input or validation error
           content:
@@ -2009,7 +2009,7 @@ paths:
           description: Filter by notification type
           schema:
             type: string
-            enum: [system, weather, field, crop, sensor, blockchain]
+            enum: [system, weather, Fields, crop, sensor, blockchain]
       responses:
         '200':
           description: List of notifications
@@ -2400,22 +2400,22 @@ components:
           description: Token expiration time in seconds
           example: 3600
     
-    # Field Schemas
-    Field:
+    # Fields Schemas
+    Fields:
       type: object
       properties:
         id:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         name:
           type: string
-          description: Field name
-          example: North Field
+          description: Fields name
+          example: North Fields
         area:
           type: number
           format: float
-          description: Field area in acres
+          description: Fields area in acres
           example: 25.4
         location:
           $ref: '#/components/schemas/GeoLocation'
@@ -2428,14 +2428,14 @@ components:
         crops:
           type: array
           items:
-            $ref: '#/components/schemas/FieldCrop'
+            $ref: '#/components/schemas/FieldsCrop'
         sensors:
           type: array
           items:
-            $ref: '#/components/schemas/FieldSensor'
+            $ref: '#/components/schemas/fieldsensor'
         owner:
           type: string
-          description: User ID of the field owner
+          description: User ID of the Fields owner
           example: 60d21b4667d0d8992e610c80
         createdAt:
           type: string
@@ -2448,7 +2448,7 @@ components:
           description: Last update timestamp
           example: 2025-06-24T10:30:00Z
     
-    FieldInput:
+    FieldsInput:
       type: object
       required:
         - name
@@ -2456,12 +2456,12 @@ components:
       properties:
         name:
           type: string
-          description: Field name
-          example: North Field
+          description: Fields name
+          example: North Fields
         area:
           type: number
           format: float
-          description: Field area in acres
+          description: Fields area in acres
           example: 25.4
         location:
           $ref: '#/components/schemas/GeoLocation'
@@ -2472,7 +2472,7 @@ components:
           description: Soil type
           example: Clay Loam
     
-    FieldCrop:
+    FieldsCrop:
       type: object
       properties:
         id:
@@ -2499,7 +2499,7 @@ components:
           description: Expected harvest date
           example: 2025-09-20
     
-    FieldSensor:
+    fieldsensor:
       type: object
       properties:
         id:
@@ -2520,17 +2520,17 @@ components:
           description: Sensor status
           example: active
     
-    FieldBoundaries:
+    FieldsBoundaries:
       type: object
       properties:
         id:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         name:
           type: string
-          description: Field name
-          example: North Field
+          description: Fields name
+          example: North Fields
         boundaries:
           $ref: '#/components/schemas/GeoPolygon'
         area:
@@ -2539,7 +2539,7 @@ components:
           description: Calculated area in acres
           example: 25.4
     
-    FieldBoundariesInput:
+    FieldsBoundariesInput:
       type: object
       required:
         - boundaries
@@ -2563,17 +2563,17 @@ components:
           type: string
           description: Crop variety
           example: Sweet Corn
-        field:
+        Fields:
           type: object
           properties:
             id:
               type: string
-              description: Field ID
+              description: Fields ID
               example: 60d21b4667d0d8992e610c85
             name:
               type: string
-              description: Field name
-              example: North Field
+              description: Fields name
+              example: North Fields
         status:
           type: string
           enum: [planned, planted, growing, harvested, failed]
@@ -2622,7 +2622,7 @@ components:
       type: object
       required:
         - name
-        - fieldId
+        - FieldsId
       properties:
         name:
           type: string
@@ -2632,9 +2632,9 @@ components:
           type: string
           description: Crop variety
           example: Sweet Corn
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         status:
           type: string
@@ -2685,17 +2685,17 @@ components:
           type: string
           description: Sensor manufacturer
           example: AgriSense
-        field:
+        Fields:
           type: object
           properties:
             id:
               type: string
-              description: Field ID
+              description: Fields ID
               example: 60d21b4667d0d8992e610c85
             name:
               type: string
-              description: Field name
-              example: North Field
+              description: Fields name
+              example: North Fields
         location:
           $ref: '#/components/schemas/GeoLocation'
         status:
@@ -2755,7 +2755,7 @@ components:
       required:
         - name
         - type
-        - fieldId
+        - FieldsId
       properties:
         name:
           type: string
@@ -2773,9 +2773,9 @@ components:
           type: string
           description: Sensor manufacturer
           example: AgriSense
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         location:
           $ref: '#/components/schemas/GeoLocation'
@@ -3299,9 +3299,9 @@ components:
     YieldPrediction:
       type: object
       properties:
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         cropId:
           type: string
@@ -3370,9 +3370,9 @@ components:
     PestRiskAssessment:
       type: object
       properties:
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         cropId:
           type: string
@@ -3427,7 +3427,7 @@ components:
                 items:
                   type: string
                   description: Recommended actions
-                  example: Monitor field edges for early signs of infestation
+                  example: Monitor Fields edges for early signs of infestation
         weatherFactors:
           type: object
           properties:
@@ -3452,9 +3452,9 @@ components:
     SoilHealthAnalysis:
       type: object
       properties:
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         overallHealth:
           type: string
@@ -3594,9 +3594,9 @@ components:
           type: string
           description: Analysis ID
           example: 60d21b4667d0d8992e610c9e
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         cropId:
           type: string
@@ -3795,23 +3795,23 @@ components:
         action:
           type: string
           description: Recommended action
-          example: Increase irrigation in North Field by 15%
+          example: Increase irrigation in North Fields by 15%
         priority:
           type: string
           enum: [low, medium, high, critical]
           description: Recommendation priority
           example: high
-        field:
+        Fields:
           type: object
           properties:
             id:
               type: string
-              description: Field ID
+              description: Fields ID
               example: 60d21b4667d0d8992e610c85
             name:
               type: string
-              description: Field name
-              example: North Field
+              description: Fields name
+              example: North Fields
         crop:
           type: object
           properties:
@@ -3878,7 +3878,7 @@ components:
           example: 60d21b4667d0d8992e610ca1
         type:
           type: string
-          enum: [token, land, farmhouse, investment]
+          enum: [token, Fields, farmhouse, investment]
           description: Transaction type
           example: token
         hash:
@@ -3943,7 +3943,7 @@ components:
       properties:
         type:
           type: string
-          enum: [token, land, farmhouse, investment]
+          enum: [token, Fields, farmhouse, investment]
           description: Transaction type
           example: token
         to:
@@ -4000,32 +4000,32 @@ components:
           description: Balance update timestamp
           example: 2025-06-24T10:30:00Z
     
-    LandToken:
+    FieldsToken:
       type: object
       properties:
         id:
           type: string
-          description: Land token ID
+          description: Fields token ID
           example: 60d21b4667d0d8992e610ca2
         tokenId:
           type: string
           description: Blockchain token ID
           example: 12345
-        field:
+        Fields:
           type: object
           properties:
             id:
               type: string
-              description: Field ID
+              description: Fields ID
               example: 60d21b4667d0d8992e610c85
             name:
               type: string
-              description: Field name
-              example: North Field
+              description: Fields name
+              example: North Fields
             area:
               type: number
               format: float
-              description: Field area in acres
+              description: Fields area in acres
               example: 25.4
             location:
               $ref: '#/components/schemas/GeoLocation'
@@ -4056,14 +4056,14 @@ components:
           description: Token update timestamp
           example: 2025-06-24T10:30:00Z
     
-    LandTokenInput:
+    FieldsTokenInput:
       type: object
       required:
-        - fieldId
+        - FieldsId
       properties:
-        fieldId:
+        FieldsId:
           type: string
-          description: Field ID
+          description: Fields ID
           example: 60d21b4667d0d8992e610c85
         metadata:
           type: object
@@ -4175,11 +4175,11 @@ components:
         title:
           type: string
           description: Investment title
-          example: North Field Expansion
+          example: North Fields Expansion
         description:
           type: string
           description: Investment description
-          example: Funding for expanding irrigation infrastructure in North Field
+          example: Funding for expanding irrigation infrastructure in North Fields
         creator:
           type: object
           properties:
@@ -4196,9 +4196,9 @@ components:
           properties:
             type:
               type: string
-              enum: [field, farmhouse, equipment, other]
+              enum: [Fields, farmhouse, equipment, other]
               description: Asset type
-              example: field
+              example: Fields
             id:
               type: string
               description: Asset ID
@@ -4206,7 +4206,7 @@ components:
             name:
               type: string
               description: Asset name
-              example: North Field
+              example: North Fields
         targetAmount:
           type: number
           format: float
@@ -4291,16 +4291,16 @@ components:
         title:
           type: string
           description: Investment title
-          example: North Field Expansion
+          example: North Fields Expansion
         description:
           type: string
           description: Investment description
-          example: Funding for expanding irrigation infrastructure in North Field
+          example: Funding for expanding irrigation infrastructure in North Fields
         assetType:
           type: string
-          enum: [field, farmhouse, equipment, other]
+          enum: [Fields, farmhouse, equipment, other]
           description: Asset type
-          example: field
+          example: Fields
         assetId:
           type: string
           description: Asset ID
@@ -4368,7 +4368,7 @@ components:
           example: 60d21b4667d0d8992e610ca6
         type:
           type: string
-          enum: [system, weather, field, crop, sensor, blockchain]
+          enum: [system, weather, Fields, crop, sensor, blockchain]
           description: Notification type
           example: weather
         title:
@@ -4393,7 +4393,7 @@ components:
           description: Additional notification data
           example:
             alertId: 60d21b4667d0d8992e610c9d
-            fieldId: 60d21b4667d0d8992e610c85
+            FieldsId: 60d21b4667d0d8992e610c85
         recipient:
           type: string
           description: User ID of the notification recipient
@@ -4446,9 +4446,9 @@ components:
               type: boolean
               description: Weather notifications enabled
               example: true
-            field:
+            Fields:
               type: boolean
-              description: Field notifications enabled
+              description: Fields notifications enabled
               example: true
             crop:
               type: boolean
@@ -4520,9 +4520,9 @@ components:
               type: boolean
               description: Weather notifications enabled
               example: true
-            field:
+            Fields:
               type: boolean
-              description: Field notifications enabled
+              description: Fields notifications enabled
               example: true
             crop:
               type: boolean
@@ -4621,9 +4621,9 @@ components:
           type: boolean
           description: System updates enabled
           example: false
-        fieldAlerts:
+        FieldsAlerts:
           type: boolean
-          description: Field alerts enabled
+          description: Fields alerts enabled
           example: true
         cropHealth:
           type: boolean
@@ -4725,7 +4725,7 @@ components:
           type: object
           description: Error details
           example:
-            field: "name"
+            Fields: "name"
             message: "Name is required"
         code:
           type: integer

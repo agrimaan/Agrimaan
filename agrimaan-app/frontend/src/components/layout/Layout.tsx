@@ -5,6 +5,11 @@ import { Box, CssBaseline, Toolbar } from '@mui/material';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
+import LogisticsSidebar from './LogisticsSidebar';
+import InvestorSidebar from './InvestorSidebar';
+import AgronomistSidebar from './AgronomistSidebar';
+import BuyerSidebar from './BuyerSidebar';
+
 import AlertDisplay from '../common/AlertDisplay';
 import { RootState } from '../../store';
 
@@ -23,8 +28,18 @@ const Layout: React.FC = () => {
       {/* Header */}
       <Header open={open} toggleDrawer={toggleDrawer} />
       
-      {/* Sidebar */}
-      <Sidebar open={open} toggleDrawer={toggleDrawer} user={user} />
+      {/* Sidebar - Conditional based on user role */}
+      {user?.role === 'logistics' ? (
+        <LogisticsSidebar open={open} toggleDrawer={toggleDrawer} user={user} />
+      ) : user?.role === 'investor' ? (
+        <InvestorSidebar open={open} toggleDrawer={toggleDrawer} user={user} />
+      ) : user?.role === 'agronomist' ? (
+        <AgronomistSidebar open={open} toggleDrawer={toggleDrawer} user={user} />
+      ) : user?.role === 'buyer' ? (
+        <BuyerSidebar open={open} toggleDrawer={toggleDrawer} user={user} />
+      ): (
+        <Sidebar open={open} toggleDrawer={toggleDrawer} user={user} />
+      )}
       
       {/* Main Content */}
       <Box

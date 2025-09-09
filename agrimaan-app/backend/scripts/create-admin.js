@@ -36,10 +36,10 @@ mongoose.connect(process.env.MONGODB_URI, {
       isSystemAdmin: true,
       address: {
         street: 'Admin Office',
-        city: 'Rohini',
-        state: 'New Delhi',
+        city: 'Agrimaan HQ',
+        state: 'Karnataka',
         country: 'India',
-        zipCode: '110085'
+        zipCode: '560001'
       }
     });
     

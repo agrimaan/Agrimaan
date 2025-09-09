@@ -27,9 +27,9 @@ const ProductSchema = new mongoose.Schema({
     required: true
   },
   origin: {
-    field: {
+    Fields: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Field'
+      ref: 'Fields'
     },
     farm: {
       name: String,

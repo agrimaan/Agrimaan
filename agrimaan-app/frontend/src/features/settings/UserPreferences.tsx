@@ -70,7 +70,7 @@ interface NotificationPreferences {
   weatherAlerts: boolean;
   marketPrices: boolean;
   systemUpdates: boolean;
-  fieldAlerts: boolean;
+  FieldsAlerts: boolean;
   cropHealth: boolean;
 }
 
@@ -116,7 +116,7 @@ const initialPreferences: UserPreferencesData = {
     weatherAlerts: true,
     marketPrices: true,
     systemUpdates: false,
-    fieldAlerts: true,
+    FieldsAlerts: true,
     cropHealth: true
   },
   display: {
@@ -192,7 +192,7 @@ const timezones = [
   'Asia/Shanghai',
   'Asia/Kolkata',
   'Australia/Sydney',
-  'Pacific/Auckland'
+  'Pacific/AuckFields'
 ];
 
 const UserPreferences: React.FC = () => {
@@ -432,12 +432,12 @@ const UserPreferences: React.FC = () => {
               <FormControlLabel
                 control={
                   <Switch
-                    checked={preferences.notifications.fieldAlerts}
-                    onChange={handleNotificationChange('fieldAlerts')}
+                    checked={preferences.notifications.FieldsAlerts}
+                    onChange={handleNotificationChange('FieldsAlerts')}
                     color="primary"
                   />
                 }
-                label="Field Alerts"
+                label="Fields Alerts"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -650,7 +650,7 @@ const UserPreferences: React.FC = () => {
             </ListItemIcon>
             <ListItemText 
               primary="Share Location Data" 
-              secondary="Allow access to your location for weather and field mapping" 
+              secondary="Allow access to your location for weather and Fields mapping" 
             />
             <ListItemSecondaryAction>
               <Switch

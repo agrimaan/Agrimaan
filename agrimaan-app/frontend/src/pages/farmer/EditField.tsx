@@ -2,58 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Alert, CircularProgress } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import FieldForm from '../../components/FieldForm';
+import FieldsForm from '../../components/FieldsForm';
 
 // Mock data for demonstration
-const mockField = {
+const mockFields = {
   id: '1',
-  name: 'North Field',
+  name: 'North Fields',
   area: '12.5',
   location: 'Village Rampur, District Meerut, Uttar Pradesh',
   soilType: 'Loam',
   irrigationType: 'Drip Irrigation',
-  description: 'Main wheat production field with good drainage system',
+  description: 'Main wheat production Fields with good drainage system',
   coordinates: {
     latitude: '28.9845',
     longitude: '77.7064'
   }
 };
 
-const EditField: React.FC = () => {
+const EditFields: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   
-  const [fieldData, setFieldData] = useState<any>(null);
+  const [FieldsData, setFieldsData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const fetchField = async () => {
+    const fetchFields = async () => {
       try {
         // For now, using mock data
         // Replace this with actual API call
-        console.log('Fetching field with id:', id);
+        console.log('Fetching Fields with id:', id);
         
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
         
         // TODO: Replace with actual API call
-        // const response = await dispatch(getFieldById(id) as any);
+        // const response = await dispatch(getFieldsById(id) as any);
         
-        setFieldData(mockField);
+        setFieldsData(mockFields);
       } catch (error: any) {
-        console.error('Error fetching field:', error);
-        setError('Failed to load field data.');
+        console.error('Error fetching Fields:', error);
+        setError('Failed to load Fields data.');
       } finally {
         setIsLoadingData(false);
       }
     };
 
     if (id) {
-      fetchField();
+      fetchFields();
     }
   }, [id, dispatch]);
 
@@ -62,13 +62,13 @@ const EditField: React.FC = () => {
     setError(null);
 
     try {
-      console.log('Updating field with data:', formData);
+      console.log('Updating Fields with data:', formData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // TODO: Uncomment when slice is ready
-      // await dispatch(updateField({ id, data: formData }) as any);
+      // await dispatch(updateFields({ id, data: formData }) as any);
 
       setSuccess(true);
       setTimeout(() => {
@@ -76,8 +76,8 @@ const EditField: React.FC = () => {
       }, 1500);
 
     } catch (error: any) {
-      console.error('Error updating field:', error);
-      setError(error.message || 'Failed to update field. Please try again.');
+      console.error('Error updating Fields:', error);
+      setError(error.message || 'Failed to update Fields. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -91,11 +91,11 @@ const EditField: React.FC = () => {
     );
   }
 
-  if (!fieldData) {
+  if (!FieldsData) {
     return (
       <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
         <Alert severity="error">
-          Field not found.
+          Fields not found.
         </Alert>
       </Box>
     );
@@ -104,7 +104,7 @@ const EditField: React.FC = () => {
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Edit Field: {fieldData.name}
+        Edit Fields: {FieldsData.name}
       </Typography>
 
       {error && (
@@ -115,12 +115,12 @@ const EditField: React.FC = () => {
 
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Field updated successfully! Redirecting...
+          Fields updated successfully! Redirecting...
         </Alert>
       )}
 
-      <FieldForm
-        initialData={fieldData}
+      <FieldsForm
+        initialData={FieldsData}
         onSubmit={handleSubmit}
         isLoading={isLoading}
         isEdit={true}
@@ -129,4 +129,4 @@ const EditField: React.FC = () => {
   );
 };
 
-export default EditField;
+export default EditFields;

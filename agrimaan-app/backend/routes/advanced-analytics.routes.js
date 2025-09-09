@@ -3,14 +3,14 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Analytics = require('../models/Analytics');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const Crop = require('../models/Crop');
 const Sensor = require('../models/Sensor');
 const Weather = require('../models/Weather');
 const auth = require('../middleware/auth');
 
 // Mock AI model functions (in production, these would connect to actual ML models)
-const predictYield = async (cropData, fieldData, weatherData, sensorData) => {
+const predictYield = async (cropData, FieldsData, weatherData, sensorData) => {
   // Simulate AI processing time
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -42,8 +42,8 @@ const predictYield = async (cropData, fieldData, weatherData, sensorData) => {
   }
   
   // Soil health impact
-  if (fieldData.soilHealth) {
-    switch (fieldData.soilHealth) {
+  if (FieldsData.soilHealth) {
+    switch (FieldsData.soilHealth) {
       case 'excellent':
         yieldModifier *= 1.2;
         break;
@@ -86,7 +86,7 @@ const predictYield = async (cropData, fieldData, weatherData, sensorData) => {
   let confidence = 70; // Base confidence
   if (weatherData && weatherData.length > 10) confidence += 5;
   if (sensorData && sensorData.length > 5) confidence += 10;
-  if (fieldData.soilTests && fieldData.soilTests.length > 0) confidence += 10;
+  if (FieldsData.soilTests && FieldsData.soilTests.length > 0) confidence += 10;
   
   // Cap confidence at 95%
   confidence = Math.min(confidence, 95);
@@ -100,7 +100,7 @@ const predictYield = async (cropData, fieldData, weatherData, sensorData) => {
     },
     {
       name: 'Soil Health',
-      value: fieldData.soilHealth || 'Unknown',
+      value: FieldsData.soilHealth || 'Unknown',
       weight: 0.25
     },
     {
@@ -132,7 +132,7 @@ const predictYield = async (cropData, fieldData, weatherData, sensorData) => {
     });
   }
   
-  if (fieldData.soilHealth === 'fair' || fieldData.soilHealth === 'poor') {
+  if (FieldsData.soilHealth === 'fair' || FieldsData.soilHealth === 'poor') {
     recommendations.push({
       action: 'Apply soil amendments',
       priority: 'medium',
@@ -163,7 +163,7 @@ const predictYield = async (cropData, fieldData, weatherData, sensorData) => {
   };
 };
 
-const assessPestRisk = async (cropData, fieldData, weatherData) => {
+const assessPestRisk = async (cropData, FieldsData, weatherData) => {
   // Simulate AI processing time
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -273,8 +273,8 @@ const assessPestRisk = async (cropData, fieldData, weatherData) => {
   }
   
   // Previous pest history
-  if (fieldData.pestHistory && fieldData.pestHistory.length > 0) {
-    const recentPests = fieldData.pestHistory.filter(p => {
+  if (FieldsData.pestHistory && FieldsData.pestHistory.length > 0) {
+    const recentPests = FieldsData.pestHistory.filter(p => {
       const pestDate = new Date(p.date);
       const sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
@@ -306,9 +306,9 @@ const assessPestRisk = async (cropData, fieldData, weatherData) => {
   }
   
   // Neighboring fields
-  if (fieldData.neighboringCrops && fieldData.neighboringCrops.length > 0) {
+  if (FieldsData.neighboringCrops && FieldsData.neighboringCrops.length > 0) {
     // Diversity in neighboring crops reduces risk
-    const uniqueCrops = new Set(fieldData.neighboringCrops.map(c => c.type)).size;
+    const uniqueCrops = new Set(FieldsData.neighboringCrops.map(c => c.type)).size;
     if (uniqueCrops > 2) {
       riskScore -= 10;
       factors.push({
@@ -385,7 +385,7 @@ const assessPestRisk = async (cropData, fieldData, weatherData) => {
   }
   
   // Add recommendation for historical data if missing
-  if (!fieldData.pestHistory) {
+  if (!FieldsData.pestHistory) {
     recommendations.push({
       action: 'Start tracking pest incidents',
       priority: 'medium',
@@ -460,7 +460,7 @@ const determinePotentialPests = (cropType, weatherData) => {
 };
 
 // Function to analyze soil health
-const analyzeSoilHealth = async (fieldData, sensorData) => {
+const analyzeSoilHealth = async (FieldsData, sensorData) => {
   // Simulate AI processing time
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -480,8 +480,8 @@ const analyzeSoilHealth = async (fieldData, sensorData) => {
   const factors = [];
   
   // Extract soil test data if available
-  if (fieldData.soilTests && fieldData.soilTests.length > 0) {
-    const latestSoilTest = fieldData.soilTests.sort((a, b) => 
+  if (FieldsData.soilTests && FieldsData.soilTests.length > 0) {
+    const latestSoilTest = FieldsData.soilTests.sort((a, b) => 
       new Date(b.date) - new Date(a.date))[0];
     
     if (latestSoilTest.ph) {
@@ -678,39 +678,39 @@ const analyzeSoilHealth = async (fieldData, sensorData) => {
   }
   
   // Evaluate soil type if available
-  if (fieldData.soilType) {
+  if (FieldsData.soilType) {
     // Different soil types have different agricultural potential
     const highQualitySoils = ['loam', 'silt loam', 'clay loam'];
     const mediumQualitySoils = ['sandy loam', 'silty clay', 'sandy clay loam'];
     const challengingSoils = ['sand', 'clay', 'rocky'];
     
-    if (highQualitySoils.some(soil => fieldData.soilType.toLowerCase().includes(soil))) {
+    if (highQualitySoils.some(soil => FieldsData.soilType.toLowerCase().includes(soil))) {
       healthScore += 10;
       factors.push({
         name: 'Soil Type',
-        value: fieldData.soilType,
+        value: FieldsData.soilType,
         status: 'Excellent',
         weight: 0.1
       });
-    } else if (mediumQualitySoils.some(soil => fieldData.soilType.toLowerCase().includes(soil))) {
+    } else if (mediumQualitySoils.some(soil => FieldsData.soilType.toLowerCase().includes(soil))) {
       factors.push({
         name: 'Soil Type',
-        value: fieldData.soilType,
+        value: FieldsData.soilType,
         status: 'Good',
         weight: 0.1
       });
-    } else if (challengingSoils.some(soil => fieldData.soilType.toLowerCase().includes(soil))) {
+    } else if (challengingSoils.some(soil => FieldsData.soilType.toLowerCase().includes(soil))) {
       healthScore -= 10;
       factors.push({
         name: 'Soil Type',
-        value: fieldData.soilType,
+        value: FieldsData.soilType,
         status: 'Challenging',
         weight: 0.1
       });
     } else {
       factors.push({
         name: 'Soil Type',
-        value: fieldData.soilType,
+        value: FieldsData.soilType,
         status: 'Moderate',
         weight: 0.1
       });
@@ -811,13 +811,13 @@ const analyzeSoilHealth = async (fieldData, sensorData) => {
         action: 'Improve drainage',
         priority: 'high',
         timeframe: 'As soon as possible',
-        details: 'Soil moisture is excessively high. Consider improving field drainage to prevent root diseases and nutrient leaching.'
+        details: 'Soil moisture is excessively high. Consider improving Fields drainage to prevent root diseases and nutrient leaching.'
       });
     }
   }
   
   // If no soil test data is available
-  if (!fieldData.soilTests || fieldData.soilTests.length === 0) {
+  if (!FieldsData.soilTests || FieldsData.soilTests.length === 0) {
     recommendations.push({
       action: 'Conduct comprehensive soil test',
       priority: 'high',
@@ -843,47 +843,47 @@ const analyzeSoilHealth = async (fieldData, sensorData) => {
   };
 };
 
-// @route   GET api/advanced-analytics/field/:fieldId/yield-prediction
-// @desc    Get yield prediction for a field
+// @route   GET api/advanced-analytics/Fields/:FieldsId/yield-prediction
+// @desc    Get yield prediction for a Fields
 // @access  Private
-router.get('/field/:fieldId/yield-prediction', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/yield-prediction', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get current crop in the field
+    // Get current crop in the Fields
     const crop = await Crop.findOne({ 
-      field: fieldId,
+      Fields: FieldsId,
       status: { $in: ['active', 'growing', 'mature'] }
     }).sort({ plantingDate: -1 });
     
     if (!crop) {
-      return res.status(404).json({ message: 'No active crop found in this field' });
+      return res.status(404).json({ message: 'No active crop found in this Fields' });
     }
     
     // Get weather data
-    const weatherData = await Weather.find({ field: fieldId })
+    const weatherData = await Weather.find({ Fields: FieldsId })
       .sort({ date: -1 })
       .limit(30);
     
     // Get sensor data
-    const sensors = await Sensor.find({ field: fieldId });
+    const sensors = await Sensor.find({ Fields: FieldsId });
     
     // Generate yield prediction
-    const predictionData = await predictYield(crop, field, weatherData, sensors);
+    const predictionData = await predictYield(crop, Fields, weatherData, sensors);
     
     // Create analytics record
     const analytics = new Analytics({
-      field: fieldId,
+      Fields: FieldsId,
       crop: crop._id,
       type: 'yield_prediction',
       data: predictionData,
@@ -908,44 +908,44 @@ router.get('/field/:fieldId/yield-prediction', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/advanced-analytics/field/:fieldId/pest-risk
-// @desc    Get pest risk assessment for a field
+// @route   GET api/advanced-analytics/Fields/:FieldsId/pest-risk
+// @desc    Get pest risk assessment for a Fields
 // @access  Private
-router.get('/field/:fieldId/pest-risk', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/pest-risk', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get current crop in the field
+    // Get current crop in the Fields
     const crop = await Crop.findOne({ 
-      field: fieldId,
+      Fields: FieldsId,
       status: { $in: ['active', 'growing', 'mature'] }
     }).sort({ plantingDate: -1 });
     
     if (!crop) {
-      return res.status(404).json({ message: 'No active crop found in this field' });
+      return res.status(404).json({ message: 'No active crop found in this Fields' });
     }
     
     // Get weather data
-    const weatherData = await Weather.find({ field: fieldId })
+    const weatherData = await Weather.find({ Fields: FieldsId })
       .sort({ date: -1 })
       .limit(30);
     
     // Generate pest risk assessment
-    const riskData = await assessPestRisk(crop, field, weatherData);
+    const riskData = await assessPestRisk(crop, Fields, weatherData);
     
     // Create analytics record
     const analytics = new Analytics({
-      field: fieldId,
+      Fields: FieldsId,
       crop: crop._id,
       type: 'pest_risk',
       data: riskData,
@@ -970,35 +970,35 @@ router.get('/field/:fieldId/pest-risk', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/advanced-analytics/field/:fieldId/soil-health
-// @desc    Get soil health analysis for a field
+// @route   GET api/advanced-analytics/Fields/:FieldsId/soil-health
+// @desc    Get soil health analysis for a Fields
 // @access  Private
-router.get('/field/:fieldId/soil-health', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/soil-health', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
     // Get sensor data
     const sensors = await Sensor.find({ 
-      field: fieldId,
+      Fields: FieldsId,
       type: { $in: ['soil_moisture', 'soil_temperature', 'soil_ph', 'soil_ec'] }
     });
     
     // Generate soil health analysis
-    const soilHealthData = await analyzeSoilHealth(field, sensors);
+    const soilHealthData = await analyzeSoilHealth(Fields, sensors);
     
     // Create analytics record
     const analytics = new Analytics({
-      field: fieldId,
+      Fields: FieldsId,
       type: 'soil_health',
       data: soilHealthData,
       confidence: soilHealthData.confidence,
@@ -1044,12 +1044,12 @@ router.post(
       const { cropId, imageUrl, imageDate } = req.body;
       
       // Check if crop exists and user has access
-      const crop = await Crop.findById(cropId).populate('field', 'owner');
+      const crop = await Crop.findById(cropId).populate('Fields', 'owner');
       if (!crop) {
         return res.status(404).json({ message: 'Crop not found' });
       }
       
-      if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
       
@@ -1107,7 +1107,7 @@ router.post(
           action: 'Inspect crop for pest infestation',
           priority: 'high',
           timeframe: 'Within 24 hours',
-          details: 'Visual analysis indicates possible pest damage. Conduct field inspection to identify specific pests.'
+          details: 'Visual analysis indicates possible pest damage. Conduct Fields inspection to identify specific pests.'
         });
         recommendations.push({
           action: 'Review nutrient management',
@@ -1126,7 +1126,7 @@ router.post(
       
       // Create analytics record
       const analytics = new Analytics({
-        field: crop.field,
+        Fields: crop.Fields,
         crop: cropId,
         type: 'image_analysis',
         data: {
@@ -1156,31 +1156,31 @@ router.post(
   }
 );
 
-// @route   GET api/advanced-analytics/field/:fieldId/market-forecast
-// @desc    Get market forecast for crops in a field
+// @route   GET api/advanced-analytics/Fields/:FieldsId/market-forecast
+// @desc    Get market forecast for crops in a Fields
 // @access  Private
-router.get('/field/:fieldId/market-forecast', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/market-forecast', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get current crops in the field
+    // Get current crops in the Fields
     const crops = await Crop.find({ 
-      field: fieldId,
+      Fields: FieldsId,
       status: { $in: ['active', 'growing', 'mature'] }
     });
     
     if (crops.length === 0) {
-      return res.status(404).json({ message: 'No active crops found in this field' });
+      return res.status(404).json({ message: 'No active crops found in this Fields' });
     }
     
     // In a real implementation, this would call a market data API
@@ -1295,7 +1295,7 @@ router.get('/field/:fieldId/market-forecast', auth, async (req, res) => {
       
       // Create analytics record for this forecast
       const analytics = new Analytics({
-        field: fieldId,
+        Fields: FieldsId,
         crop: crop._id,
         type: 'market_forecast',
         data: {
@@ -1314,7 +1314,7 @@ router.get('/field/:fieldId/market-forecast', auth, async (req, res) => {
     }
     
     res.json({
-      fieldId,
+      FieldsId,
       forecasts
     });
   } catch (err) {

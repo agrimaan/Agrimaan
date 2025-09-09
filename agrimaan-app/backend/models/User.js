@@ -49,7 +49,7 @@ const UserSchema = new mongoose.Schema({
   },
   fields: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field'
+    ref: 'Fields'
   }],
   // New fields for buyer role
   purchaseHistory: [{

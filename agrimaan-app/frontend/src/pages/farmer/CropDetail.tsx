@@ -66,8 +66,8 @@ const mockCrop = {
   daysToHarvest: 75,
   growthProgress: 65,
   fields: [
-    { id: 1, name: 'North Field', area: '25 acres', health: 'Good' },
-    { id: 2, name: 'South Field', area: '20 acres', health: 'Excellent' }
+    { id: 1, name: 'North Fields', area: '25 acres', health: 'Good' },
+    { id: 2, name: 'South Fields', area: '20 acres', health: 'Excellent' }
   ],
   waterRequirements: {
     current: '1.2 inches/week',
@@ -233,7 +233,7 @@ const CropDetail: React.FC = () => {
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tabValue} onChange={handleTabChange} aria-label="crop details tabs">
-            <Tab label="Fields" icon={<GrassIcon />} iconPosition="start" />
+            <Tab label="fields" icon={<GrassIcon />} iconPosition="start" />
             <Tab label="Water" icon={<WaterDropIcon />} iconPosition="start" />
             <Tab label="Nutrients" icon={<WbSunnyIcon />} iconPosition="start" />
             <Tab label="Issues" icon={<BugReportIcon />} iconPosition="start" />
@@ -242,17 +242,17 @@ const CropDetail: React.FC = () => {
         </Box>
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={2}>
-            {crop.fields.map((field) => (
-              <Grid item xs={12} sm={6} md={4} key={field.id}>
+            {crop.fields.map((Fields) => (
+              <Grid item xs={12} sm={6} md={4} key={Fields.id}>
                 <Card>
                   <CardContent>
-                    <Typography variant="h6">{field.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">Area: {field.area}</Typography>
+                    <Typography variant="h6">{Fields.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">Area: {Fields.area}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       Health: 
                       <Chip 
-                        label={field.health} 
-                        color={getHealthColor(field.health) as any} 
+                        label={Fields.health} 
+                        color={getHealthColor(Fields.health) as any} 
                         size="small" 
                         sx={{ ml: 1 }}
                       />
@@ -261,10 +261,10 @@ const CropDetail: React.FC = () => {
                       variant="outlined" 
                       size="small" 
                       component={Link}
-                      to={`/fields/${field.id}`}
+                      to={`/fields/${Fields.id}`}
                       sx={{ mt: 2 }}
                     >
-                      View Field
+                      View Fields
                     </Button>
                   </CardContent>
                 </Card>

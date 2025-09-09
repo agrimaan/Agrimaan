@@ -43,12 +43,11 @@ import {
   Visibility as VisibilityIcon
 } from '@mui/icons-material';
 import axios from 'axios';
-import { API_BASE_URL } from '../../config/apiConfig';
 
 // Define types
 interface Recommendation {
   _id: string;
-  field: {
+  Fields: {
     _id: string;
     name: string;
   };
@@ -93,9 +92,9 @@ const Recommendations: React.FC = () => {
         const mockRecommendations: Recommendation[] = [
           {
             _id: 'r1',
-            field: {
+            Fields: {
               _id: 'f1',
-              name: 'North Wheat Field'
+              name: 'North Wheat Fields'
             },
             farmer: {
               _id: 'u1',
@@ -111,7 +110,7 @@ const Recommendations: React.FC = () => {
           },
           {
             _id: 'r2',
-            field: {
+            Fields: {
               _id: 'f2',
               name: 'South Rice Paddy'
             },
@@ -129,9 +128,9 @@ const Recommendations: React.FC = () => {
           },
           {
             _id: 'r3',
-            field: {
+            Fields: {
               _id: 'f3',
-              name: 'East Cotton Field'
+              name: 'East Cotton Fields'
             },
             farmer: {
               _id: 'u3',
@@ -147,9 +146,9 @@ const Recommendations: React.FC = () => {
           },
           {
             _id: 'r4',
-            field: {
+            Fields: {
               _id: 'f4',
-              name: 'West Sugarcane Field'
+              name: 'West Sugarcane Fields'
             },
             farmer: {
               _id: 'u4',
@@ -167,7 +166,7 @@ const Recommendations: React.FC = () => {
           },
           {
             _id: 'r5',
-            field: {
+            Fields: {
               _id: 'f5',
               name: 'Central Vegetable Plot'
             },
@@ -210,7 +209,7 @@ const Recommendations: React.FC = () => {
     if (searchTerm) {
       result = result.filter(
         rec => 
-          rec.field.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          rec.Fields.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           rec.farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           rec.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -349,7 +348,7 @@ const Recommendations: React.FC = () => {
                   </InputAdornment>
                 ),
               }}
-              placeholder="Search by field, farmer, or description"
+              placeholder="Search by Fields, farmer, or description"
             />
           </Grid>
           
@@ -436,7 +435,7 @@ const Recommendations: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Field</TableCell>
+                <TableCell>Fields</TableCell>
                 <TableCell>Farmer</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell>Description</TableCell>
@@ -449,7 +448,7 @@ const Recommendations: React.FC = () => {
             <TableBody>
               {filteredRecommendations.map((recommendation) => (
                 <TableRow key={recommendation._id}>
-                  <TableCell>{recommendation.field.name}</TableCell>
+                  <TableCell>{recommendation.Fields.name}</TableCell>
                   <TableCell>{recommendation.farmer.name}</TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>

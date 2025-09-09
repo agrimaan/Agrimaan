@@ -17,7 +17,7 @@ type Props = {
   loading?: boolean;
   error?: string | null;
   onRefresh?: () => void;
-  fieldName?: string;
+  FieldsName?: string;
 };
 
 export default function WeatherAdvicePanel({
@@ -25,14 +25,14 @@ export default function WeatherAdvicePanel({
   loading,
   error,
   onRefresh,
-  fieldName,
+  FieldsName,
 }: Props) {
   return (
     <Card variant="outlined">
       <CardHeader
         title={
           <Typography variant="h6">
-            AI Weather Advice {fieldName ? `— ${fieldName}` : ""}
+            AI Weather Advice {FieldsName ? `— ${FieldsName}` : ""}
           </Typography>
         }
         action={

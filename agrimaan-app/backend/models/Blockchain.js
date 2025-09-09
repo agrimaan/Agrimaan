@@ -23,7 +23,7 @@ const BlockchainTransactionSchema = new mongoose.Schema({
   },
   tokenType: {
     type: String,
-    enum: ['AGM', 'LAND', 'FARMHOUSE', 'OTHER'],
+    enum: ['AGM', 'Fields', 'FARMHOUSE', 'OTHER'],
     default: 'AGM'
   },
   status: {
@@ -50,7 +50,7 @@ const BlockchainTransactionSchema = new mongoose.Schema({
   relatedEntity: {
     entityType: {
       type: String,
-      enum: ['user', 'field', 'crop', 'sensor', 'product', 'contract']
+      enum: ['user', 'Fields', 'crop', 'sensor', 'product', 'contract']
     },
     entityId: {
       type: mongoose.Schema.Types.ObjectId
@@ -82,7 +82,7 @@ const SmartContractSchema = new mongoose.Schema({
   },
   contractType: {
     type: String,
-    enum: ['token', 'marketplace', 'supply_chain', 'yield_sharing', 'land_ownership', 'other'],
+    enum: ['token', 'marketplace', 'supply_chain', 'yield_sharing', 'Fields_ownership', 'other'],
     required: true
   },
   abi: {
@@ -226,11 +226,11 @@ const TokenSchema = new mongoose.Schema({
   },
   assetType: {
     type: String,
-    enum: ['land', 'farmhouse', 'equipment', 'crop_yield', 'other'],
+    enum: ['Fields', 'farmhouse', 'equipment', 'crop_yield', 'other'],
     required: true
   },
   assetDetails: {
-    // For land
+    // For Fields
     location: {
       type: {
         type: String,
@@ -354,7 +354,7 @@ const TokenSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Create geospatial indexes for land tokens
+// Create geospatial indexes for Fields tokens
 TokenSchema.index({ 'assetDetails.location': '2dsphere' });
 
 const BlockchainTransaction = mongoose.model('BlockchainTransaction', BlockchainTransactionSchema);

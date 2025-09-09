@@ -29,7 +29,7 @@ interface IrrigationSystem {
   isAutomated: boolean;
 }
 
-export interface Field {
+export interface Fields {
   _id: string;
   name: string;
   owner: string;
@@ -46,19 +46,19 @@ export interface Field {
   updatedAt: Date;
 }
 
-interface FieldState {
-  fields: Field[];
-  field: Field | null;
+interface fieldstate {
+  fields: Fields[];
+  Fields: Fields | null;
   loading: boolean;
   error: string | null;
 }
 
 // Get all fields
 export const getFields = createAsyncThunk(
-  'field/getFields',
+  'Fields/getFields',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/fields/getAll`);
+  const res = await axios.get(`${API_BASE_URL}/api/fields`);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch fields');
@@ -66,79 +66,79 @@ export const getFields = createAsyncThunk(
   }
 );
 
-// Get field by ID
-export const getFieldById = createAsyncThunk(
-  'field/getFieldById',
+// Get Fields by ID
+export const getFieldsById = createAsyncThunk(
+  'Fields/getFieldsById',
   async (id: string, { rejectWithValue }) => {
     try {
   const res = await axios.get(`${API_BASE_URL}/api/fields/${id}`);
       return res.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch field');
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch Fields');
     }
   }
 );
 
-// Create field
-export const createField = createAsyncThunk(
-  'field/createField',
-  async (formData: Partial<Field>, { dispatch, rejectWithValue }) => {
+// Create Fields
+export const createFields = createAsyncThunk(
+  'Fields/createFields',
+  async (formData: Partial<Fields>, { dispatch, rejectWithValue }) => {
     try {
   const res = await axios.post(`${API_BASE_URL}/api/fields`, formData);
       
       dispatch(setAlert({
-        message: 'Field created successfully',
+        message: 'Fields created successfully',
         type: 'success'
       }) as any);
       
       return res.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to create field');
+      return rejectWithValue(err.response?.data?.message || 'Failed to create Fields');
     }
   }
 );
 
-// Update field
-export const updateField = createAsyncThunk(
-  'field/updateField',
-  async ({ id, formData }: { id: string; formData: Partial<Field> }, { dispatch, rejectWithValue }) => {
+// Update Fields
+export const updateFields = createAsyncThunk(
+  'Fields/updateFields',
+  async ({ id, formData }: { id: string; formData: Partial<Fields> }, { dispatch, rejectWithValue }) => {
     try {
   const res = await axios.put(`${API_BASE_URL}/api/fields/${id}`, formData);
       
       dispatch(setAlert({
-        message: 'Field updated successfully',
+        message: 'Fields updated successfully',
         type: 'success'
       }) as any);
       
       return res.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to update field');
+      return rejectWithValue(err.response?.data?.message || 'Failed to update Fields');
     }
   }
 );
 
-// Delete field
-export const deleteField = createAsyncThunk(
-  'field/deleteField',
+// Delete Fields
+export const deleteFields = createAsyncThunk(
+  'Fields/deleteFields',
   async (id: string, { dispatch, rejectWithValue }) => {
     try {
   await axios.delete(`${API_BASE_URL}/api/fields/${id}`);
       
       dispatch(setAlert({
-        message: 'Field deleted successfully',
+        message: 'Fields deleted successfully',
         type: 'success'
       }) as any);
       
       return id;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to delete field');
+      return rejectWithValue(err.response?.data?.message || 'Failed to delete Fields');
     }
   }
 );
 
 // Get nearby fields
-export const getNearbyFields = createAsyncThunk(
-  'field/getNearbyFields',
+export const getNearbyfields = createAsyncThunk(
+  'Fields/getNearbyfields',
   async ({ lng, lat, distance }: { lng: number; lat: number; distance: number }, { rejectWithValue }) => {
     try {
   const res = await axios.get(`${API_BASE_URL}/api/fields/nearby/${distance}?lng=${lng}&lat=${lat}`);
@@ -150,20 +150,20 @@ export const getNearbyFields = createAsyncThunk(
 );
 
 // Initial state
-const initialState: FieldState = {
+const initialState: fieldstate = {
   fields: [],
-  field: null,
+  Fields: null,
   loading: false,
   error: null
 };
 
 // Slice
-const fieldSlice = createSlice({
-  name: 'field',
+const fieldslice = createSlice({
+  name: 'Fields',
   initialState,
   reducers: {
-    clearField: (state) => {
-      state.field = null;
+    clearFields: (state) => {
+      state.Fields = null;
     },
     clearError: (state) => {
       state.error = null;
@@ -184,78 +184,78 @@ const fieldSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // Get field by ID
-      .addCase(getFieldById.pending, (state) => {
+      // Get Fields by ID
+      .addCase(getFieldsById.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getFieldById.fulfilled, (state, action) => {
-        state.field = action.payload;
+      .addCase(getFieldsById.fulfilled, (state, action) => {
+        state.Fields = action.payload;
         state.loading = false;
       })
-      .addCase(getFieldById.rejected, (state, action) => {
+      .addCase(getFieldsById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
       
-      // Create field
-      .addCase(createField.pending, (state) => {
+      // Create Fields
+      .addCase(createFields.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createField.fulfilled, (state, action) => {
+      .addCase(createFields.fulfilled, (state, action) => {
         state.fields.push(action.payload);
-        state.field = action.payload;
+        state.Fields = action.payload;
         state.loading = false;
       })
-      .addCase(createField.rejected, (state, action) => {
+      .addCase(createFields.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
       
-      // Update field
-      .addCase(updateField.pending, (state) => {
+      // Update Fields
+      .addCase(updateFields.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateField.fulfilled, (state, action) => {
-        state.fields = state.fields.map(field =>
-          field._id === action.payload._id ? action.payload : field
+      .addCase(updateFields.fulfilled, (state, action) => {
+        state.fields = state.fields.map(Fields =>
+          Fields._id === action.payload._id ? action.payload : Fields
         );
-        state.field = action.payload;
+        state.Fields = action.payload;
         state.loading = false;
       })
-      .addCase(updateField.rejected, (state, action) => {
+      .addCase(updateFields.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
       
-      // Delete field
-      .addCase(deleteField.pending, (state) => {
+      // Delete Fields
+      .addCase(deleteFields.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteField.fulfilled, (state, action) => {
-        state.fields = state.fields.filter(field => field._id !== action.payload);
-        state.field = null;
+      .addCase(deleteFields.fulfilled, (state, action) => {
+        state.fields = state.fields.filter(Fields => Fields._id !== action.payload);
+        state.Fields = null;
         state.loading = false;
       })
-      .addCase(deleteField.rejected, (state, action) => {
+      .addCase(deleteFields.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
       
       // Get nearby fields
-      .addCase(getNearbyFields.pending, (state) => {
+      .addCase(getNearbyfields.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getNearbyFields.fulfilled, (state, action) => {
+      .addCase(getNearbyfields.fulfilled, (state, action) => {
         state.fields = action.payload;
         state.loading = false;
       })
-      .addCase(getNearbyFields.rejected, (state, action) => {
+      .addCase(getNearbyfields.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
   }
 });
 
-export const { clearField, clearError } = fieldSlice.actions;
+export const { clearFields, clearError } = fieldslice.actions;
 
-export default fieldSlice.reducer;
+export default fieldslice.reducer;

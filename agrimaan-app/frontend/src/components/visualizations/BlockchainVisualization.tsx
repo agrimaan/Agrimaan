@@ -15,6 +15,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import SendIcon from '@mui/icons-material/Send';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import TokenIcon from '@mui/icons-material/Token';
+//import fieldscapeIcon from '@mui/icons-material/fieldscape';
 import LandscapeIcon from '@mui/icons-material/Landscape';
 import HomeIcon from '@mui/icons-material/Home';
 
@@ -93,7 +94,7 @@ interface BlockchainVisualizationProps {
       shares?: number;
     }>;
     stats: {
-      landTokens: number;
+      FieldsTokens: number;
       farmhouseTokens: number;
       fractionalizedTokens: number;
       totalAGM: number;
@@ -160,7 +161,7 @@ const BlockchainVisualization: React.FC<BlockchainVisualizationProps> = ({
     switch (tokenType.toUpperCase()) {
       case 'AGM':
         return <TokenIcon />;
-      case 'LAND':
+      case 'Fields':
         return <LandscapeIcon />;
       case 'FARMHOUSE':
         return <HomeIcon />;
@@ -517,7 +518,7 @@ const BlockchainVisualization: React.FC<BlockchainVisualizationProps> = ({
                         <Avatar 
                           sx={{ 
                             bgcolor: 
-                              token.tokenType === 'LAND' ? theme.palette.success.light :
+                              token.tokenType === 'Fields' ? theme.palette.success.light :
                               token.tokenType === 'FARMHOUSE' ? theme.palette.warning.light :
                               theme.palette.primary.light,
                             mr: 1,
@@ -695,10 +696,10 @@ const BlockchainVisualization: React.FC<BlockchainVisualizationProps> = ({
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Typography variant="body2" color="text.secondary">
-                      Land Tokens
+                      Fields Tokens
                     </Typography>
                     <Typography variant="h6">
-                      {marketData.stats.landTokens}
+                      {marketData.stats.FieldsTokens}
                     </Typography>
                   </Grid>
                   

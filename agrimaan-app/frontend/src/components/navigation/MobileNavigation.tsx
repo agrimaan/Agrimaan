@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+//import fieldscapeIcon from '@mui/icons-material/fieldscape';
 import LandscapeIcon from '@mui/icons-material/Landscape';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import SensorsIcon from '@mui/icons-material/Sensors';
@@ -57,7 +58,7 @@ interface MobileNavigationProps {
 // Define navigation items
 const mainNavItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Fields', icon: <LandscapeIcon />, path: '/fields' },
+  { text: 'fields', icon: <LandscapeIcon />, path: '/fields' },
   { text: 'Crops', icon: <AgricultureIcon />, path: '/crops' },
   { text: 'Sensors', icon: <SensorsIcon />, path: '/sensors' },
   { text: 'Weather', icon: <WaterDropIcon />, path: '/weather' },
@@ -74,7 +75,7 @@ const secondaryNavItems = [
 ];
 
 const favoriteItems = [
-  { text: 'Saved Fields', icon: <FavoriteIcon />, path: '/fields/saved' },
+  { text: 'Saved fields', icon: <FavoriteIcon />, path: '/fields/saved' },
   { text: 'Recent Activities', icon: <HistoryIcon />, path: '/activities' },
 ];
 
@@ -366,7 +367,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
       <Box sx={{ width: '100%', maxWidth: 360, p: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">
-            {path.startsWith('/fields') ? 'Field Filters' : 
+            {path.startsWith('/fields') ? 'Fields Filters' : 
              path.startsWith('/crops') ? 'Crop Filters' : 
              path.startsWith('/sensors') ? 'Sensor Filters' : 
              'Filters'}
@@ -420,7 +421,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
             to="/dashboard"
           />
           <BottomNavigationAction 
-            label="Fields" 
+            label="fields" 
             icon={<LandscapeIcon />} 
             component={RouterLink}
             to="/fields"

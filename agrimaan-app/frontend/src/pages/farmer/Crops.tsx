@@ -189,10 +189,10 @@ const Crops: React.FC = () => {
     setEditingCrop(null);
   };
 
-  const handleInputChange = (field: keyof CropFormData, value: string) => {
+  const handleInputChange = (Fields: keyof CropFormData, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [Fields]: value
     }));
   };
 

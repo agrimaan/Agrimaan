@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-The agrimaan application is a comprehensive agricultural management platform that provides farmers, investors, and administrators with tools for crop management, field mapping, analytics, and marketplace transactions. This document summarizes the deployment preparation work completed for the application.
+The agrimaan application is a comprehensive agricultural management platform that provides farmers, investors, and administrators with tools for crop management, Fields mapping, analytics, and marketplace transactions. This document summarizes the deployment preparation work completed for the application.
 
 ## Deployment Architecture
 

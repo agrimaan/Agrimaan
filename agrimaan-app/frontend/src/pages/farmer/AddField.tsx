@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Box, Typography, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import FieldForm from '../../components/FieldForm';
-// import { createField } from '../features/fields/fieldSlice'; // Uncomment when slice is ready
+import FieldsForm from '../../components/FieldsForm';
+// import { createFields } from '../features/fields/fieldslice'; // Uncomment when slice is ready
 
-const AddField: React.FC = () => {
+const AddFields: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -19,13 +19,13 @@ const AddField: React.FC = () => {
     try {
       // For now, using mock implementation
       // Replace this with actual API call
-      console.log('Creating field with data:', formData);
+      console.log('Creating Fields with data:', formData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // TODO: Uncomment when slice is ready
-      // await dispatch(createField(formData) as any);
+      // await dispatch(createFields(formData) as any);
 
       setSuccess(true);
       setTimeout(() => {
@@ -33,8 +33,8 @@ const AddField: React.FC = () => {
       }, 1500);
 
     } catch (error: any) {
-      console.error('Error creating field:', error);
-      setError(error.message || 'Failed to create field. Please try again.');
+      console.error('Error creating Fields:', error);
+      setError(error.message || 'Failed to create Fields. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +43,7 @@ const AddField: React.FC = () => {
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Land Registry
+        Fields Registry
       </Typography>
 
       {error && (
@@ -54,11 +54,11 @@ const AddField: React.FC = () => {
 
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Land created successfully! Redirecting...
+          Fields created successfully! Redirecting...
         </Alert>
       )}
 
-      <FieldForm
+      <FieldsForm
         onSubmit={handleSubmit}
         isLoading={isLoading}
         isEdit={false}
@@ -67,4 +67,4 @@ const AddField: React.FC = () => {
   );
 };
 
-export default AddField;
+export default AddFields;

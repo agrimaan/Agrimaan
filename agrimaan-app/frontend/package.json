@@ -3,15 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "11.14.0",
-    "@emotion/styled": "11.14.1",
+    "@base-ui-components/react": "^1.0.0-beta.3",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^5.18.0",
-    "@mui/material": "5.18.0",
+    "@mui/material": "^5.18.0",
+    "@mui/x-date-pickers": "^6.20.2",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.6.2",
     "chart.js": "^4.4.1",
+    "date-fns": "^2.30.0",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
+    "mui": "^0.0.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
@@ -23,9 +27,10 @@
     "uuid": "^11.1.0"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -46,16 +51,16 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
     "@types/leaflet": "^1.9.8",
     "@types/leaflet-draw": "^1.0.12",
-    "@types/node": "^20.19.11",
+    "@types/node": "^20.19.13",
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.7",
     "@types/testing-library__react": "^10.2.0",
+    "html-webpack-plugin": "^5.6.4",
     "jest": "^27.5.1",
     "react-scripts": "^5.0.1",
     "typescript": "^4.9.5"

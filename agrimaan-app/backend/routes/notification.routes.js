@@ -101,7 +101,7 @@ router.post('/test', [
   auth,
   [
     body('type', 'Type is required').isIn(['alert', 'info', 'success', 'warning', 'error']),
-    body('category', 'Category is required').isIn(['system', 'weather', 'crop', 'field', 'sensor', 'analytics', 'blockchain', 'marketplace', 'other']),
+    body('category', 'Category is required').isIn(['system', 'weather', 'crop', 'Fields', 'sensor', 'analytics', 'blockchain', 'marketplace', 'other']),
     body('title', 'Title is required').not().isEmpty(),
     body('message', 'Message is required').not().isEmpty()
   ]
@@ -117,7 +117,7 @@ router.post('/test', [
   }
   
   try {
-    const { type, category, title, message, priority, actionRequired, actionLink, fieldId, cropId, sensorId } = req.body;
+    const { type, category, title, message, priority, actionRequired, actionLink, FieldsId, cropId, sensorId } = req.body;
     
     let notification;
     
@@ -127,7 +127,7 @@ router.post('/test', [
           req.user.id,
           title,
           message,
-          fieldId,
+          FieldsId,
           { type, priority, actionRequired, actionLink }
         );
         break;
@@ -138,7 +138,7 @@ router.post('/test', [
           title,
           message,
           cropId,
-          fieldId,
+          FieldsId,
           { type, priority, actionRequired, actionLink }
         );
         break;
@@ -149,7 +149,7 @@ router.post('/test', [
           title,
           message,
           sensorId,
-          fieldId,
+          FieldsId,
           { type, priority, actionRequired, actionLink }
         );
         break;
@@ -159,7 +159,7 @@ router.post('/test', [
           req.user.id,
           title,
           message,
-          fieldId,
+          FieldsId,
           { type, priority, actionRequired, actionLink }
         );
         break;

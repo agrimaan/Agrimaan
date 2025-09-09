@@ -2,13 +2,8 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "typeRoots": ["node_modules/@types", "node_modules"],
-  "types": ["node","react", "react-dom", "@mui/material", "@reduxjs/toolkit", "jest"],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["node", "react", "react-dom", "jest"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,7 +16,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx"
-    },
-  "include": ["src"],
+  },
+  "include": ["src", "../../fix-mui-date-picker.js"],
   "exclude": ["node_modules"]
 }

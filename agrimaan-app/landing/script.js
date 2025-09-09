@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const message = this.querySelector('#message');
       
       // Reset error states
-      [name, email, subject, message].forEach(field => {
-        field.style.borderColor = '';
+      [name, email, subject, message].forEach(Fields => {
+        Fields.style.borderColor = '';
       });
       
       // Validate required fields

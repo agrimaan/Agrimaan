@@ -93,10 +93,10 @@ class WeatherService {
   /**
    * Persist a snapshot (optional for your protected routes)
    */
-  async saveWeatherData(fieldId, weatherData) {
+  async saveWeatherData(FieldsId, weatherData) {
     try {
       const weather = new Weather({
-        field: fieldId,
+        Fields: FieldsId,
         date: new Date(),
         temperature: weatherData.current.temperature,
         humidity: weatherData.current.humidity,

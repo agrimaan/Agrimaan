@@ -20,7 +20,7 @@ interface Recommendation {
 
 export interface Analytics {
   _id: string;
-  field: string;
+  Fields: string;
   crop?: string;
   date: Date;
   type: 'yield_prediction' | 'pest_risk' | 'disease_risk' | 'irrigation_recommendation' | 'fertilizer_recommendation' | 'harvest_timing' | 'planting_recommendation' | 'other';
@@ -36,8 +36,8 @@ export interface Analytics {
   updatedAt: Date;
 }
 
-interface FieldSummary {
-  field: {
+interface fieldsummary {
+  Fields: {
     id: string;
     name: string;
     area: {
@@ -72,7 +72,7 @@ interface Prediction {
 interface RecommendationItem {
   id: string;
   analyticsId: string;
-  field: {
+  Fields: {
     _id: string;
     name: string;
   };
@@ -91,7 +91,7 @@ interface RecommendationItem {
 interface AnalyticsState {
   analyticsList: Analytics[];
   analytics: Analytics | null;
-  fieldSummary: FieldSummary | null;
+  fieldsummary: fieldsummary | null;
   predictions: Prediction[];
   recommendations: RecommendationItem[];
   loading: boolean;
@@ -102,15 +102,15 @@ interface AnalyticsState {
 export const getAnalytics = createAsyncThunk(
   'analytics/getAnalytics',
   async (
-    { fieldId, cropId, type, startDate, endDate }: 
-    { fieldId?: string; cropId?: string; type?: string; startDate?: string; endDate?: string } = {},
+    { FieldsId, cropId, type, startDate, endDate }: 
+    { FieldsId?: string; cropId?: string; type?: string; startDate?: string; endDate?: string } = {},
     { rejectWithValue }
   ) => {
     try {
   let url = `${API_BASE_URL}/api/analytics`;
       const params = [];
       
-      if (fieldId) params.push(`fieldId=${fieldId}`);
+      if (FieldsId) params.push(`FieldsId=${FieldsId}`);
       if (cropId) params.push(`cropId=${cropId}`);
       if (type) params.push(`type=${type}`);
       if (startDate) params.push(`startDate=${startDate}`);
@@ -198,15 +198,15 @@ export const deleteAnalytics = createAsyncThunk(
   }
 );
 
-// Get field summary
-export const getFieldSummary = createAsyncThunk(
-  'analytics/getFieldSummary',
-  async (fieldId: string, { rejectWithValue }) => {
+// Get Fields summary
+export const getFieldsummary = createAsyncThunk(
+  'analytics/getFieldsummary',
+  async (FieldsId: string, { rejectWithValue }) => {
     try {
-  const res = await axios.get(`${API_BASE_URL}/api/analytics/field/${fieldId}/summary`);
+  const res = await axios.get(`${API_BASE_URL}/api/analytics/Fields/${FieldsId}/summary`);
       return res.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to fetch field summary');
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch Fields summary');
     }
   }
 );
@@ -241,7 +241,7 @@ export const getRecommendations = createAsyncThunk(
 const initialState: AnalyticsState = {
   analyticsList: [],
   analytics: null,
-  fieldSummary: null,
+  fieldsummary: null,
   predictions: [],
   recommendations: [],
   loading: false,
@@ -256,8 +256,8 @@ const analyticsSlice = createSlice({
     clearAnalytics: (state) => {
       state.analytics = null;
     },
-    clearFieldSummary: (state) => {
-      state.fieldSummary = null;
+    clearfieldsummary: (state) => {
+      state.fieldsummary = null;
     },
     clearPredictions: (state) => {
       state.predictions = [];
@@ -338,15 +338,15 @@ const analyticsSlice = createSlice({
         state.error = action.payload as string;
       })
       
-      // Get field summary
-      .addCase(getFieldSummary.pending, (state) => {
+      // Get Fields summary
+      .addCase(getFieldsummary.pending, (state) => {
         state.loading = true;
       })
-      .addCase(getFieldSummary.fulfilled, (state, action) => {
-        state.fieldSummary = action.payload;
+      .addCase(getFieldsummary.fulfilled, (state, action) => {
+        state.fieldsummary = action.payload;
         state.loading = false;
       })
-      .addCase(getFieldSummary.rejected, (state, action) => {
+      .addCase(getFieldsummary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
@@ -379,6 +379,6 @@ const analyticsSlice = createSlice({
   }
 });
 
-export const { clearAnalytics, clearFieldSummary, clearPredictions, clearError } = analyticsSlice.actions;
+export const { clearAnalytics, clearfieldsummary, clearPredictions, clearError } = analyticsSlice.actions;
 
 export default analyticsSlice.reducer;

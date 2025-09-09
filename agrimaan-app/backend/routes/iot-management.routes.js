@@ -16,7 +16,7 @@ router.post(
     [
       body('name', 'Name is required').not().isEmpty(),
       body('type', 'Type is required').not().isEmpty(),
-      body('field', 'Field ID is required').not().isEmpty()
+      body('Fields', 'Fields ID is required').not().isEmpty()
     ]
   ],
   async (req, res) => {
@@ -26,13 +26,13 @@ router.post(
     }
 
     try {
-      const { name, type, field, description, manufacturer, model, firmwareVersion } = req.body;
+      const { name, type, Fields, description, manufacturer, model, firmwareVersion } = req.body;
       
       // Create device data
       const deviceData = {
         name,
         type,
-        field,
+        Fields,
         description,
         manufacturer,
         model,
@@ -360,30 +360,30 @@ router.post(
   }
 );
 
-// @route   GET api/iot-management/field/:fieldId/devices
-// @desc    Get all devices for a field
+// @route   GET api/iot-management/Fields/:FieldsId/devices
+// @desc    Get all devices for a Fields
 // @access  Private
-router.get('/field/:fieldId/devices', auth, async (req, res) => {
+router.get('/Fields/:FieldsId/devices', auth, async (req, res) => {
   try {
-    // Check if field exists and user has access
-    const field = await mongoose.model('Field').findById(req.params.fieldId);
+    // Check if Fields exists and user has access
+    const Fields = await mongoose.model('Fields').findById(req.params.FieldsId);
     
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get devices for field
-    const devices = await iotService.getDevicesByField(req.params.fieldId);
+    // Get devices for Fields
+    const devices = await iotService.getDevicesByFields(req.params.FieldsId);
     
     res.json(devices);
   } catch (err) {
     console.error(err.message);
     if (err.kind === 'ObjectId') {
-      return res.status(404).json({ message: 'Field not found' });
+      return res.status(404).json({ message: 'Fields not found' });
     }
     res.status(500).send('Server error');
   }

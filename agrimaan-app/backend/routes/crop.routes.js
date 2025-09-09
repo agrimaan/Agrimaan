@@ -2,38 +2,38 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const Crop = require('../models/Crop');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const auth = require('../middleware/auth');
 
 // @route   GET api/crops
-// @desc    Get all crops (filtered by field if provided)
+// @desc    Get all crops (filtered by Fields if provided)
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     let query = {};
     
-    // Filter by field if provided
-    if (req.query.fieldId) {
-      query.field = req.query.fieldId;
+    // Filter by Fields if provided
+    if (req.query.FieldsId) {
+      query.Fields = req.query.FieldsId;
       
-      // Check if user has access to this field
-      const field = await Field.findById(req.query.fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if user has access to this Fields
+      const Fields = await Fields.findById(req.query.FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
     } else if (req.user.role !== 'admin') {
-      // If no field is specified and user is not admin, get all crops from user's fields
-      const userFields = await Field.find({ owner: req.user.id }).select('_id');
-      const fieldIds = userFields.map(field => field._id);
-      query.field = { $in: fieldIds };
+      // If no Fields is specified and user is not admin, get all crops from user's fields
+      const userfields = await Fields.find({ owner: req.user.id }).select('_id');
+      const FieldsIds = userfields.map(Fields => Fields._id);
+      query.Fields = { $in: FieldsIds };
     }
     
     const crops = await Crop.find(query)
-      .populate('field', ['name', 'location', 'area'])
+      .populate('Fields', ['name', 'location', 'area'])
       .sort({ plantingDate: -1 });
       
     res.json(crops);
@@ -49,14 +49,14 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', auth, async (req, res) => {
   try {
     const crop = await Crop.findById(req.params.id)
-      .populate('field', ['name', 'location', 'area', 'soilType', 'owner']);
+      .populate('Fields', ['name', 'location', 'area', 'soilType', 'owner']);
     
     if (!crop) {
       return res.status(404).json({ message: 'Crop not found' });
     }
 
-    // Check if user has access to this crop's field
-    if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this crop's Fields
+    if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -79,7 +79,7 @@ router.post(
     auth,
     [
       body('name', 'Name is required').not().isEmpty(),
-      body('field', 'Field ID is required').not().isEmpty(),
+      body('Fields', 'Fields ID is required').not().isEmpty(),
       body('plantingDate', 'Planting date is required').isISO8601().toDate(),
       body('status', 'Status must be valid').optional().isIn(['planned', 'planted', 'growing', 'harvested', 'failed']),
       body('growthStage', 'Growth stage must be valid').optional().isIn(['germination', 'vegetative', 'flowering', 'ripening', 'mature'])
@@ -94,7 +94,7 @@ router.post(
     try {
       const {
         name,
-        field: fieldId,
+        Fields: FieldsId,
         variety,
         plantingDate,
         harvestDate,
@@ -105,20 +105,20 @@ router.post(
         notes
       } = req.body;
 
-      // Check if field exists and user has access
-      const field = await Field.findById(fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if Fields exists and user has access
+      const Fields = await Fields.findById(FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
       // Create new crop
       const newCrop = new Crop({
         name,
-        field: fieldId,
+        Fields: FieldsId,
         variety,
         plantingDate,
         harvestDate,
@@ -131,9 +131,9 @@ router.post(
 
       const crop = await newCrop.save();
 
-      // Add crop to field's crops array
-      await Field.findByIdAndUpdate(
-        fieldId,
+      // Add crop to Fields's crops array
+      await Fields.findByIdAndUpdate(
+        FieldsId,
         { $push: { crops: crop._id } },
         { new: true }
       );
@@ -169,14 +169,14 @@ router.put(
     }
 
     try {
-      let crop = await Crop.findById(req.params.id).populate('field', 'owner');
+      let crop = await Crop.findById(req.params.id).populate('Fields', 'owner');
       
       if (!crop) {
         return res.status(404).json({ message: 'Crop not found' });
       }
 
-      // Check if user has access to this crop's field
-      if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this crop's Fields
+      if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -233,20 +233,20 @@ router.put(
 // @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const crop = await Crop.findById(req.params.id).populate('field', 'owner');
+    const crop = await Crop.findById(req.params.id).populate('Fields', 'owner');
     
     if (!crop) {
       return res.status(404).json({ message: 'Crop not found' });
     }
 
-    // Check if user has access to this crop's field
-    if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    // Check if user has access to this crop's Fields
+    if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
 
-    // Remove crop from field's crops array
-    await Field.findByIdAndUpdate(
-      crop.field._id,
+    // Remove crop from Fields's crops array
+    await Fields.findByIdAndUpdate(
+      crop.Fields._id,
       { $pull: { crops: crop._id } }
     );
 
@@ -282,14 +282,14 @@ router.post(
     }
 
     try {
-      const crop = await Crop.findById(req.params.id).populate('field', 'owner');
+      const crop = await Crop.findById(req.params.id).populate('Fields', 'owner');
       
       if (!crop) {
         return res.status(404).json({ message: 'Crop not found' });
       }
 
-      // Check if user has access to this crop's field
-      if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this crop's Fields
+      if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -336,14 +336,14 @@ router.post(
     }
 
     try {
-      const crop = await Crop.findById(req.params.id).populate('field', 'owner');
+      const crop = await Crop.findById(req.params.id).populate('Fields', 'owner');
       
       if (!crop) {
         return res.status(404).json({ message: 'Crop not found' });
       }
 
-      // Check if user has access to this crop's field
-      if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this crop's Fields
+      if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -391,14 +391,14 @@ router.post(
     }
 
     try {
-      const crop = await Crop.findById(req.params.id).populate('field', 'owner');
+      const crop = await Crop.findById(req.params.id).populate('Fields', 'owner');
       
       if (!crop) {
         return res.status(404).json({ message: 'Crop not found' });
       }
 
-      // Check if user has access to this crop's field
-      if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this crop's Fields
+      if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 
@@ -446,14 +446,14 @@ router.post(
     }
 
     try {
-      const crop = await Crop.findById(req.params.id).populate('field', 'owner');
+      const crop = await Crop.findById(req.params.id).populate('Fields', 'owner');
       
       if (!crop) {
         return res.status(404).json({ message: 'Crop not found' });
       }
 
-      // Check if user has access to this crop's field
-      if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this crop's Fields
+      if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
 

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { gptWeatherAdvice, gptChat } = require('../services/ai.service');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const weatherService = require('../services/weather.service');
 
 // Health probe for this router
@@ -17,11 +17,11 @@ router.post('/weather-advice', async (req, res) => {
   try {
     let bundle = req.body?.bundle;
     if (!bundle) {
-      const { fieldId } = req.body || {};
-      if (!fieldId) return res.status(400).json({ message: 'Provide fieldId or bundle' });
-      const field = await Field.findById(fieldId).select('location name').lean();
-      if (!field || !field.location) return res.status(404).json({ message: 'Field not found' });
-      const svc = await weatherService.getCurrentWeather(field.location.lat, field.location.lng);
+      const { FieldsId } = req.body || {};
+      if (!FieldsId) return res.status(400).json({ message: 'Provide FieldsId or bundle' });
+      const Fields = await Fields.findById(FieldsId).select('location name').lean();
+      if (!Fields || !Fields.location) return res.status(404).json({ message: 'Fields not found' });
+      const svc = await weatherService.getCurrentWeather(Fields.location.lat, Fields.location.lng);
       bundle = {
         current: { ...svc.current, temperatureUnit: '°C', windUnit: 'km/h', station: svc.location?.name },
         forecast: svc.forecast,
@@ -44,19 +44,19 @@ router.post('/weather-advice', async (req, res) => {
 
 
 // Weather advice (your existing pattern)
-// POST /api/ai/weather-advice  { fieldId?: string, bundle?: object }
+// POST /api/ai/weather-advice  { FieldsId?: string, bundle?: object }
 router.post('/weather-advice', async (req, res) => {
   try {
     let bundle = req.body?.bundle;
 
     if (!bundle) {
-      const { fieldId } = req.body || {};
-      if (!fieldId) return res.status(400).json({ message: 'Provide fieldId or bundle' });
+      const { FieldsId } = req.body || {};
+      if (!FieldsId) return res.status(400).json({ message: 'Provide FieldsId or bundle' });
 
-      const field = await Field.findById(fieldId).select('location name').lean();
-      if (!field || !field.location) return res.status(404).json({ message: 'Field not found' });
+      const Fields = await Fields.findById(FieldsId).select('location name').lean();
+      if (!Fields || !Fields.location) return res.status(404).json({ message: 'Fields not found' });
 
-      const svc = await weatherService.getCurrentWeather(field.location.lat, field.location.lng);
+      const svc = await weatherService.getCurrentWeather(Fields.location.lat, Fields.location.lng);
 
       bundle = {
         current: {

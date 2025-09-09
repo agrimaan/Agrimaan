@@ -30,7 +30,7 @@ const mockSensors = [
     id: 1, 
     name: 'Soil Moisture Sensor 1', 
     type: 'Moisture',
-    field: 'North Field',
+    Fields: 'North Fields',
     status: 'Active',
     batteryLevel: '85%',
     lastReading: '28%',
@@ -41,7 +41,7 @@ const mockSensors = [
     id: 2, 
     name: 'Temperature Sensor 1', 
     type: 'Temperature',
-    field: 'North Field',
+    Fields: 'North Fields',
     status: 'Active',
     batteryLevel: '72%',
     lastReading: '72°F',
@@ -52,7 +52,7 @@ const mockSensors = [
     id: 3, 
     name: 'Humidity Sensor 1', 
     type: 'Humidity',
-    field: 'South Field',
+    Fields: 'South Fields',
     status: 'Inactive',
     batteryLevel: '15%',
     lastReading: '65%',
@@ -63,7 +63,7 @@ const mockSensors = [
     id: 4, 
     name: 'Wind Sensor 1', 
     type: 'Wind',
-    field: 'East Field',
+    Fields: 'East Fields',
     status: 'Active',
     batteryLevel: '90%',
     lastReading: '8 mph NW',
@@ -74,7 +74,7 @@ const mockSensors = [
     id: 5, 
     name: 'Soil Moisture Sensor 2', 
     type: 'Moisture',
-    field: 'South Field',
+    Fields: 'South Fields',
     status: 'Active',
     batteryLevel: '65%',
     lastReading: '32%',
@@ -85,7 +85,7 @@ const mockSensors = [
     id: 6, 
     name: 'Temperature Sensor 2', 
     type: 'Temperature',
-    field: 'West Field',
+    Fields: 'West Fields',
     status: 'Maintenance',
     batteryLevel: '45%',
     lastReading: '68°F',
@@ -98,7 +98,7 @@ const Sensors: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [fieldFilter, setFieldFilter] = useState('');
+  const [FieldsFilter, setFieldsFilter] = useState('');
   const [sensors] = useState(mockSensors);
 
   const handleTypeFilterChange = (event: SelectChangeEvent) => {
@@ -109,21 +109,21 @@ const Sensors: React.FC = () => {
     setStatusFilter(event.target.value);
   };
 
-  const handleFieldFilterChange = (event: SelectChangeEvent) => {
-    setFieldFilter(event.target.value);
+  const handleFieldsFilterChange = (event: SelectChangeEvent) => {
+    setFieldsFilter(event.target.value);
   };
 
   const filteredSensors = sensors.filter(sensor => {
     const matchesSearch = 
       sensor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       sensor.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sensor.field.toLowerCase().includes(searchTerm.toLowerCase());
+      sensor.Fields.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesType = typeFilter === '' || sensor.type === typeFilter;
     const matchesStatus = statusFilter === '' || sensor.status === statusFilter;
-    const matchesField = fieldFilter === '' || sensor.field === fieldFilter;
+    const matchesFields = FieldsFilter === '' || sensor.Fields === FieldsFilter;
     
-    return matchesSearch && matchesType && matchesStatus && matchesField;
+    return matchesSearch && matchesType && matchesStatus && matchesFields;
   });
 
   const getStatusColor = (status: string) => {
@@ -148,7 +148,7 @@ const Sensors: React.FC = () => {
 
   const sensorTypes = Array.from(new Set(sensors.map(sensor => sensor.type)));
   const sensorStatuses = Array.from(new Set(sensors.map(sensor => sensor.status)));
-  const sensorFields = Array.from(new Set(sensors.map(sensor => sensor.field)));
+  const sensorfields = Array.from(new Set(sensors.map(sensor => sensor.Fields)));
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -219,17 +219,17 @@ const Sensors: React.FC = () => {
           </Grid>
           <Grid item xs={12} sm={4} md={2}>
             <FormControl fullWidth>
-              <InputLabel id="field-filter-label">Field</InputLabel>
+              <InputLabel id="Fields-filter-label">Fields</InputLabel>
               <Select
-                labelId="field-filter-label"
-                id="field-filter"
-                value={fieldFilter}
-                label="Field"
-                onChange={handleFieldFilterChange}
+                labelId="Fields-filter-label"
+                id="Fields-filter"
+                value={FieldsFilter}
+                label="Fields"
+                onChange={handleFieldsFilterChange}
               >
-                <MenuItem value="">All Fields</MenuItem>
-                {sensorFields.map((field) => (
-                  <MenuItem key={field} value={field}>{field}</MenuItem>
+                <MenuItem value="">All fields</MenuItem>
+                {sensorfields.map((Fields) => (
+                  <MenuItem key={Fields} value={Fields}>{Fields}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -276,7 +276,7 @@ const Sensors: React.FC = () => {
                 </Box>
                 
                 <Typography variant="body2" color="text.secondary">
-                  Field: {sensor.field}
+                  Fields: {sensor.Fields}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Last Reading: <strong>{sensor.lastReading}</strong>

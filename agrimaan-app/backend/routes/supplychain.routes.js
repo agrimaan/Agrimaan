@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const { Product, SupplyChainEvent, Shipment, MarketplaceListing, Order } = require('../models/SupplyChain');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const Crop = require('../models/Crop');
 const auth = require('../middleware/auth');
 const { v4: uuidv4 } = require('uuid');
@@ -40,9 +40,9 @@ router.get('/products', auth, async (req, res) => {
       query.status = req.query.status;
     }
     
-    // Filter by field if provided
-    if (req.query.fieldId) {
-      query['origin.field'] = req.query.fieldId;
+    // Filter by Fields if provided
+    if (req.query.FieldsId) {
+      query['origin.Fields'] = req.query.FieldsId;
     }
     
     // Filter by crop if provided
@@ -62,7 +62,7 @@ router.get('/products', auth, async (req, res) => {
     
     const products = await Product.find(query)
       .populate('producer', ['name', 'email'])
-      .populate('origin.field', ['name', 'location'])
+      .populate('origin.Fields', ['name', 'location'])
       .populate('crop', ['name', 'variety'])
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -93,7 +93,7 @@ router.get('/products/:id', auth, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate('producer', ['name', 'email'])
-      .populate('origin.field', ['name', 'location'])
+      .populate('origin.Fields', ['name', 'location'])
       .populate('crop', ['name', 'variety', 'plantingDate', 'harvestDate']);
     
     if (!product) {
@@ -151,26 +151,26 @@ router.post(
       // Check if crop exists and user has access
       let crop = null;
       if (cropId) {
-        crop = await Crop.findById(cropId).populate('field', 'owner');
+        crop = await Crop.findById(cropId).populate('Fields', 'owner');
         if (!crop) {
           return res.status(404).json({ message: 'Crop not found' });
         }
         
-        if (crop.field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+        if (crop.Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
           return res.status(403).json({ message: 'Access denied to this crop' });
         }
       }
       
-      // Check if field exists and user has access
-      let field = null;
-      if (origin && origin.field) {
-        field = await Field.findById(origin.field);
-        if (!field) {
-          return res.status(404).json({ message: 'Field not found' });
+      // Check if Fields exists and user has access
+      let Fields = null;
+      if (origin && origin.Fields) {
+        Fields = await Fields.findById(origin.Fields);
+        if (!Fields) {
+          return res.status(404).json({ message: 'Fields not found' });
         }
         
-        if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-          return res.status(403).json({ message: 'Access denied to this field' });
+        if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+          return res.status(403).json({ message: 'Access denied to this Fields' });
         }
       }
       
@@ -185,7 +185,7 @@ router.post(
         category,
         producer: req.user.id,
         origin: {
-          field: field ? field._id : null,
+          Fields: Fields ? Fields._id : null,
           farm: origin ? origin.farm : null,
           country: origin ? origin.country : null,
           region: origin ? origin.region : null
@@ -236,10 +236,10 @@ router.post(
         eventId,
         product: product._id,
         eventType: 'harvest',
-        location: field ? {
+        location: Fields ? {
           type: 'Point',
-          coordinates: field.location.coordinates,
-          name: field.name
+          coordinates: Fields.location.coordinates,
+          name: Fields.name
         } : null,
         actor: {
           user: req.user.id,
@@ -1821,7 +1821,7 @@ router.get('/trace/:productId', async (req, res) => {
     // Find product by productId (not MongoDB _id)
     const product = await Product.findOne({ productId: req.params.productId })
       .populate('producer', ['name', 'email'])
-      .populate('origin.field', ['name', 'location'])
+      .populate('origin.Fields', ['name', 'location'])
       .populate('crop', ['name', 'variety', 'plantingDate', 'harvestDate']);
     
     if (!product) {

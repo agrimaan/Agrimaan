@@ -204,7 +204,7 @@ class IoTService {
           `Device Health Alert: ${device.name}`,
           `Your device ${device.name} has reported ${healthCheck.status} health status. Please check device details.`,
           device._id,
-          device.field,
+          device.Fields,
           {
             type: healthCheck.status === 'critical' ? 'error' : 'warning',
             priority: healthCheck.status === 'critical' ? 'high' : 'medium',
@@ -340,16 +340,16 @@ class IoTService {
   }
   
   /**
-   * Get devices by field
-   * @param {string} fieldId - Field ID
-   * @returns {Promise<Array<Object>>} Devices in field
+   * Get devices by Fields
+   * @param {string} FieldsId - Fields ID
+   * @returns {Promise<Array<Object>>} Devices in Fields
    */
-  async getDevicesByField(fieldId) {
+  async getDevicesByFields(FieldsId) {
     try {
-      return await IoT.Device.find({ field: fieldId });
+      return await IoT.Device.find({ Fields: FieldsId });
     } catch (error) {
-      console.error('Error getting devices by field:', error);
-      throw new Error('Failed to get devices by field');
+      console.error('Error getting devices by Fields:', error);
+      throw new Error('Failed to get devices by Fields');
     }
   }
   
@@ -477,7 +477,7 @@ class IoTService {
           `Sensor Alert: ${anomaly.sensorName}`,
           `${anomaly.sensorName} has reported a value of ${anomaly.value} which is ${anomaly.type === 'above_threshold' ? 'above' : 'below'} the threshold of ${anomaly.threshold}.`,
           anomaly.sensorId,
-          device.field,
+          device.Fields,
           {
             type: 'warning',
             priority: 'high',

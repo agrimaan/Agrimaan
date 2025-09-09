@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const { IoTDevice, SensorReading, IoTAlert, MaintenanceLog, EdgeDevice } = require('../models/IoT');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const auth = require('../middleware/auth');
 const mqtt = require('mqtt');
 
@@ -20,7 +20,7 @@ const mqtt = require('mqtt');
 //     const topicParts = topic.split('/');
 //     if (topicParts.length !== 4) return;
     
-//     const fieldId = topicParts[1];
+//     const FieldsId = topicParts[1];
 //     const deviceId = topicParts[2];
 //     const messageType = topicParts[3];
     
@@ -49,7 +49,7 @@ const mqtt = require('mqtt');
 //       value: data.value,
 //       unit: data.unit,
 //       timestamp: data.timestamp || new Date(),
-//       field: device.field,
+//       Fields: device.Fields,
 //       metadata: data.metadata
 //     });
     
@@ -81,7 +81,7 @@ const mqtt = require('mqtt');
       
 //       const newAlert = new IoTAlert({
 //         device: device._id,
-//         field: device.field,
+//         Fields: device.Fields,
 //         alertType: 'low_battery',
 //         severity: data.batteryLevel < 10 ? 'high' : 'medium',
 //         message: `Low battery (${data.batteryLevel}%) on device ${device.name}`,
@@ -112,9 +112,9 @@ router.get('/devices', auth, async (req, res) => {
       query.owner = req.user.id;
     }
     
-    // Filter by field if provided
-    if (req.query.fieldId) {
-      query.field = req.query.fieldId;
+    // Filter by Fields if provided
+    if (req.query.FieldsId) {
+      query.Fields = req.query.FieldsId;
     }
     
     // Filter by device type if provided
@@ -128,7 +128,7 @@ router.get('/devices', auth, async (req, res) => {
     }
     
     const devices = await IoTDevice.find(query)
-      .populate('field', ['name', 'location'])
+      .populate('Fields', ['name', 'location'])
       .sort({ createdAt: -1 });
     
     res.json(devices);
@@ -144,7 +144,7 @@ router.get('/devices', auth, async (req, res) => {
 router.get('/devices/:id', auth, async (req, res) => {
   try {
     const device = await IoTDevice.findById(req.params.id)
-      .populate('field', ['name', 'location', 'owner'])
+      .populate('Fields', ['name', 'location', 'owner'])
       .populate('owner', ['name', 'email']);
     
     if (!device) {
@@ -192,7 +192,7 @@ router.post(
         'other'
       ]),
       body('location.coordinates', 'Location coordinates are required').isArray().isLength({ min: 2, max: 2 }),
-      body('field', 'Field ID is required').not().isEmpty()
+      body('Fields', 'Fields ID is required').not().isEmpty()
     ]
   ],
   async (req, res) => {
@@ -210,7 +210,7 @@ router.post(
         model,
         firmwareVersion,
         location,
-        field: fieldId,
+        Fields: FieldsId,
         installationDate,
         powerSource,
         connectionType,
@@ -226,14 +226,14 @@ router.post(
         return res.status(400).json({ message: 'Device ID already exists' });
       }
       
-      // Check if field exists and user has access
-      const field = await Field.findById(fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+      // Check if Fields exists and user has access
+      const Fields = await Fields.findById(FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied to this field' });
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied to this Fields' });
       }
       
       // Create new device
@@ -245,7 +245,7 @@ router.post(
         model,
         firmwareVersion,
         owner: req.user.id,
-        field: fieldId,
+        Fields: FieldsId,
         location,
         installationDate: installationDate || new Date(),
         powerSource: powerSource || 'battery',
@@ -306,7 +306,7 @@ router.put(
         model,
         firmwareVersion,
         location,
-        field,
+        Fields,
         status,
         batteryLevel,
         powerSource,
@@ -324,18 +324,18 @@ router.put(
       if (model) device.model = model;
       if (firmwareVersion) device.firmwareVersion = firmwareVersion;
       if (location) device.location = location;
-      if (field) {
-        // Check if field exists and user has access
-        const fieldObj = await Field.findById(field);
-        if (!fieldObj) {
-          return res.status(404).json({ message: 'Field not found' });
+      if (Fields) {
+        // Check if Fields exists and user has access
+        const FieldsObj = await Fields.findById(Fields);
+        if (!FieldsObj) {
+          return res.status(404).json({ message: 'Fields not found' });
         }
         
-        if (fieldObj.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-          return res.status(403).json({ message: 'Access denied to this field' });
+        if (FieldsObj.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+          return res.status(403).json({ message: 'Access denied to this Fields' });
         }
         
-        device.field = field;
+        device.Fields = Fields;
       }
       if (status) device.status = status;
       if (batteryLevel !== undefined) device.batteryLevel = batteryLevel;
@@ -409,21 +409,21 @@ router.get('/readings', auth, async (req, res) => {
       }
       
       query.device = req.query.deviceId;
-    } else if (req.query.fieldId) {
-      // Filter by field if provided
-      const field = await Field.findById(req.query.fieldId);
-      if (!field) {
-        return res.status(404).json({ message: 'Field not found' });
+    } else if (req.query.FieldsId) {
+      // Filter by Fields if provided
+      const Fields = await Fields.findById(req.query.FieldsId);
+      if (!Fields) {
+        return res.status(404).json({ message: 'Fields not found' });
       }
       
-      // Check if user has access to this field
-      if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      // Check if user has access to this Fields
+      if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
       
-      query.field = req.query.fieldId;
+      query.Fields = req.query.FieldsId;
     } else {
-      // If no device or field specified, get readings from all devices owned by user
+      // If no device or Fields specified, get readings from all devices owned by user
       if (req.user.role !== 'admin') {
         const userDevices = await IoTDevice.find({ owner: req.user.id }).select('_id');
         query.device = { $in: userDevices.map(device => device._id) };
@@ -543,7 +543,7 @@ router.post(
         timestamp: timestamp || new Date(),
         quality: quality || 'good',
         location: location || device.location,
-        field: device.field,
+        Fields: device.Fields,
         metadata
       });
       
@@ -572,11 +572,11 @@ router.get('/alerts', auth, async (req, res) => {
     // If user is not admin, only show alerts for their devices/fields
     if (req.user.role !== 'admin') {
       const userDevices = await IoTDevice.find({ owner: req.user.id }).select('_id');
-      const userFields = await Field.find({ owner: req.user.id }).select('_id');
+      const userfields = await Fields.find({ owner: req.user.id }).select('_id');
       
       query.$or = [
         { device: { $in: userDevices.map(device => device._id) } },
-        { field: { $in: userFields.map(field => field._id) } }
+        { Fields: { $in: userfields.map(Fields => Fields._id) } }
       ];
     }
     
@@ -585,9 +585,9 @@ router.get('/alerts', auth, async (req, res) => {
       query.device = req.query.deviceId;
     }
     
-    // Filter by field if provided
-    if (req.query.fieldId) {
-      query.field = req.query.fieldId;
+    // Filter by Fields if provided
+    if (req.query.FieldsId) {
+      query.Fields = req.query.FieldsId;
     }
     
     // Filter by alert type if provided
@@ -624,7 +624,7 @@ router.get('/alerts', auth, async (req, res) => {
     
     const alerts = await IoTAlert.find(query)
       .populate('device', ['name', 'deviceType'])
-      .populate('field', ['name'])
+      .populate('Fields', ['name'])
       .populate('acknowledgedBy', ['name'])
       .populate('resolvedBy', ['name'])
       .sort({ timestamp: -1 })
@@ -682,7 +682,7 @@ router.post(
     try {
       const {
         deviceId,
-        fieldId,
+        FieldsId,
         alertType,
         severity,
         message,
@@ -705,23 +705,23 @@ router.post(
         }
       }
       
-      // Check if field exists and user has access
-      let field = null;
-      if (fieldId) {
-        field = await Field.findById(fieldId);
-        if (!field) {
-          return res.status(404).json({ message: 'Field not found' });
+      // Check if Fields exists and user has access
+      let Fields = null;
+      if (FieldsId) {
+        Fields = await Fields.findById(FieldsId);
+        if (!Fields) {
+          return res.status(404).json({ message: 'Fields not found' });
         }
         
-        if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
-          return res.status(403).json({ message: 'Access denied to this field' });
+        if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+          return res.status(403).json({ message: 'Access denied to this Fields' });
         }
       }
       
       // Create new alert
       const newAlert = new IoTAlert({
         device: deviceId,
-        field: fieldId,
+        Fields: FieldsId,
         alertType,
         severity,
         message,
@@ -766,9 +766,9 @@ router.put('/alerts/:id/acknowledge', auth, async (req, res) => {
       if (device && device.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
-    } else if (alert.field) {
-      const field = await Field.findById(alert.field);
-      if (field && field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    } else if (alert.Fields) {
+      const Fields = await Fields.findById(alert.Fields);
+      if (Fields && Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Access denied' });
       }
     }
@@ -825,9 +825,9 @@ router.put(
         if (device && device.owner.toString() !== req.user.id && req.user.role !== 'admin') {
           return res.status(403).json({ message: 'Access denied' });
         }
-      } else if (alert.field) {
-        const field = await Field.findById(alert.field);
-        if (field && field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+      } else if (alert.Fields) {
+        const Fields = await Fields.findById(alert.Fields);
+        if (Fields && Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
           return res.status(403).json({ message: 'Access denied' });
         }
       }
@@ -1014,25 +1014,25 @@ router.get('/maintenance', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/iot/analytics/field/:fieldId
-// @desc    Get analytics for a field
+// @route   GET api/iot/analytics/Fields/:FieldsId
+// @desc    Get analytics for a Fields
 // @access  Private
-router.get('/analytics/field/:fieldId', auth, async (req, res) => {
+router.get('/analytics/Fields/:FieldsId', auth, async (req, res) => {
   try {
-    const fieldId = req.params.fieldId;
+    const FieldsId = req.params.FieldsId;
     
-    // Check if field exists and user has access
-    const field = await Field.findById(fieldId);
-    if (!field) {
-      return res.status(404).json({ message: 'Field not found' });
+    // Check if Fields exists and user has access
+    const Fields = await Fields.findById(FieldsId);
+    if (!Fields) {
+      return res.status(404).json({ message: 'Fields not found' });
     }
     
-    if (field.owner.toString() !== req.user.id && req.user.role !== 'admin') {
+    if (Fields.owner.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     
-    // Get all devices in the field
-    const devices = await IoTDevice.find({ field: fieldId });
+    // Get all devices in the Fields
+    const devices = await IoTDevice.find({ Fields: FieldsId });
     
     // Get readings for the last 30 days
     const thirtyDaysAgo = new Date();
@@ -1068,13 +1068,13 @@ router.get('/analytics/field/:fieldId', auth, async (req, res) => {
     
     // Get active alerts
     const activeAlerts = await IoTAlert.find({
-      field: fieldId,
+      Fields: FieldsId,
       status: { $in: ['active', 'acknowledged'] }
     }).sort({ timestamp: -1 });
     
     res.json({
-      fieldId,
-      fieldName: field.name,
+      FieldsId,
+      FieldsName: Fields.name,
       deviceCount: devices.length,
       soilMoistureData,
       temperatureData,

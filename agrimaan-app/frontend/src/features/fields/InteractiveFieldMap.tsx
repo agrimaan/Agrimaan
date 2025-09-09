@@ -87,7 +87,7 @@ interface MapLayer {
   minZoom: number;
 }
 
-interface Field {
+interface Fields {
   id: string;
   name: string;
   geometry: any; // GeoJSON geometry
@@ -230,10 +230,10 @@ const overlayLayers: MapLayer[] = [
   }
 ];
 
-const mockFields: Field[] = [
+const mockfields: Fields[] = [
   {
-    id: 'field-1',
-    name: 'North Field',
+    id: 'Fields-1',
+    name: 'North Fields',
     geometry: {
       type: 'Polygon',
       coordinates: [[
@@ -252,8 +252,8 @@ const mockFields: Field[] = [
     visible: true
   },
   {
-    id: 'field-2',
-    name: 'South Field',
+    id: 'Fields-2',
+    name: 'South Fields',
     geometry: {
       type: 'Polygon',
       coordinates: [[
@@ -318,7 +318,7 @@ const mockSatelliteImages: SatelliteImage[] = [
   }
 ];
 
-const InteractiveFieldMap: React.FC = () => {
+const InteractiveFieldsMap: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -329,13 +329,13 @@ const InteractiveFieldMap: React.FC = () => {
   
   const [loading, setLoading] = useState(true);
   const [layersDrawerOpen, setLayersDrawerOpen] = useState(false);
-  const [fieldsDrawerOpen, setFieldsDrawerOpen] = useState(false);
+  const [fieldsDrawerOpen, setfieldsDrawerOpen] = useState(false);
   const [satelliteDrawerOpen, setSatelliteDrawerOpen] = useState(false);
   const [activeBaseLayer, setActiveBaseLayer] = useState('osm');
   const [visibleOverlays, setVisibleOverlays] = useState<string[]>([]);
   const [overlayOpacity, setOverlayOpacity] = useState<Record<string, number>>({});
-  const [fields, setFields] = useState<Field[]>(mockFields);
-  const [selectedField, setSelectedField] = useState<string | null>(null);
+  const [fields, setfields] = useState<Fields[]>(mockfields);
+  const [selectedFields, setSelectedFields] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [satelliteDate, setSatelliteDate] = useState<string>(mockSatelliteImages[0].date);
   const [satelliteType, setSatelliteType] = useState<'rgb' | 'ndvi' | 'false-color'>('rgb');
@@ -426,9 +426,9 @@ const InteractiveFieldMap: React.FC = () => {
       });
       
       // Add fields as GeoJSON
-      fields.forEach(field => {
+      fields.forEach(Fields => {
         const geoJSONLayer = L.geoJSON(
-          { type: 'Feature', geometry: field.geometry, properties: { id: field.id, name: field.name } } as GeoJSON.Feature, // Type assertion
+          { type: 'Feature', geometry: Fields.geometry, properties: { id: Fields.id, name: Fields.name } } as GeoJSON.Feature, // Type assertion
           {
             style: {
               color: theme.palette.secondary.main,
@@ -437,19 +437,19 @@ const InteractiveFieldMap: React.FC = () => {
               fillOpacity: 0.2
             },
             onEachFeature: (feature, layer) => {
-              layer.bindTooltip(field.name);
+              layer.bindTooltip(Fields.name);
               layer.on('click', () => {
-                setSelectedField(field.id);
+                setSelectedFields(Fields.id);
               });
             }
           }
         );
         
-        if (field.visible) {
+        if (Fields.visible) {
           geoJSONLayer.addTo(map);
         }
         
-        layersRef.current[`field-${field.id}`] = geoJSONLayer;
+        layersRef.current[`Fields-${Fields.id}`] = geoJSONLayer;
       });
       
       // Handle draw events
@@ -457,20 +457,20 @@ const InteractiveFieldMap: React.FC = () => {
         const layer = e.layer;
         drawnItems.addLayer(layer);
         
-        // Generate a new field from the drawn shape
+        // Generate a new Fields from the drawn shape
         const geoJSON = layer.toGeoJSON();
-        const newField: Field = {
-          id: `field-${Date.now()}`,
-          name: `New Field ${fields.length + 1}`,
+        const newFields: Fields = {
+          id: `Fields-${Date.now()}`,
+          name: `New Fields ${fields.length + 1}`,
           geometry: geoJSON.geometry,
           area: L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]),
           visible: true
         };
         
-        setFields(prev => [...prev, newField]);
-        setSelectedField(newField.id);
+        setfields(prev => [...prev, newFields]);
+        setSelectedFields(newFields.id);
         
-        showSnackbar('Field created successfully', 'success');
+        showSnackbar('Fields created successfully', 'success');
       });
       
       // Save map reference
@@ -533,24 +533,24 @@ const InteractiveFieldMap: React.FC = () => {
     }
   };
   
-  // Handle field visibility toggle
-  const handleFieldVisibilityToggle = (fieldId: string) => {
+  // Handle Fields visibility toggle
+  const handleFieldsVisibilityToggle = (FieldsId: string) => {
     if (mapRef.current) {
-      const field = fields.find(f => f.id === fieldId);
-      const layer = layersRef.current[`field-${fieldId}`];
+      const Fields = fields.find(f => f.id === FieldsId);
+      const layer = layersRef.current[`Fields-${FieldsId}`];
       
-      if (field) {
-        if (field.visible) {
-          // Hide field
+      if (Fields) {
+        if (Fields.visible) {
+          // Hide Fields
           mapRef.current.removeLayer(layer);
         } else {
-          // Show field
+          // Show Fields
           mapRef.current.addLayer(layer);
         }
         
         // Update state
-        setFields(prev => prev.map(f => 
-          f.id === fieldId ? { ...f, visible: !f.visible } : f
+        setfields(prev => prev.map(f => 
+          f.id === FieldsId ? { ...f, visible: !f.visible } : f
         ));
       }
     }
@@ -766,92 +766,92 @@ const InteractiveFieldMap: React.FC = () => {
   );
   
   // Render fields drawer content
-  const renderFieldsDrawerContent = () => (
+  const renderfieldsDrawerContent = () => (
     <Box sx={{ width: isMobile ? '100%' : 300, p: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">Fields</Typography>
-        <IconButton onClick={() => setFieldsDrawerOpen(false)}>
+        <Typography variant="h6">fields</Typography>
+        <IconButton onClick={() => setfieldsDrawerOpen(false)}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider sx={{ mb: 2 }} />
       
       <List dense>
-        {fields.map(field => (
+        {fields.map(Fields => (
           <ListItem 
-            key={field.id} 
+            key={Fields.id} 
             disablePadding
             secondaryAction={
               <Switch
                 edge="end"
-                checked={field.visible}
-                onChange={() => handleFieldVisibilityToggle(field.id)}
+                checked={Fields.visible}
+                onChange={() => handleFieldsVisibilityToggle(Fields.id)}
               />
             }
           >
             <ListItemButton
-              selected={selectedField === field.id}
-              onClick={() => setSelectedField(field.id)}
+              selected={selectedFields === Fields.id}
+              onClick={() => setSelectedFields(Fields.id)}
             >
               <ListItemIcon>
                 <CropIcon />
               </ListItemIcon>
               <ListItemText 
-                primary={field.name} 
-                secondary={`${field.area.toFixed(1)} acres${field.crop ? ` • ${field.crop}` : ''}`} 
+                primary={Fields.name} 
+                secondary={`${Fields.area.toFixed(1)} acres${Fields.crop ? ` • ${Fields.crop}` : ''}`} 
               />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
       
-      {selectedField && (
+      {selectedFields && (
         <>
           <Divider sx={{ my: 2 }} />
           
-          <Typography variant="subtitle1" gutterBottom>Field Details</Typography>
+          <Typography variant="subtitle1" gutterBottom>Fields Details</Typography>
           <Box sx={{ p: 1 }}>
             {(() => {
-              const field = fields.find(f => f.id === selectedField);
-              if (!field) return null;
+              const Fields = fields.find(f => f.id === selectedFields);
+              if (!Fields) return null;
               
               return (
                 <>
-                  <Typography variant="h6">{field.name}</Typography>
+                  <Typography variant="h6">{Fields.name}</Typography>
                   <Typography variant="body2" gutterBottom>
-                    Area: {field.area.toFixed(2)} acres
+                    Area: {Fields.area.toFixed(2)} acres
                   </Typography>
                   
-                  {field.crop && (
+                  {Fields.crop && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <GrassIcon fontSize="small" sx={{ mr: 1 }} />
                       <Typography variant="body2">
-                        Crop: {field.crop}
+                        Crop: {Fields.crop}
                       </Typography>
                     </Box>
                   )}
                   
-                  {field.soilType && (
+                  {Fields.soilType && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <SpaIcon fontSize="small" sx={{ mr: 1 }} />
                       <Typography variant="body2">
-                        Soil Type: {field.soilType}
+                        Soil Type: {Fields.soilType}
                       </Typography>
                     </Box>
                   )}
                   
-                  {field.plantingDate && (
+                  {Fields.plantingDate && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <Typography variant="body2">
-                        Planting Date: {new Date(field.plantingDate).toLocaleDateString()}
+                        Planting Date: {new Date(Fields.plantingDate).toLocaleDateString()}
                       </Typography>
                     </Box>
                   )}
                   
-                  {field.harvestDate && (
+                  {Fields.harvestDate && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <Typography variant="body2">
-                        Harvest Date: {new Date(field.harvestDate).toLocaleDateString()}
+                        Harvest Date: {new Date(Fields.harvestDate).toLocaleDateString()}
                       </Typography>
                     </Box>
                   )}
@@ -973,7 +973,7 @@ const InteractiveFieldMap: React.FC = () => {
     <Box>
       <Box sx={{ mb: 3 }}>
         <Typography variant={isMobile ? "h5" : "h4"} component="h1" gutterBottom>
-          Interactive Field Map
+          Interactive Fields Map
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
           Visualize and manage your fields with advanced mapping tools
@@ -989,7 +989,7 @@ const InteractiveFieldMap: React.FC = () => {
           scrollButtons="auto"
           allowScrollButtonsMobile
         >
-          <Tab label="Field Map" />
+          <Tab label="Fields Map" />
           <Tab label="Satellite Imagery" />
           <Tab label="Soil Zones" />
           <Tab label="Crop Rotation" />
@@ -1038,8 +1038,8 @@ const InteractiveFieldMap: React.FC = () => {
               <LayersIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Fields">
-            <IconButton onClick={() => setFieldsDrawerOpen(true)}>
+          <Tooltip title="fields">
+            <IconButton onClick={() => setfieldsDrawerOpen(true)}>
               <CropIcon />
             </IconButton>
           </Tooltip>
@@ -1146,13 +1146,13 @@ const InteractiveFieldMap: React.FC = () => {
         )}
       </MapContainer>
       
-      {/* Field Information (below map) */}
-      {selectedField && !isFullscreen && (
+      {/* Fields Information (below map) */}
+      {selectedFields && !isFullscreen && (
         <Card sx={{ mt: 3 }}>
           <CardHeader
-            title={fields.find(f => f.id === selectedField)?.name || 'Field Details'}
+            title={fields.find(f => f.id === selectedFields)?.name || 'Fields Details'}
             action={
-              <IconButton onClick={() => setSelectedField(null)}>
+              <IconButton onClick={() => setSelectedFields(null)}>
                 <CloseIcon />
               </IconButton>
             }
@@ -1163,26 +1163,26 @@ const InteractiveFieldMap: React.FC = () => {
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle2" color="text.secondary">Area</Typography>
                 <Typography variant="body1">
-                  {fields.find(f => f.id === selectedField)?.area.toFixed(2)} acres
+                  {fields.find(f => f.id === selectedFields)?.area.toFixed(2)} acres
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle2" color="text.secondary">Crop</Typography>
                 <Typography variant="body1">
-                  {fields.find(f => f.id === selectedField)?.crop || 'Not specified'}
+                  {fields.find(f => f.id === selectedFields)?.crop || 'Not specified'}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle2" color="text.secondary">Soil Type</Typography>
                 <Typography variant="body1">
-                  {fields.find(f => f.id === selectedField)?.soilType || 'Not specified'}
+                  {fields.find(f => f.id === selectedFields)?.soilType || 'Not specified'}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
                 <Typography variant="subtitle2" color="text.secondary">Planting Date</Typography>
                 <Typography variant="body1">
-                  {fields.find(f => f.id === selectedField)?.plantingDate ? 
-                    new Date(fields.find(f => f.id === selectedField)?.plantingDate as string).toLocaleDateString() : 
+                  {fields.find(f => f.id === selectedFields)?.plantingDate ? 
+                    new Date(fields.find(f => f.id === selectedFields)?.plantingDate as string).toLocaleDateString() : 
                     'Not specified'}
                 </Typography>
               </Grid>
@@ -1193,14 +1193,14 @@ const InteractiveFieldMap: React.FC = () => {
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
               >
-                Edit Field
+                Edit Fields
               </Button>
               <Button
                 variant="outlined"
                 color="error"
                 startIcon={<DeleteIcon />}
               >
-                Delete Field
+                Delete Fields
               </Button>
             </Box>
           </CardContent>
@@ -1226,7 +1226,7 @@ const InteractiveFieldMap: React.FC = () => {
       <Drawer
         anchor={isMobile ? "bottom" : "right"}
         open={fieldsDrawerOpen}
-        onClose={() => setFieldsDrawerOpen(false)}
+        onClose={() => setfieldsDrawerOpen(false)}
         sx={{
           '& .MuiDrawer-paper': isMobile ? {
             borderTopLeftRadius: 16,
@@ -1235,7 +1235,7 @@ const InteractiveFieldMap: React.FC = () => {
           } : {}
         }}
       >
-        {renderFieldsDrawerContent()}
+        {renderfieldsDrawerContent()}
       </Drawer>
       
       <Drawer
@@ -1272,4 +1272,4 @@ const InteractiveFieldMap: React.FC = () => {
   );
 };
 
-export default InteractiveFieldMap;
+export default InteractiveFieldsMap;

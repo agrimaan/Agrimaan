@@ -8,14 +8,14 @@
    - [Logging In](#logging-in)
    - [Dashboard Overview](#dashboard-overview)
    - [Mobile App Access](#mobile-app-access)
-3. [Field Management](#field-management)
-   - [Adding a New Field](#adding-a-new-field)
-   - [Drawing Field Boundaries](#drawing-field-boundaries)
-   - [Viewing Field Details](#viewing-field-details)
-   - [Managing Multiple Fields](#managing-multiple-fields)
+3. [Fields Management](#Fields-management)
+   - [Adding a New Fields](#adding-a-new-Fields)
+   - [Drawing Fields Boundaries](#drawing-Fields-boundaries)
+   - [Viewing Fields Details](#viewing-Fields-details)
+   - [Managing Multiple fields](#managing-multiple-fields)
    - [Using Satellite Imagery](#using-satellite-imagery)
 4. [Crop Management](#crop-management)
-   - [Adding Crops to Fields](#adding-crops-to-fields)
+   - [Adding Crops to fields](#adding-crops-to-fields)
    - [Tracking Crop Growth Stages](#tracking-crop-growth-stages)
    - [Recording Planting and Harvest Dates](#recording-planting-and-harvest-dates)
    - [Crop Rotation Planning](#crop-rotation-planning)
@@ -39,7 +39,7 @@
 8. [Blockchain Features](#blockchain-features)
    - [Setting Up Your Wallet](#setting-up-your-wallet)
    - [AGM Tokens](#agm-tokens)
-   - [Land Tokenization](#land-tokenization)
+   - [Fields Tokenization](#Fields-tokenization)
    - [Farmhouse Tokenization](#farmhouse-tokenization)
    - [Investment Opportunities](#investment-opportunities)
 9. [Marketplace](#marketplace)
@@ -56,7 +56,7 @@
     - [Privacy Settings](#privacy-settings)
 12. [Mobile Features](#mobile-features)
     - [Offline Mode](#offline-mode)
-    - [Field Scouting](#field-scouting)
+    - [Fields Scouting](#Fields-scouting)
     - [Mobile Data Collection](#mobile-data-collection)
 13. [Support and Resources](#support-and-resources)
     - [Getting Help](#getting-help)
@@ -68,7 +68,7 @@
 
 Welcome to the agrimaan Platform, your comprehensive solution for modern, data-driven farming. This guide will help you navigate the platform's features and tools designed specifically for farmers to optimize operations, increase yields, and make informed decisions.
 
-The agrimaan Platform combines field management, crop monitoring, IoT sensor integration, weather data, advanced analytics, blockchain technology, and marketplace features in one unified system. Whether you're managing a small family farm or a large agricultural operation, our platform scales to meet your needs.
+The agrimaan Platform combines Fields management, crop monitoring, IoT sensor integration, weather data, advanced analytics, blockchain technology, and marketplace features in one unified system. Whether you're managing a small family farm or a large agricultural operation, our platform scales to meet your needs.
 
 This guide provides step-by-step instructions for all major features, along with tips and best practices to help you get the most out of the platform.
 
@@ -104,7 +104,7 @@ The dashboard is your central hub for monitoring your farm's status and accessin
 1. **Navigation Menu**: Access all platform features from the left sidebar (or bottom navigation bar on mobile).
 2. **Summary Cards**: View quick statistics about your fields, crops, sensors, and alerts.
 3. **Weather Widget**: See current weather conditions and forecast for your farm location.
-4. **Field Map**: Interactive map showing your registered fields.
+4. **Fields Map**: Interactive map showing your registered fields.
 5. **Crop Status**: Visual representation of your crops' current growth stages.
 6. **Sensor Data**: Real-time readings from your IoT sensors.
 7. **Recommendations**: AI-generated suggestions based on your farm's data.
@@ -119,51 +119,51 @@ The agrimaan mobile app provides access to all platform features with a mobile-o
 3. Enable location services and notifications for the best experience.
 4. The app works in offline mode when you don't have internet connectivity, automatically syncing data when connection is restored.
 
-## Field Management
+## Fields Management
 
-### Adding a New Field
+### Adding a New Fields
 
-1. From the dashboard, click on "Fields" in the navigation menu.
-2. Click the "+ Add Field" button.
-3. Enter field details:
-   - Field name
+1. From the dashboard, click on "fields" in the navigation menu.
+2. Click the "+ Add Fields" button.
+3. Enter Fields details:
+   - Fields name
    - Area (in acres or hectares)
    - Soil type (if known)
    - Additional notes (optional)
 4. Click "Next" to proceed to the boundary drawing step.
 
-### Drawing Field Boundaries
+### Drawing Fields Boundaries
 
-You can define your field boundaries in several ways:
+You can define your Fields boundaries in several ways:
 
 **Method 1: Manual Drawing**
-1. On the map, use the drawing tools to outline your field:
+1. On the map, use the drawing tools to outline your Fields:
    - Click the "Draw Polygon" tool.
-   - Click on the map to place points around your field boundary.
+   - Click on the map to place points around your Fields boundary.
    - Close the polygon by clicking on the first point.
 2. Adjust the boundary by dragging points if needed.
 3. Click "Save" when finished.
 
 **Method 2: Import from File**
 1. Click "Import Boundaries".
-2. Select a GeoJSON, KML, or Shapefile containing your field boundaries.
+2. Select a GeoJSON, KML, or Shapefile containing your Fields boundaries.
 3. Verify the imported boundaries on the map.
 4. Make any necessary adjustments.
 5. Click "Save".
 
 **Method 3: Satellite Detection (Beta)**
 1. Click "Detect from Satellite".
-2. Navigate to your field's approximate location on the map.
+2. Navigate to your Fields's approximate location on the map.
 3. Click "Detect Boundaries".
 4. Review the automatically detected boundaries.
 5. Make any necessary adjustments.
 6. Click "Save".
 
-### Viewing Field Details
+### Viewing Fields Details
 
-1. From the Fields page, click on any field to view its details.
-2. The Field Details page shows:
-   - Field summary (name, area, soil type)
+1. From the fields page, click on any Fields to view its details.
+2. The Fields Details page shows:
+   - Fields summary (name, area, soil type)
    - Interactive map
    - Current crops
    - Sensor data
@@ -172,24 +172,24 @@ You can define your field boundaries in several ways:
    - Historical data
    - Recommendations
 
-### Managing Multiple Fields
+### Managing Multiple fields
 
-1. Use the Fields page to see all your fields in a list or map view.
+1. Use the fields page to see all your fields in a list or map view.
 2. Filter fields by:
    - Name
    - Crop type
    - Status
    - Size
 3. Use the batch operations menu to:
-   - Export field data
+   - Export Fields data
    - Generate reports
    - Apply settings to multiple fields
 
 ### Using Satellite Imagery
 
-Satellite imagery helps monitor crop health and field conditions remotely:
+Satellite imagery helps monitor crop health and Fields conditions remotely:
 
-1. From a field's detail page, click the "Satellite" tab.
+1. From a Fields's detail page, click the "Satellite" tab.
 2. Select the date range for imagery.
 3. Choose the visualization type:
    - RGB (natural color)
@@ -201,9 +201,9 @@ Satellite imagery helps monitor crop health and field conditions remotely:
 
 ## Crop Management
 
-### Adding Crops to Fields
+### Adding Crops to fields
 
-1. Navigate to a field's detail page.
+1. Navigate to a Fields's detail page.
 2. Click the "+ Add Crop" button.
 3. Enter crop details:
    - Crop type
@@ -236,9 +236,9 @@ Satellite imagery helps monitor crop health and field conditions remotely:
 
 Plan future crop rotations to optimize soil health and yields:
 
-1. From the Fields page, click "Crop Rotation Planner".
-2. Select a field to plan rotations for.
-3. View the field's crop history.
+1. From the fields page, click "Crop Rotation Planner".
+2. Select a Fields to plan rotations for.
+3. View the Fields's crop history.
 4. Click "+ Add Rotation" to plan future crops.
 5. The system will provide recommendations based on:
    - Previous crops
@@ -267,7 +267,7 @@ Plan future crop rotations to optimize soil health and yields:
    - Model
    - Serial number
 6. Follow the specific connection instructions for your sensor type.
-7. Once connected, assign the sensor to a field.
+7. Once connected, assign the sensor to a Fields.
 8. Position the sensor on the map to record its exact location.
 
 ### Sensor Placement Guidelines
@@ -276,7 +276,7 @@ For optimal data collection, follow these placement guidelines:
 
 **Soil Moisture Sensors:**
 - Install at multiple depths (e.g., 6", 12", 24") to monitor the root zone.
-- Place in representative areas of the field, avoiding unusually wet or dry spots.
+- Place in representative areas of the Fields, avoiding unusually wet or dry spots.
 - Install multiple sensors for fields with varying soil types.
 
 **Weather Stations:**
@@ -347,7 +347,7 @@ If a sensor is not reporting data or showing unusual readings:
    - 7-day forecast (daily)
    - 14-day forecast (less detailed)
 3. Toggle between different visualization options.
-4. View field-specific microclimate forecasts if you have weather stations installed.
+4. View Fields-specific microclimate forecasts if you have weather stations installed.
 
 ### Setting Up Weather Alerts
 
@@ -378,7 +378,7 @@ If a sensor is not reporting data or showing unusual readings:
 Get data-driven yield forecasts for your crops:
 
 1. From the dashboard, navigate to "Analytics" > "Yield Predictions".
-2. Select a field and crop to analyze.
+2. Select a Fields and crop to analyze.
 3. View the predicted yield range and confidence level.
 4. Explore factors influencing the prediction:
    - Weather conditions
@@ -407,7 +407,7 @@ Monitor and predict pest risks to your crops:
 Understand and improve your soil conditions:
 
 1. Navigate to "Analytics" > "Soil Health".
-2. Select a field to analyze.
+2. Select a Fields to analyze.
 3. View comprehensive soil metrics:
    - Nutrient levels (N-P-K)
    - pH levels
@@ -424,7 +424,7 @@ Understand and improve your soil conditions:
 Use image analysis to detect crop issues early:
 
 1. Navigate to "Analytics" > "Crop Image Analysis".
-2. Upload images of your crops or use the mobile app to capture photos in the field.
+2. Upload images of your crops or use the mobile app to capture photos in the Fields.
 3. The system will analyze the images for:
    - Disease symptoms
    - Nutrient deficiencies
@@ -473,19 +473,19 @@ AGM tokens are the platform's digital currency for transactions and investments:
    - Investing in agricultural projects
    - Paying for premium platform features
 
-### Land Tokenization
+### Fields Tokenization
 
-Convert your physical land assets into digital tokens:
+Convert your physical Fields assets into digital tokens:
 
-1. Navigate to "Blockchain" > "Land Tokens".
-2. Click "+ Tokenize Land".
-3. Select a registered field to tokenize.
+1. Navigate to "Blockchain" > "Fields Tokens".
+2. Click "+ Tokenize Fields".
+3. Select a registered Fields to tokenize.
 4. Complete the verification process:
    - Provide ownership documentation
-   - Verify field boundaries
+   - Verify Fields boundaries
    - Set tokenization parameters
 5. Review and confirm the tokenization details.
-6. Once approved, your land tokens will appear in your wallet.
+6. Once approved, your Fields tokens will appear in your wallet.
 7. You can now:
    - Hold tokens as digital assets
    - Sell full or fractional ownership
@@ -493,7 +493,7 @@ Convert your physical land assets into digital tokens:
 
 ### Farmhouse Tokenization
 
-Similar to land tokenization, but for farm buildings:
+Similar to Fields tokenization, but for farm buildings:
 
 1. Navigate to "Blockchain" > "Farmhouse Tokens".
 2. Click "+ Tokenize Farmhouse".
@@ -534,7 +534,7 @@ Participate in agricultural investment opportunities:
    - Fertilizers and chemicals
    - Services
    - Technology
-   - Land and property
+   - Fields and property
 3. Use filters to narrow down options:
    - Price range
    - Location
@@ -552,7 +552,7 @@ Sell your products or services on the marketplace:
 3. Select the listing type:
    - Product
    - Service
-   - Land
+   - Fields
    - Equipment rental
 4. Fill in the details:
    - Title and description
@@ -604,7 +604,7 @@ The platform provides several types of notifications:
 
 1. **System Notifications**: Platform updates, maintenance alerts, and account information.
 2. **Weather Alerts**: Severe weather warnings, frost alerts, and optimal condition notifications.
-3. **Field Alerts**: Issues detected in your fields that may require attention.
+3. **Fields Alerts**: Issues detected in your fields that may require attention.
 4. **Crop Alerts**: Growth stage transitions, potential issues, and harvest timing recommendations.
 5. **Sensor Alerts**: Low battery warnings, connectivity issues, and unusual readings.
 6. **Blockchain Notifications**: Transaction confirmations, investment updates, and token movements.
@@ -678,13 +678,13 @@ The mobile app works even without internet connectivity:
 4. Download maps and critical data before going to areas with poor connectivity.
 5. Set the app to "Prepare for Offline" before extended offline use to ensure all necessary data is downloaded.
 
-### Field Scouting
+### Fields Scouting
 
-Use the mobile app for efficient field scouting:
+Use the mobile app for efficient Fields scouting:
 
-1. Navigate to "Fields" and select a field to scout.
+1. Navigate to "fields" and select a Fields to scout.
 2. Click "Start Scouting".
-3. The app will track your path through the field.
+3. The app will track your path through the Fields.
 4. Record observations:
    - Tap the "+" button to add an observation
    - Select the observation type (pest, disease, weed, etc.)
@@ -695,11 +695,11 @@ Use the mobile app for efficient field scouting:
 
 ### Mobile Data Collection
 
-Collect data efficiently in the field:
+Collect data efficiently in the Fields:
 
 1. Use the mobile app's data collection forms.
 2. Scan QR codes on sensors to quickly access their data.
-3. Take geo-tagged photos that automatically link to the correct field.
+3. Take geo-tagged photos that automatically link to the correct Fields.
 4. Record voice notes that are automatically transcribed.
 5. Use the camera for automatic crop growth stage identification.
 

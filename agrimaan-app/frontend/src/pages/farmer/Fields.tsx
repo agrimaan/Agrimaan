@@ -23,7 +23,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store'; // adjust path to your store
-import { getFields, deleteField } from '../../features/fields/fieldSlice';
+import { getFields, deleteFields } from '../../features/fields/fieldSlice';
 
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -38,7 +38,7 @@ const Fields: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { fields, loading, error } = useSelector((state: RootState) => state.field);
+  const { fields, loading, error } = useSelector((state: RootState) => state.fields);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -81,7 +81,7 @@ const Fields: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (selectedField) {
       try {
-        await dispatch(deleteField(selectedField._id) as any);
+        await dispatch(deleteFields(selectedField._id) as any);
         setDeleteSuccess(true);
 
         setTimeout(() => {
@@ -104,7 +104,7 @@ const Fields: React.FC = () => {
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="div">
-          Land Management
+          Fields Management
         </Typography>
         <Button 
           component={Link}
@@ -113,13 +113,13 @@ const Fields: React.FC = () => {
           color="primary" 
           startIcon={<AddIcon />}
         >
-          Add Land
+          Add Fields
         </Button>
       </Box>
 
       {deleteSuccess && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Land deleted successfully!
+          Fields deleted successfully!
         </Alert>
       )}
 
@@ -153,7 +153,7 @@ const Fields: React.FC = () => {
       ) : (
         <>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Found {filteredFields.length} land{filteredFields.length !== 1 ? 's' : ''}
+            Found {filteredFields.length} Fields{filteredFields.length !== 1 ? 's' : ''}
           </Typography>
 
           <Grid container spacing={3}>
@@ -241,7 +241,7 @@ const Fields: React.FC = () => {
           {filteredFields.length === 0 && !loading && (
             <Box sx={{ textAlign: 'center', py: 8 }}>
               <Typography variant="h6" color="text.secondary" gutterBottom>
-                No land found
+                No Fields found
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 {searchTerm ? 'Try adjusting your search criteria' : 'Get started by adding your first field'}
@@ -252,7 +252,7 @@ const Fields: React.FC = () => {
                 variant="contained" 
                 startIcon={<AddIcon />}
               >
-                Add Your First Land
+                Add Your First Fields
               </Button>
             </Box>
           )}
@@ -275,11 +275,11 @@ const Fields: React.FC = () => {
       >
         <MenuItem onClick={handleEdit}>
           <EditIcon sx={{ mr: 1, fontSize: 20 }} />
-          Edit Land
+          Edit Fields
         </MenuItem>
         <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 1, fontSize: 20 }} />
-          Delete Land
+          Delete Fields
         </MenuItem>
       </Menu>
 
@@ -291,7 +291,7 @@ const Fields: React.FC = () => {
         aria-describedby="delete-dialog-description"
       >
         <DialogTitle id="delete-dialog-title">
-          Delete Land
+          Delete Fields
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-dialog-description">

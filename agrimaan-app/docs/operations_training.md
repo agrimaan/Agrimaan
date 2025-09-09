@@ -23,7 +23,7 @@ The agrimaan application consists of the following components:
 3. **Database**: MongoDB
    - Technology: MongoDB 6.0
    - Deployment: MongoDB container
-   - Purpose: Stores all application data including user information, crop data, field data, and analytics
+   - Purpose: Stores all application data including user information, crop data, Fields data, and analytics
 
 4. **Nginx**: Web server and reverse proxy
    - Technology: Nginx Alpine

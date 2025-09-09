@@ -127,11 +127,11 @@ The backend consists of the following microservices:
    - User preferences
    - Account settings
 
-3. **Field Service**
-   - Field management
+3. **Fields Service**
+   - Fields management
    - GIS data processing
    - Boundary calculations
-   - Field history tracking
+   - Fields history tracking
 
 4. **Crop Service**
    - Crop management
@@ -209,7 +209,7 @@ The platform uses multiple database technologies:
 
 1. **PostgreSQL**
    - User accounts and profiles
-   - Field and crop data
+   - Fields and crop data
    - Transactional marketplace data
    - Relational data with spatial extensions
 
@@ -249,7 +249,7 @@ The platform integrates with various external services:
 
 2. **Satellite Imagery**
    - Sentinel
-   - Landsat
+   - fieldsat
    - Planet
    - Custom drone imagery
 
@@ -517,7 +517,7 @@ After installation, perform these initial setup steps:
 
 6. **Verify system health:**
    ```bash
-   curl http://localhost:3001/api/health
+   curl http://localhost:3000/api/health
    # Should return {"status":"ok","services":[...]}
    ```
 
@@ -834,7 +834,7 @@ The platform can integrate with third-party KYC/AML services:
 2. Click "Deploy Contract".
 3. Select the contract type:
    - AGM Token
-   - Land Token
+   - Fields Token
    - Farmhouse Token
    - Investment Contract
    - Revenue Distribution
@@ -1131,7 +1131,7 @@ The platform can integrate with third-party KYC/AML services:
 2. Select the import source file.
 3. Configure import settings:
    - Target database and tables
-   - Field mapping
+   - Fields mapping
    - Conflict resolution strategy
    - Validation rules
 4. Run a validation check before import.
@@ -1381,7 +1381,7 @@ The platform can integrate with third-party KYC/AML services:
    - False color rendering
    - Cloud masking
    - Image enhancement
-   - Field boundary detection
+   - Fields boundary detection
 3. Set processing schedules.
 4. Configure storage and caching policies.
 5. Monitor processing queue and resource usage.

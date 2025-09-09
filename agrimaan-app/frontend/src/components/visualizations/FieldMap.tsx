@@ -5,8 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import { useTheme } from '@mui/material/styles';
 
 // Define prop types for the component
-interface FieldMapProps {
-  fieldData: {
+interface FieldsMapProps {
+  FieldsData: {
     _id: string;
     name: string;
     location: {
@@ -60,8 +60,8 @@ interface FieldMapProps {
   showLegend?: boolean;
 }
 
-const FieldMap: React.FC<FieldMapProps> = ({
-  fieldData,
+const FieldsMap: React.FC<FieldsMapProps> = ({
+  FieldsData,
   sensors = [],
   crops = [],
   weatherData,
@@ -120,13 +120,13 @@ const FieldMap: React.FC<FieldMapProps> = ({
 
   // Initialize map
   useEffect(() => {
-    if (!mapRef.current || !fieldData.location) return;
+    if (!mapRef.current || !FieldsData.location) return;
     
     try {
       // Create map instance if it doesn't exist
       if (!mapInstanceRef.current) {
         const map = L.map(mapRef.current).setView(
-          [fieldData.location.lat, fieldData.location.lng],
+          [FieldsData.location.lat, FieldsData.location.lng],
           14
         );
         
@@ -160,13 +160,13 @@ const FieldMap: React.FC<FieldMapProps> = ({
         }
       });
       
-      // Add field boundary if available
-      if (fieldData.boundaries && fieldData.boundaries.coordinates) {
+      // Add Fields boundary if available
+      if (FieldsData.boundaries && FieldsData.boundaries.coordinates) {
         try {
           // Convert GeoJSON coordinates to Leaflet format
-          const coordinates = fieldData.boundaries.coordinates[0].map(coord => [coord[1], coord[0]]);
+          const coordinates = FieldsData.boundaries.coordinates[0].map(coord => [coord[1], coord[0]]);
           
-          // Create polygon for field boundary
+          // Create polygon for Fields boundary
           const polygon = L.polygon(coordinates as L.LatLngExpression[], {
             color: theme.palette.primary.main,
             weight: 2,
@@ -178,16 +178,16 @@ const FieldMap: React.FC<FieldMapProps> = ({
           // Fit map to boundary
           map.fitBounds(polygon.getBounds());
           
-          // Add field name popup
-          polygon.bindPopup(`<b>${fieldData.name}</b><br>Area: ${fieldData.area || 'N/A'} ha<br>Soil: ${fieldData.soilType || 'N/A'}`);
+          // Add Fields name popup
+          polygon.bindPopup(`<b>${FieldsData.name}</b><br>Area: ${FieldsData.area || 'N/A'} ha<br>Soil: ${FieldsData.soilType || 'N/A'}`);
         } catch (err) {
-          console.error('Error creating field boundary:', err);
+          console.error('Error creating Fields boundary:', err);
         }
       } else {
-        // If no boundary, just add a marker for the field center
-        L.marker([fieldData.location.lat, fieldData.location.lng])
+        // If no boundary, just add a marker for the Fields center
+        L.marker([FieldsData.location.lat, FieldsData.location.lng])
           .addTo(map)
-          .bindPopup(`<b>${fieldData.name}</b><br>Area: ${fieldData.area || 'N/A'} ha<br>Soil: ${fieldData.soilType || 'N/A'}`);
+          .bindPopup(`<b>${FieldsData.name}</b><br>Area: ${FieldsData.area || 'N/A'} ha<br>Soil: ${FieldsData.soilType || 'N/A'}`);
       }
       
       // Add crop areas if available
@@ -263,11 +263,11 @@ const FieldMap: React.FC<FieldMapProps> = ({
           iconAnchor: [60, 40]
         });
         
-        // Position weather info in the top right corner of the field
-        if (fieldData.boundaries && fieldData.boundaries.coordinates) {
+        // Position weather info in the top right corner of the Fields
+        if (FieldsData.boundaries && FieldsData.boundaries.coordinates) {
           try {
             const bounds = L.latLngBounds(
-              fieldData.boundaries.coordinates[0].map(coord => [coord[1], coord[0]]) as L.LatLngExpression[]
+              FieldsData.boundaries.coordinates[0].map(coord => [coord[1], coord[0]]) as L.LatLngExpression[]
             );
             const ne = bounds.getNorthEast();
             L.marker([ne.lat, ne.lng], { icon: weatherIcon }).addTo(map);
@@ -275,8 +275,8 @@ const FieldMap: React.FC<FieldMapProps> = ({
             console.error('Error adding weather info:', err);
           }
         } else {
-          // If no boundary, place weather info near the field center
-          L.marker([fieldData.location.lat + 0.01, fieldData.location.lng + 0.01], { icon: weatherIcon }).addTo(map);
+          // If no boundary, place weather info near the Fields center
+          L.marker([FieldsData.location.lat + 0.01, FieldsData.location.lng + 0.01], { icon: weatherIcon }).addTo(map);
         }
       }
       
@@ -294,7 +294,7 @@ const FieldMap: React.FC<FieldMapProps> = ({
         mapInstanceRef.current = null;
       }
     };
-  }, [fieldData, sensors, crops, weatherData, theme, interactive, createSensorIcon, cropStatusColors]);
+  }, [FieldsData, sensors, crops, weatherData, theme, interactive, createSensorIcon, cropStatusColors]);
 
   // Render legend
   const renderLegend = () => {
@@ -396,4 +396,4 @@ const FieldMap: React.FC<FieldMapProps> = ({
   );
 };
 
-export default FieldMap;
+export default FieldsMap;

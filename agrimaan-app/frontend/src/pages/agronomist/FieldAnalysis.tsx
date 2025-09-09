@@ -1,21 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
-
-
-//import EcoIcon from '@mui/icons-material/Eco';
-//import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
-//import NatureIcon from '@mui/icons-material/Nature';
-//import YardIcon from '@mui/icons-material/Yard';
-//import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-//import PaymentIcon from '@mui/icons-material/Payment';
-//import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-//import FilterListIcon from '@mui/icons-material/FilterList';
-//import { useDispatch, useSelector } from 'react-redux';
-//import { DataGrid } from '@mui/x-data-grid';   // if used
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'; // if used
-
-
 import {
   Box,
   Button,
@@ -45,13 +29,13 @@ import {
   BugReport as BugReportIcon,
   History as HistoryIcon,
   Assignment as AssignmentIcon,
-  ArrowBack as ArrowBackIcon
+  ArrowBack as ArrowBackIcon,
+  VideoCall as VideoCallIcon
 } from '@mui/icons-material';
 import axios from 'axios';
-import { API_BASE_URL } from '../../config/apiConfig';
 
 // Define types
-interface Field {
+interface Fields {
   _id: string;
   name: string;
   location: string;
@@ -111,8 +95,8 @@ function TabPanel(props: TabPanelProps) {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`field-analysis-tabpanel-${index}`}
-      aria-labelledby={`field-analysis-tab-${index}`}
+      id={`Fields-analysis-tabpanel-${index}`}
+      aria-labelledby={`Fields-analysis-tab-${index}`}
       {...other}
     >
       {value === index && (
@@ -126,14 +110,14 @@ function TabPanel(props: TabPanelProps) {
 
 function a11yProps(index: number) {
   return {
-    id: `field-analysis-tab-${index}`,
-    'aria-controls': `field-analysis-tabpanel-${index}`,
+    id: `Fields-analysis-tab-${index}`,
+    'aria-controls': `Fields-analysis-tabpanel-${index}`,
   };
 }
 
-const FieldAnalysis: React.FC = () => {
+const FieldsAnalysis: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [field, setField] = useState<Field | null>(null);
+  const [Fields, setFields] = useState<Fields | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tabValue, setTabValue] = useState(0);
@@ -141,13 +125,13 @@ const FieldAnalysis: React.FC = () => {
   useEffect(() => {
     // In a real implementation, this would be an API call
     // For now, we'll use mock data
-    const fetchField = async () => {
+    const fetchFields = async () => {
       setLoading(true);
       try {
-        // Mock field data
-        const mockField: Field = {
+        // Mock Fields data
+        const mockFields: Fields = {
           _id: id || 'f1',
-          name: 'North Wheat Field',
+          name: 'North Wheat Fields',
           location: 'Punjab',
           size: 25,
           unit: 'acres',
@@ -205,17 +189,17 @@ const FieldAnalysis: React.FC = () => {
 
         // Simulate API delay
         setTimeout(() => {
-          setField(mockField);
+          setFields(mockFields);
           setLoading(false);
         }, 800);
       } catch (err: any) {
-        console.error('Error fetching field data:', err);
-        setError(err.message || 'Failed to load field data');
+        console.error('Error fetching Fields data:', err);
+        setError(err.message || 'Failed to load Fields data');
         setLoading(false);
       }
     };
 
-    fetchField();
+    fetchFields();
   }, [id]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -291,17 +275,17 @@ const FieldAnalysis: React.FC = () => {
           <LinearProgress />
         </Box>
         <Typography variant="h5" sx={{ mt: 2 }}>
-          Loading field data...
+          Loading Fields data...
         </Typography>
       </Container>
     );
   }
 
-  if (error || !field) {
+  if (error || !Fields) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Typography variant="h5" color="error">
-          Error: {error || 'Field not found'}
+          Error: {error || 'Fields not found'}
         </Typography>
         <Button
           component={RouterLink}
@@ -309,7 +293,7 @@ const FieldAnalysis: React.FC = () => {
           startIcon={<ArrowBackIcon />}
           sx={{ mt: 2 }}
         >
-          Back to Fields
+          Back to fields
         </Button>
       </Container>
     );
@@ -323,33 +307,33 @@ const FieldAnalysis: React.FC = () => {
           to="/agronomist/fields"
           startIcon={<ArrowBackIcon />}
         >
-          Back to Fields
+          Back to fields
         </Button>
       </Box>
 
-      {/* Field Overview */}
+      {/* Fields Overview */}
       <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Box>
             <Typography variant="h4" gutterBottom>
-              {field.name}
+              {Fields.name}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <TerrainIcon sx={{ mr: 1 }} />
               <Typography variant="body1">
-                {field.location} | {field.size} {field.unit} | {field.soilType} soil
+                {Fields.location} | {Fields.size} {Fields.unit} | {Fields.soilType} soil
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <SpaIcon sx={{ mr: 1 }} />
               <Typography variant="body1">
-                Main crop: {field.crops[0].name} ({field.crops[0].variety})
+                Main crop: {Fields.crops[0].name} ({Fields.crops[0].variety})
               </Typography>
             </Box>
           </Box>
           <Chip 
-            label={`Health: ${field.healthStatus.charAt(0).toUpperCase() + field.healthStatus.slice(1)}`}
-            color={getHealthStatusColor(field.healthStatus) as any}
+            label={`Health: ${Fields.healthStatus.charAt(0).toUpperCase() + Fields.healthStatus.slice(1)}`}
+            color={getHealthStatusColor(Fields.healthStatus) as any}
             sx={{ fontSize: '1rem', py: 2, px: 1 }}
           />
         </Box>
@@ -360,10 +344,10 @@ const FieldAnalysis: React.FC = () => {
               Owner Information
             </Typography>
             <Typography variant="body1">
-              {field.owner.name}
+              {Fields.owner.name}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {field.owner.email} | {field.owner.phone}
+              {Fields.owner.email} | {Fields.owner.phone}
             </Typography>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -371,10 +355,10 @@ const FieldAnalysis: React.FC = () => {
               Last Inspection
             </Typography>
             <Typography variant="body1">
-              {formatDate(field.lastInspection)}
+              {formatDate(Fields.lastInspection)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              By: {field.inspectionHistory[0].inspector}
+              By: {Fields.inspectionHistory[0].inspector}
             </Typography>
           </Grid>
         </Grid>
@@ -415,66 +399,66 @@ const FieldAnalysis: React.FC = () => {
                     <TableBody>
                       <TableRow>
                         <TableCell>pH Level</TableCell>
-                        <TableCell>{field.soilHealth.ph}</TableCell>
+                        <TableCell>{Fields.soilHealth.ph}</TableCell>
                         <TableCell>
                           <Chip 
-                            label={getSoilHealthRating(field.soilHealth.ph, 'ph').rating} 
-                            color={getSoilHealthRating(field.soilHealth.ph, 'ph').color as any}
+                            label={getSoilHealthRating(Fields.soilHealth.ph, 'ph').rating} 
+                            color={getSoilHealthRating(Fields.soilHealth.ph, 'ph').color as any}
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Nitrogen (ppm)</TableCell>
-                        <TableCell>{field.soilHealth.nitrogen}</TableCell>
+                        <TableCell>{Fields.soilHealth.nitrogen}</TableCell>
                         <TableCell>
                           <Chip 
-                            label={getSoilHealthRating(field.soilHealth.nitrogen, 'nitrogen').rating} 
-                            color={getSoilHealthRating(field.soilHealth.nitrogen, 'nitrogen').color as any}
+                            label={getSoilHealthRating(Fields.soilHealth.nitrogen, 'nitrogen').rating} 
+                            color={getSoilHealthRating(Fields.soilHealth.nitrogen, 'nitrogen').color as any}
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Phosphorus (ppm)</TableCell>
-                        <TableCell>{field.soilHealth.phosphorus}</TableCell>
+                        <TableCell>{Fields.soilHealth.phosphorus}</TableCell>
                         <TableCell>
                           <Chip 
-                            label={getSoilHealthRating(field.soilHealth.phosphorus, 'phosphorus').rating} 
-                            color={getSoilHealthRating(field.soilHealth.phosphorus, 'phosphorus').color as any}
+                            label={getSoilHealthRating(Fields.soilHealth.phosphorus, 'phosphorus').rating} 
+                            color={getSoilHealthRating(Fields.soilHealth.phosphorus, 'phosphorus').color as any}
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Potassium (ppm)</TableCell>
-                        <TableCell>{field.soilHealth.potassium}</TableCell>
+                        <TableCell>{Fields.soilHealth.potassium}</TableCell>
                         <TableCell>
                           <Chip 
-                            label={getSoilHealthRating(field.soilHealth.potassium, 'potassium').rating} 
-                            color={getSoilHealthRating(field.soilHealth.potassium, 'potassium').color as any}
+                            label={getSoilHealthRating(Fields.soilHealth.potassium, 'potassium').rating} 
+                            color={getSoilHealthRating(Fields.soilHealth.potassium, 'potassium').color as any}
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Organic Matter (%)</TableCell>
-                        <TableCell>{field.soilHealth.organicMatter}</TableCell>
+                        <TableCell>{Fields.soilHealth.organicMatter}</TableCell>
                         <TableCell>
                           <Chip 
-                            label={getSoilHealthRating(field.soilHealth.organicMatter, 'organicMatter').rating} 
-                            color={getSoilHealthRating(field.soilHealth.organicMatter, 'organicMatter').color as any}
+                            label={getSoilHealthRating(Fields.soilHealth.organicMatter, 'organicMatter').rating} 
+                            color={getSoilHealthRating(Fields.soilHealth.organicMatter, 'organicMatter').color as any}
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Moisture (%)</TableCell>
-                        <TableCell>{field.soilHealth.moisture}</TableCell>
+                        <TableCell>{Fields.soilHealth.moisture}</TableCell>
                         <TableCell>
                           <Chip 
-                            label={getSoilHealthRating(field.soilHealth.moisture, 'moisture').rating} 
-                            color={getSoilHealthRating(field.soilHealth.moisture, 'moisture').color as any}
+                            label={getSoilHealthRating(Fields.soilHealth.moisture, 'moisture').rating} 
+                            color={getSoilHealthRating(Fields.soilHealth.moisture, 'moisture').color as any}
                             size="small"
                           />
                         </TableCell>
@@ -489,23 +473,23 @@ const FieldAnalysis: React.FC = () => {
                     Soil Analysis Summary
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    The soil in {field.name} is primarily {field.soilType.toLowerCase()}, which is generally suitable for {field.crops[0].name.toLowerCase()} cultivation.
+                    The soil in {Fields.name} is primarily {Fields.soilType.toLowerCase()}, which is generally suitable for {Fields.crops[0].name.toLowerCase()} cultivation.
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    The pH level of {field.soilHealth.ph} is {getSoilHealthRating(field.soilHealth.ph, 'ph').rating.toLowerCase()} for {field.crops[0].name.toLowerCase()} growth.
+                    The pH level of {Fields.soilHealth.ph} is {getSoilHealthRating(Fields.soilHealth.ph, 'ph').rating.toLowerCase()} for {Fields.crops[0].name.toLowerCase()} growth.
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    Nitrogen levels are {getSoilHealthRating(field.soilHealth.nitrogen, 'nitrogen').rating.toLowerCase()}, indicating {getSoilHealthRating(field.soilHealth.nitrogen, 'nitrogen').rating === 'Low' ? 'a need for nitrogen fertilization' : 'adequate nitrogen for crop growth'}.
+                    Nitrogen levels are {getSoilHealthRating(Fields.soilHealth.nitrogen, 'nitrogen').rating.toLowerCase()}, indicating {getSoilHealthRating(Fields.soilHealth.nitrogen, 'nitrogen').rating === 'Low' ? 'a need for nitrogen fertilization' : 'adequate nitrogen for crop growth'}.
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    Soil moisture is currently at {field.soilHealth.moisture}%, which is {getSoilHealthRating(field.soilHealth.moisture, 'moisture').rating.toLowerCase()} for the current growth stage.
+                    Soil moisture is currently at {Fields.soilHealth.moisture}%, which is {getSoilHealthRating(Fields.soilHealth.moisture, 'moisture').rating.toLowerCase()} for the current growth stage.
                   </Typography>
                   <Box sx={{ mt: 2 }}>
                     <Button
                       variant="contained"
                       startIcon={<AssignmentIcon />}
                       component={RouterLink}
-                      to={`/agronomist/fields/${field._id}/recommendations/new`}
+                      to={`/agronomist/fields/${Fields._id}/recommendations/new`}
                     >
                       Create Soil Recommendation
                     </Button>
@@ -536,7 +520,7 @@ const FieldAnalysis: React.FC = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {field.crops.map((crop) => (
+                      {Fields.crops.map((crop) => (
                         <TableRow key={crop._id}>
                           <TableCell>{crop.name}</TableCell>
                           <TableCell>{crop.variety}</TableCell>
@@ -586,10 +570,10 @@ const FieldAnalysis: React.FC = () => {
                     Crop Analysis Summary
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    The {field.crops[0].name.toLowerCase()} crop ({field.crops[0].variety}) is currently in the vegetative growth stage, with overall {field.crops[0].healthStatus} health.
+                    The {Fields.crops[0].name.toLowerCase()} crop ({Fields.crops[0].variety}) is currently in the vegetative growth stage, with overall {Fields.crops[0].healthStatus} health.
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    Planted on {formatDate(field.crops[0].plantingDate)}, the crop is expected to be ready for harvest around {formatDate(field.crops[0].expectedHarvestDate)}.
+                    Planted on {formatDate(Fields.crops[0].plantingDate)}, the crop is expected to be ready for harvest around {formatDate(Fields.crops[0].expectedHarvestDate)}.
                   </Typography>
                   <Typography variant="body1" paragraph>
                     Recent inspection found some minor signs of nutrient deficiency in the eastern section, which should be addressed with appropriate fertilization.
@@ -602,7 +586,7 @@ const FieldAnalysis: React.FC = () => {
                       variant="contained"
                       startIcon={<BugReportIcon />}
                       component={RouterLink}
-                      to={`/agronomist/fields/${field._id}/issues/new`}
+                      to={`/agronomist/fields/${Fields._id}/issues/new`}
                     >
                       Report Issue
                     </Button>
@@ -610,7 +594,7 @@ const FieldAnalysis: React.FC = () => {
                       variant="outlined"
                       startIcon={<AssignmentIcon />}
                       component={RouterLink}
-                      to={`/agronomist/fields/${field._id}/recommendations/new`}
+                      to={`/agronomist/fields/${Fields._id}/recommendations/new`}
                     >
                       Create Recommendation
                     </Button>
@@ -639,7 +623,7 @@ const FieldAnalysis: React.FC = () => {
                         Temperature
                       </Typography>
                       <Typography variant="h6">
-                        {field.weatherConditions.temperature}°C
+                        {Fields.weatherConditions.temperature}°C
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -647,7 +631,7 @@ const FieldAnalysis: React.FC = () => {
                         Humidity
                       </Typography>
                       <Typography variant="h6">
-                        {field.weatherConditions.humidity}%
+                        {Fields.weatherConditions.humidity}%
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -655,7 +639,7 @@ const FieldAnalysis: React.FC = () => {
                         Rainfall (last 7 days)
                       </Typography>
                       <Typography variant="h6">
-                        {field.weatherConditions.rainfall} mm
+                        {Fields.weatherConditions.rainfall} mm
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
@@ -663,7 +647,7 @@ const FieldAnalysis: React.FC = () => {
                         Wind Speed
                       </Typography>
                       <Typography variant="h6">
-                        {field.weatherConditions.windSpeed} km/h
+                        {Fields.weatherConditions.windSpeed} km/h
                       </Typography>
                     </Grid>
                   </Grid>
@@ -675,13 +659,13 @@ const FieldAnalysis: React.FC = () => {
                     Weather Impact Analysis
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    Current temperature of {field.weatherConditions.temperature}°C is within the optimal range for {field.crops[0].name.toLowerCase()} growth.
+                    Current temperature of {Fields.weatherConditions.temperature}°C is within the optimal range for {Fields.crops[0].name.toLowerCase()} growth.
                   </Typography>
                   <Typography variant="body1" paragraph>
-                    Rainfall of {field.weatherConditions.rainfall}mm in the last 7 days is {field.weatherConditions.rainfall < 15 ? 'below' : 'adequate for'} the crop's water requirements.
+                    Rainfall of {Fields.weatherConditions.rainfall}mm in the last 7 days is {Fields.weatherConditions.rainfall < 15 ? 'below' : 'adequate for'} the crop's water requirements.
                   </Typography>
                   <Typography variant="body1">
-                    Recommendation: {field.weatherConditions.rainfall < 15 ? 'Increase irrigation to compensate for low rainfall.' : 'Maintain current irrigation schedule.'}
+                    Recommendation: {Fields.weatherConditions.rainfall < 15 ? 'Increase irrigation to compensate for low rainfall.' : 'Maintain current irrigation schedule.'}
                   </Typography>
                 </Paper>
               </Grid>
@@ -722,7 +706,7 @@ const FieldAnalysis: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {field.inspectionHistory.map((inspection) => (
+                  {Fields.inspectionHistory.map((inspection) => (
                     <TableRow key={inspection._id}>
                       <TableCell>{formatDate(inspection.date)}</TableCell>
                       <TableCell>{inspection.inspector}</TableCell>
@@ -738,7 +722,7 @@ const FieldAnalysis: React.FC = () => {
                 variant="contained"
                 startIcon={<ScienceIcon />}
                 component={RouterLink}
-                to={`/agronomist/fields/${field._id}/inspections/new`}
+                to={`/agronomist/fields/${Fields._id}/inspections/new`}
               >
                 Record New Inspection
               </Button>
@@ -753,7 +737,7 @@ const FieldAnalysis: React.FC = () => {
           variant="outlined"
           startIcon={<VideoCallIcon />}
           component={RouterLink}
-          to={`/agronomist/consultations/new?fieldId=${field._id}`}
+          to={`/agronomist/consultations/new?FieldsId=${Fields._id}`}
         >
           Schedule Consultation
         </Button>
@@ -762,7 +746,7 @@ const FieldAnalysis: React.FC = () => {
             variant="outlined"
             startIcon={<HistoryIcon />}
             component={RouterLink}
-            to={`/agronomist/fields/${field._id}/history`}
+            to={`/agronomist/fields/${Fields._id}/history`}
           >
             View Complete History
           </Button>
@@ -770,7 +754,7 @@ const FieldAnalysis: React.FC = () => {
             variant="contained"
             startIcon={<AssignmentIcon />}
             component={RouterLink}
-            to={`/agronomist/fields/${field._id}/recommendations/new`}
+            to={`/agronomist/fields/${Fields._id}/recommendations/new`}
           >
             Create Recommendation
           </Button>
@@ -780,4 +764,4 @@ const FieldAnalysis: React.FC = () => {
   );
 };
 
-export default FieldAnalysis;
+export default FieldsAnalysis;

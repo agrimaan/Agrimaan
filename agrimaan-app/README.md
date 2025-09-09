@@ -1,4 +1,4 @@
-# agrimaan Application
+# Agrimaan Application
 
 A comprehensive agrimaan platform inspired by Agrimaan.io, integrating IoT, AI, and blockchain technologies to provide farmers and agribusinesses with tools for improved agricultural productivity, sustainability, and profitability.
 
@@ -24,14 +24,19 @@ A comprehensive agrimaan platform inspired by Agrimaan.io, integrating IoT, AI, 
 - Standardization and synchronization of agricultural data
 - Enhanced traceability and transparency
 
+### Marketplace and Order Management
+- Direct buying and selling of agricultural products
+- Order tracking from placement to delivery
+- Quality and rating system for products and sellers
+
 ## Technology Stack
 
 ### Frontend
 - React.js with TypeScript
 - Material-UI for UI components
-- Redux for state management
+- Redux Toolkit for state management
 - Chart.js for data visualization
-- Leaflet.js for field mapping
+- Leaflet.js for Fields mapping
 
 ### Backend
 - Node.js with Express
@@ -76,6 +81,8 @@ agrimaan-app/
 │   ├── models/         # MongoDB models
 │   ├── routes/         # API routes
 │   ├── middleware/     # Custom middleware
+│   ├── config/         # Configuration files
+│   ├── scripts/        # Database scripts
 │   └── utils/          # Utility functions
 ├── docs/               # Documentation
 ├── nginx/              # Nginx configuration
@@ -88,7 +95,7 @@ agrimaan-app/
 
 ### Prerequisites
 - Node.js (v14 or higher)
-- MongoDB
+- MongoDB (v4 or higher)
 - Git
 
 ### Installation
@@ -113,13 +120,36 @@ npm install
 
 4. Create a `.env` file in the backend directory with the following variables:
 ```
-PORT=5000
+PORT=3001
 MONGO_URI=mongodb://localhost:27017/agrimaan
 JWT_SECRET=your_jwt_secret_key_here
-NODE_ENV=development
+USE_REAL_DB=true
+```
+
+### Setting up MongoDB
+
+1. Install MongoDB:
+```bash
+cd backend/scripts
+chmod +x setupMongoDB.sh
+sudo ./setupMongoDB.sh
+```
+
+2. Seed the database with initial data:
+```bash
+cd backend
+node scripts/seedData.js
 ```
 
 ### Running the Application
+
+#### Option 1: Using the start script
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+#### Option 2: Running servers separately
 
 1. Start the backend server:
 ```bash
@@ -134,6 +164,30 @@ npm start
 ```
 
 3. Open your browser and navigate to `http://localhost:3000`
+
+## Default Users
+
+After seeding the database, you can log in with the following credentials:
+
+- **Admin**:
+  - Email: admin@agrimaan.com
+  - Password: password123
+
+- **Farmer**:
+  - Email: farmer@agrimaan.com
+  - Password: password123
+
+- **Buyer**:
+  - Email: buyer@agrimaan.com
+  - Password: password123
+
+- **Logistics Provider**:
+  - Email: logistics@agrimaan.com
+  - Password: password123
+
+- **Agronomist**:
+  - Email: agronomist@agrimaan.com
+  - Password: password123
 
 ## Deployment
 

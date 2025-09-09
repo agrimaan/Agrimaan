@@ -16,7 +16,7 @@ import {
 import {
   ChevronLeft as ChevronLeftIcon,
   Dashboard as DashboardIcon,
-  Terrain as FieldsIcon,
+  Terrain as LandscapeIcon,
   Grass as CropsIcon,
   Sensors as SensorsIcon,
   Analytics as AnalyticsIcon,
@@ -51,9 +51,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer, user }) => {
       icon: <DashboardIcon />
     },
     {
-      title: 'Fields',
+      title: 'fields',
       path: '/fields',
-      icon: <FieldsIcon />
+      icon: <LandscapeIcon />
     },
     {
       title: 'Crops',

@@ -11,9 +11,9 @@ const SensorSchema = new mongoose.Schema({
     enum: ['soil_moisture', 'temperature', 'humidity', 'rainfall', 'light', 'wind', 'soil_nutrient', 'water_level', 'other'],
     required: true
   },
-  field: {
+  Fields: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Field',
+    ref: 'Fields',
     required: true
   },
   location: {

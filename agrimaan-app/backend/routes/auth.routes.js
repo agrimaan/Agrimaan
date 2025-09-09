@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
-
 // @route   POST api/auth/register
 // @desc    Register a user
 // @access  Public
@@ -15,7 +14,7 @@ router.post(
     body('name', 'Name is required').not().isEmpty(),
     body('email', 'Please include a valid email').isEmail(),
     body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
-    body('role', 'Role is required').isIn(['farmer', 'buyer','logistics','agronomist', 'admin', 'investor'])
+    body('role', 'Role is required').isIn(['farmer', 'agronomist', 'admin', 'investor', 'buyer', 'logistics'])
   ],
   async (req, res) => {
     // Validate request
@@ -84,13 +83,12 @@ router.post(
     // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.warn('LOGIN BODY:', req.body);
-      console.warn('LOGIN VALIDATION ERRORS:', errors.array());
+      console.error(errors)
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { email, password } = req.body;
-    
+
     try {
       // Check if user exists
       const user = await User.findOne({ email });

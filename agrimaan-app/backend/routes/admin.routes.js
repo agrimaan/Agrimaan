@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
-const Field = require('../models/Field');
+const Fields = require('../models/Fields');
 const Crop = require('../models/Crop');
 const Sensor = require('../models/Sensor');
 const Order = require('../models/Order');
@@ -16,7 +16,7 @@ router.get('/dashboard', [auth, admin], async (req, res) => {
   try {
     // Get counts for dashboard
     const userCount = await User.countDocuments();
-    const fieldCount = await Field.countDocuments();
+    const FieldsCount = await Fields.countDocuments();
     const cropCount = await Crop.countDocuments();
     const sensorCount = await Sensor.countDocuments();
     const orderCount = await Order.countDocuments();
@@ -44,7 +44,7 @@ router.get('/dashboard', [auth, admin], async (req, res) => {
     res.json({
       counts: {
         users: userCount,
-        fields: fieldCount,
+        fields: FieldsCount,
         crops: cropCount,
         sensors: sensorCount,
         orders: orderCount
@@ -299,14 +299,14 @@ router.get('/fields', [auth, admin], async (req, res) => {
     }
     
     // Get fields with pagination
-    const fields = await Field.find(filter)
+    const fields = await Fields.find(filter)
       .populate('user', 'name email')
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));
     
     // Get total count
-    const total = await Field.countDocuments(filter);
+    const total = await Fields.countDocuments(filter);
     
     res.json({
       fields,
@@ -328,7 +328,7 @@ router.get('/fields', [auth, admin], async (req, res) => {
 // @access  Private/Admin
 router.get('/crops', [auth, admin], async (req, res) => {
   try {
-    const { page = 1, limit = 10, userId, fieldId, status, search } = req.query;
+    const { page = 1, limit = 10, userId, FieldsId, status, search } = req.query;
     
     // Build filter
     const filter = {};
@@ -336,8 +336,8 @@ router.get('/crops', [auth, admin], async (req, res) => {
       filter.user = userId;
     }
     
-    if (fieldId) {
-      filter.field = fieldId;
+    if (FieldsId) {
+      filter.Fields = FieldsId;
     }
     
     if (status) {
@@ -354,7 +354,7 @@ router.get('/crops', [auth, admin], async (req, res) => {
     // Get crops with pagination
     const crops = await Crop.find(filter)
       .populate('user', 'name email')
-      .populate('field', 'name location')
+      .populate('Fields', 'name location')
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));
@@ -382,7 +382,7 @@ router.get('/crops', [auth, admin], async (req, res) => {
 // @access  Private/Admin
 router.get('/sensors', [auth, admin], async (req, res) => {
   try {
-    const { page = 1, limit = 10, userId, fieldId, status, type, search } = req.query;
+    const { page = 1, limit = 10, userId, FieldsId, status, type, search } = req.query;
     
     // Build filter
     const filter = {};
@@ -390,8 +390,8 @@ router.get('/sensors', [auth, admin], async (req, res) => {
       filter.user = userId;
     }
     
-    if (fieldId) {
-      filter.field = fieldId;
+    if (FieldsId) {
+      filter.Fields = FieldsId;
     }
     
     if (status) {
@@ -409,7 +409,7 @@ router.get('/sensors', [auth, admin], async (req, res) => {
     // Get sensors with pagination
     const sensors = await Sensor.find(filter)
       .populate('user', 'name email')
-      .populate('field', 'name location')
+      .populate('Fields', 'name location')
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));

@@ -7,27 +7,27 @@ describe('Dashboard Page', () => {
     cy.intercept('GET', '/api/fields', { 
       statusCode: 200, 
       body: [
-        { id: 'field-1', name: 'North Field', area: 25.4, crop: 'Corn', soilType: 'Clay Loam' },
-        { id: 'field-2', name: 'South Field', area: 18.7, crop: 'Soybeans', soilType: 'Silt Loam' }
+        { id: 'Fields-1', name: 'North Fields', area: 25.4, crop: 'Corn', soilType: 'Clay Loam' },
+        { id: 'Fields-2', name: 'South Fields', area: 18.7, crop: 'Soybeans', soilType: 'Silt Loam' }
       ]
     }).as('getFields');
     
     cy.intercept('GET', '/api/crops', { 
       statusCode: 200, 
       body: [
-        { id: 'crop-1', name: 'Corn', status: 'growing', field: 'field-1' },
-        { id: 'crop-2', name: 'Soybeans', status: 'planted', field: 'field-2' },
-        { id: 'crop-3', name: 'Wheat', status: 'harvested', field: 'field-3' }
+        { id: 'crop-1', name: 'Corn', status: 'growing', Fields: 'Fields-1' },
+        { id: 'crop-2', name: 'Soybeans', status: 'planted', Fields: 'Fields-2' },
+        { id: 'crop-3', name: 'Wheat', status: 'harvested', Fields: 'Fields-3' }
       ]
     }).as('getCrops');
     
     cy.intercept('GET', '/api/sensors', { 
       statusCode: 200, 
       body: [
-        { id: 'sensor-1', name: 'Soil Moisture 1', status: 'active', field: 'field-1' },
-        { id: 'sensor-2', name: 'Temperature 1', status: 'active', field: 'field-1' },
-        { id: 'sensor-3', name: 'Soil Moisture 2', status: 'inactive', field: 'field-2' },
-        { id: 'sensor-4', name: 'Weather Station', status: 'error', field: 'field-2' }
+        { id: 'sensor-1', name: 'Soil Moisture 1', status: 'active', Fields: 'Fields-1' },
+        { id: 'sensor-2', name: 'Temperature 1', status: 'active', Fields: 'Fields-1' },
+        { id: 'sensor-3', name: 'Soil Moisture 2', status: 'inactive', Fields: 'Fields-2' },
+        { id: 'sensor-4', name: 'Weather Station', status: 'error', Fields: 'Fields-2' }
       ]
     }).as('getSensors');
     
@@ -37,16 +37,16 @@ describe('Dashboard Page', () => {
         { 
           id: 'rec-1', 
           type: 'irrigation_recommendation', 
-          action: 'Increase irrigation in North Field', 
+          action: 'Increase irrigation in North Fields', 
           priority: 'high',
-          field: { id: 'field-1', name: 'North Field' }
+          Fields: { id: 'Fields-1', name: 'North Fields' }
         },
         { 
           id: 'rec-2', 
           type: 'pest_risk', 
-          action: 'Check for aphids in South Field', 
+          action: 'Check for aphids in South Fields', 
           priority: 'medium',
-          field: { id: 'field-2', name: 'South Field' }
+          Fields: { id: 'Fields-2', name: 'South Fields' }
         }
       ]
     }).as('getRecommendations');
@@ -63,8 +63,8 @@ describe('Dashboard Page', () => {
   });
   
   it('should display summary cards with correct data', () => {
-    // Check Total Fields card
-    cy.contains('Total Fields')
+    // Check Total fields card
+    cy.contains('Total fields')
       .parent()
       .parent()
       .within(() => {
@@ -112,8 +112,8 @@ describe('Dashboard Page', () => {
   
   it('should display recommendations', () => {
     cy.contains('Recommendations').should('be.visible');
-    cy.contains('Increase irrigation in North Field').should('be.visible');
-    cy.contains('Check for aphids in South Field').should('be.visible');
+    cy.contains('Increase irrigation in North Fields').should('be.visible');
+    cy.contains('Check for aphids in South Fields').should('be.visible');
     cy.contains('View All Recommendations').should('be.visible');
   });
   
@@ -164,41 +164,41 @@ describe('Dashboard Page', () => {
     cy.checkA11y();
   });
   
-  it('should allow adding a new field', () => {
+  it('should allow adding a new Fields', () => {
     // Intercept the POST request
     cy.intercept('POST', '/api/fields', {
       statusCode: 201,
       body: {
-        id: 'field-3',
-        name: 'East Field',
+        id: 'Fields-3',
+        name: 'East Fields',
         area: 15.2,
         crop: null,
         soilType: 'Sandy Loam'
       }
-    }).as('createField');
+    }).as('createFields');
     
-    // Click the Add Field button
-    cy.findByText('Add Field').click();
+    // Click the Add Fields button
+    cy.findByText('Add Fields').click();
     
-    // Should navigate to the new field form
+    // Should navigate to the new Fields form
     cy.url().should('include', '/fields/new');
     
     // Fill out the form
-    cy.findByLabelText(/field name/i).type('East Field');
+    cy.findByLabelText(/Fields name/i).type('East Fields');
     cy.findByLabelText(/area/i).type('15.2');
     cy.findByLabelText(/soil type/i).type('Sandy Loam');
     
     // Submit the form
-    cy.findByText('Save Field').click();
+    cy.findByText('Save Fields').click();
     
     // Wait for the API call
-    cy.wait('@createField');
+    cy.wait('@createFields');
     
     // Should redirect to the fields page
     cy.url().should('include', '/fields');
     
     // Should show a success message
-    cy.contains('Field created successfully').should('be.visible');
+    cy.contains('Fields created successfully').should('be.visible');
   });
   
   it('should refresh data when clicking refresh button', () => {
@@ -206,14 +206,14 @@ describe('Dashboard Page', () => {
     cy.intercept('GET', '/api/fields', { 
       statusCode: 200, 
       body: [
-        { id: 'field-1', name: 'North Field', area: 25.4, crop: 'Corn', soilType: 'Clay Loam' },
-        { id: 'field-2', name: 'South Field', area: 18.7, crop: 'Soybeans', soilType: 'Silt Loam' },
-        { id: 'field-3', name: 'East Field', area: 15.2, crop: null, soilType: 'Sandy Loam' }
+        { id: 'Fields-1', name: 'North Fields', area: 25.4, crop: 'Corn', soilType: 'Clay Loam' },
+        { id: 'Fields-2', name: 'South Fields', area: 18.7, crop: 'Soybeans', soilType: 'Silt Loam' },
+        { id: 'Fields-3', name: 'East Fields', area: 15.2, crop: null, soilType: 'Sandy Loam' }
       ]
     }).as('getFieldsRefresh');
     
-    // Find and click the refresh button on the Total Fields card
-    cy.contains('Total Fields')
+    // Find and click the refresh button on the Total fields card
+    cy.contains('Total fields')
       .parent()
       .parent()
       .within(() => {
@@ -224,7 +224,7 @@ describe('Dashboard Page', () => {
     cy.wait('@getFieldsRefresh');
     
     // Check that the data has been updated
-    cy.contains('Total Fields')
+    cy.contains('Total fields')
       .parent()
       .parent()
       .within(() => {

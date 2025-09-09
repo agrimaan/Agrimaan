@@ -22,8 +22,8 @@ import ErrorIcon from '@mui/icons-material/Error';
 
 // Define prop types for the component
 interface SensorDashboardProps {
-  fieldId: string;
-  fieldName: string;
+  FieldsId: string;
+  FieldsName: string;
   sensors: Array<{
     _id: string;
     name: string;
@@ -67,8 +67,8 @@ interface SensorDashboardProps {
 }
 
 const SensorDashboard: React.FC<SensorDashboardProps> = ({
-  fieldId,
-  fieldName,
+  FieldsId,
+  FieldsName,
   sensors,
   sensorReadings = {},
   alerts = [],
@@ -278,7 +278,7 @@ const SensorDashboard: React.FC<SensorDashboardProps> = ({
   const renderDashboardHeader = () => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5">{fieldName} - Sensor Dashboard</Typography>
+        <Typography variant="h5">{FieldsName} - Sensor Dashboard</Typography>
         
         <Box sx={{ display: 'flex', gap: 2 }}>
           {onTimeRangeChange && (
