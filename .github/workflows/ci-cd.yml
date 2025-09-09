@@ -1,0 +1,410 @@
+name: Agrimaan CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18.x'
+  MONGODB_VERSION: '6.0'
+
+jobs:
+  # Backend Tests
+  backend-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:6.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: agrimaan-app/backend/package-lock.json
+
+    - name: Install backend dependencies
+      working-directory: ./agrimaan-app/backend
+      run: npm ci
+
+    - name: Create test environment file
+      working-directory: ./agrimaan-app/backend
+      run: |
+        echo "NODE_ENV=test" > .env.test
+        echo "MONGO_URI=mongodb://root:password@localhost:27017/agrimaan_test?authSource=admin" >> .env.test
+        echo "JWT_SECRET=test-jwt-secret-key" >> .env.test
+        echo "USE_REAL_DB=false" >> .env.test
+
+    - name: Run backend linting
+      working-directory: ./agrimaan-app/backend
+      run: npm run lint
+
+    - name: Run backend unit tests
+      working-directory: ./agrimaan-app/backend
+      run: npm run test:coverage
+      env:
+        NODE_ENV: test
+
+    - name: Upload backend coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./agrimaan-app/backend/coverage/lcov.info
+        flags: backend
+        name: backend-coverage
+
+  # Frontend Tests
+  frontend-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: agrimaan-app/frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: ./agrimaan-app/frontend
+      run: npm ci
+
+    - name: Run frontend linting
+      working-directory: ./agrimaan-app/frontend
+      run: npm run lint
+
+    - name: Run frontend type checking
+      working-directory: ./agrimaan-app/frontend
+      run: npm run type-check
+
+    - name: Run frontend unit tests
+      working-directory: ./agrimaan-app/frontend
+      run: npm run test:coverage
+      env:
+        CI: true
+
+    - name: Upload frontend coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./agrimaan-app/frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+
+  # Blockchain Tests
+  blockchain-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: agrimaan-app/blockchain/package-lock.json
+
+    - name: Install blockchain dependencies
+      working-directory: ./agrimaan-app/blockchain
+      run: npm ci
+
+    - name: Compile smart contracts
+      working-directory: ./agrimaan-app/blockchain
+      run: npm run compile
+
+    - name: Run smart contract tests
+      working-directory: ./agrimaan-app/blockchain
+      run: npm run test
+
+    - name: Run contract size analysis
+      working-directory: ./agrimaan-app/blockchain
+      run: npm run size
+
+    - name: Generate gas report
+      working-directory: ./agrimaan-app/blockchain
+      run: npm run test
+      env:
+        REPORT_GAS: true
+
+  # Security Scanning
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Snyk security scan for backend
+      uses: snyk/actions/node@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=agrimaan-app/backend/package.json --severity-threshold=high
+
+    - name: Run Snyk security scan for frontend
+      uses: snyk/actions/node@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=agrimaan-app/frontend/package.json --severity-threshold=high
+
+    - name: Run Snyk security scan for blockchain
+      uses: snyk/actions/node@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=agrimaan-app/blockchain/package.json --severity-threshold=high
+
+  # Integration Tests
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install dependencies
+      run: |
+        cd agrimaan-app/backend && npm ci
+        cd ../frontend && npm ci
+
+    - name: Start backend server
+      working-directory: ./agrimaan-app/backend
+      run: |
+        echo "NODE_ENV=test" > .env
+        echo "MONGO_URI=mongodb://root:password@localhost:27017/agrimaan_test?authSource=admin" >> .env
+        echo "JWT_SECRET=test-jwt-secret-key" >> .env
+        echo "REDIS_URL=redis://localhost:6379" >> .env
+        echo "USE_REAL_DB=true" >> .env
+        npm start &
+        sleep 10
+      env:
+        NODE_ENV: test
+
+    - name: Run API integration tests
+      working-directory: ./agrimaan-app/backend
+      run: npm run test -- --testPathPattern=integration
+
+    - name: Build frontend
+      working-directory: ./agrimaan-app/frontend
+      run: npm run build
+
+    - name: Run E2E tests with Cypress
+      working-directory: ./agrimaan-app/frontend
+      run: |
+        npm start &
+        sleep 30
+        npx cypress run --headless
+      env:
+        CYPRESS_baseUrl: http://localhost:3000
+
+  # Build and Deploy (only on main branch)
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test, blockchain-test, integration-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push backend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./agrimaan-app/backend
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/agrimaan-backend:latest
+          ${{ secrets.DOCKER_USERNAME }}/agrimaan-backend:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push frontend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./agrimaan-app/frontend
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/agrimaan-frontend:latest
+          ${{ secrets.DOCKER_USERNAME }}/agrimaan-frontend:${{ github.sha }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Deploy to staging
+      if: github.ref == 'refs/heads/develop'
+      run: |
+        echo "Deploying to staging environment..."
+        # Add staging deployment commands here
+
+    - name: Deploy to production
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "Deploying to production environment..."
+        # Add production deployment commands here
+
+  # Performance Testing
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: [integration-test]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: Install k6
+      run: |
+        sudo gpg -k
+        sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt-get update
+        sudo apt-get install k6
+
+    - name: Run performance tests
+      run: |
+        # Add k6 performance test scripts here
+        echo "Running performance tests..."
+
+  # Security Penetration Testing
+  penetration-test:
+    runs-on: ubuntu-latest
+    needs: [integration-test]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup OWASP ZAP
+      run: |
+        docker pull owasp/zap2docker-stable
+
+    - name: Run OWASP ZAP baseline scan
+      run: |
+        docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py \
+          -t http://localhost:3000 \
+          -g gen.conf \
+          -r zap-report.html || true
+
+    - name: Upload ZAP report
+      uses: actions/upload-artifact@v3
+      with:
+        name: zap-report
+        path: zap-report.html
+
+  # Code Quality Analysis
+  code-quality:
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # Notification
+  notify:
+    runs-on: ubuntu-latest
+    needs: [build-and-deploy, performance-test, penetration-test]
+    if: always()
+
+    steps:
+    - name: Notify Slack on success
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        channel: '#agrimaan-ci-cd'
+        text: '✅ Agrimaan CI/CD pipeline completed successfully!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Slack on failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#agrimaan-ci-cd'
+        text: '❌ Agrimaan CI/CD pipeline failed!'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
