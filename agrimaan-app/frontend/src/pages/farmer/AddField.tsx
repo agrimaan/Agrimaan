@@ -3,7 +3,7 @@ import { Box, Typography, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import FieldsForm from '../../components/FieldsForm';
-// import { createFields } from '../features/fields/fieldslice'; // Uncomment when slice is ready
+import { createFields } from '../../features/fields/fieldSlice'; // Uncomment when slice is ready
 
 const AddFields: React.FC = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const AddFields: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // TODO: Uncomment when slice is ready
-      // await dispatch(createFields(formData) as any);
+      await dispatch(createFields(formData) as any);
 
       setSuccess(true);
       setTimeout(() => {

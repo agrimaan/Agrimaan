@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Box,
@@ -68,7 +69,8 @@ ChartJS.register(
   ArcElement
 );
 
-const Dashboard: React.FC = () => {
+const FarmerDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const theme = useTheme();
   
@@ -94,20 +96,26 @@ const Dashboard: React.FC = () => {
     if (typeof fieldRef === 'string') {
       // If field is just an ID, find the field name from fields array
       const field = fields.find(f => f._id === fieldRef);
-      return field?.name || 'Unknown';
+      return field?.name || t('common.unknown');
     } else if (fieldRef && typeof fieldRef === 'object' && fieldRef.name) {
       // If field is populated object
       return fieldRef.name;
     }
-    return 'Unknown';
+    return t('common.unknown');
   };
   
-  // Prepare data for charts
+  // Prepare data for charts with translated labels
   const cropStatusData = {
-    labels: ['Planned', 'Planted', 'Growing', 'Harvested', 'Failed'],
+    labels: [
+      t('crops.status.planned'),
+      t('crops.status.planted'),
+      t('crops.status.growing'),
+      t('crops.status.harvested'),
+      t('crops.status.failed')
+    ],
     datasets: [
       {
-        label: 'Crop Status',
+        label: t('crops.status.title'),
         data: [
           crops.filter(crop => crop.status === 'planned').length,
           crops.filter(crop => crop.status === 'planted').length,
@@ -135,10 +143,15 @@ const Dashboard: React.FC = () => {
   };
   
   const sensorStatusData = {
-    labels: ['Active', 'Inactive', 'Maintenance', 'Error'],
+    labels: [
+      t('sensors.status.active'),
+      t('sensors.status.inactive'),
+      t('sensors.status.maintenance'),
+      t('sensors.status.error')
+    ],
     datasets: [
       {
-        label: 'Sensor Status',
+        label: t('sensors.status.title'),
         data: [
           sensors.filter(sensor => sensor.status === 'active').length,
           sensors.filter(sensor => sensor.status === 'inactive').length,
@@ -164,10 +177,18 @@ const Dashboard: React.FC = () => {
   
   // Mock data for soil moisture trend
   const soilMoistureData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+    labels: [
+      t('months.jan'),
+      t('months.feb'),
+      t('months.mar'),
+      t('months.apr'),
+      t('months.may'),
+      t('months.jun'),
+      t('months.jul')
+    ],
     datasets: [
       {
-        label: 'Field 1',
+        label: t('dashboard.field1'),
         data: [65, 59, 80, 81, 56, 55, 40],
         borderColor: theme.palette.primary.main,
         backgroundColor: 'rgba(46, 125, 50, 0.1)',
@@ -175,7 +196,7 @@ const Dashboard: React.FC = () => {
         tension: 0.4
       },
       {
-        label: 'Field 2',
+        label: t('dashboard.field2'),
         data: [28, 48, 40, 19, 86, 27, 90],
         borderColor: theme.palette.secondary.main,
         backgroundColor: 'rgba(255, 143, 0, 0.1)',
@@ -187,15 +208,20 @@ const Dashboard: React.FC = () => {
   
   // Mock data for crop yield comparison
   const cropYieldData = {
-    labels: ['Wheat', 'Corn', 'Soybeans', 'Rice'],
+    labels: [
+      t('crops.wheat'),
+      t('crops.corn'),
+      t('crops.soybeans'),
+      t('crops.rice')
+    ],
     datasets: [
       {
-        label: 'Last Year',
+        label: t('dashboard.lastYear'),
         data: [4.2, 9.5, 3.1, 5.8],
         backgroundColor: theme.palette.primary.light,
       },
       {
-        label: 'This Year (Projected)',
+        label: t('dashboard.thisYearProjected'),
         data: [4.5, 10.2, 3.4, 6.0],
         backgroundColor: theme.palette.primary.dark,
       }
@@ -210,7 +236,7 @@ const Dashboard: React.FC = () => {
       },
       title: {
         display: true,
-        text: 'Crop Yield Comparison (tons/ha)'
+        text: t('dashboard.cropYieldComparison')
       }
     },
     scales: {
@@ -224,7 +250,7 @@ const Dashboard: React.FC = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Dashboard
+          {t('dashboard.title')}
         </Typography>
         
         <Box>
@@ -235,7 +261,7 @@ const Dashboard: React.FC = () => {
             startIcon={<StoreIcon />}
             sx={{ mr: 1 }}
           >
-            Sell Crops
+            {t('dashboard.sellCrops')}
           </Button>
           <Button
             component={RouterLink}
@@ -244,7 +270,7 @@ const Dashboard: React.FC = () => {
             startIcon={<AddIcon />}
             sx={{ mr: 1 }}
           >
-            Add Field
+            {t('dashboard.addField')}
           </Button>
         </Box>
       </Box>
@@ -257,7 +283,7 @@ const Dashboard: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
-                    Total Fields
+                    {t('dashboard.totalFields')}
                   </Typography>
                   <Typography variant="h4" component="div">
                     {fieldsLoading ? '...' : fields.length}
@@ -267,7 +293,7 @@ const Dashboard: React.FC = () => {
               </Box>
               <Box sx={{ mt: 2 }}>
                 <Link component={RouterLink} to="/fields" color="primary" underline="hover">
-                  View all fields
+                  {t('dashboard.viewAllFields')}
                 </Link>
               </Box>
             </CardContent>
@@ -280,7 +306,7 @@ const Dashboard: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
-                    Active Crops
+                    {t('dashboard.activeCrops')}
                   </Typography>
                   <Typography variant="h4" component="div">
                     {cropsLoading ? '...' : crops.filter(crop => crop.status !== 'harvested' && crop.status !== 'failed').length}
@@ -290,7 +316,7 @@ const Dashboard: React.FC = () => {
               </Box>
               <Box sx={{ mt: 2 }}>
                 <Link component={RouterLink} to="/crops" color="primary" underline="hover">
-                  View all crops
+                  {t('dashboard.viewAllCrops')}
                 </Link>
               </Box>
             </CardContent>
@@ -303,7 +329,7 @@ const Dashboard: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
-                    Active Sensors
+                    {t('dashboard.activeSensors')}
                   </Typography>
                   <Typography variant="h4" component="div">
                     {sensorsLoading ? '...' : sensors.filter(sensor => sensor.status === 'active').length}
@@ -313,7 +339,7 @@ const Dashboard: React.FC = () => {
               </Box>
               <Box sx={{ mt: 2 }}>
                 <Link component={RouterLink} to="/sensors" color="primary" underline="hover">
-                  View all sensors
+                  {t('dashboard.viewAllSensors')}
                 </Link>
               </Box>
             </CardContent>
@@ -326,7 +352,7 @@ const Dashboard: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
-                    Ready to Sell
+                    {t('dashboard.readyToSell')}
                   </Typography>
                   <Typography variant="h4" component="div">
                     {cropsLoading ? '...' : cropsReadyForSale.length}
@@ -336,7 +362,7 @@ const Dashboard: React.FC = () => {
               </Box>
               <Box sx={{ mt: 2 }}>
                 <Link component={RouterLink} to="/marketplace" color="primary" underline="hover">
-                  View marketplace
+                  {t('dashboard.viewMarketplace')}
                 </Link>
               </Box>
             </CardContent>
@@ -349,7 +375,7 @@ const Dashboard: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
-                    Alerts
+                    {t('dashboard.alerts')}
                   </Typography>
                   <Typography variant="h4" component="div" color="error.main">
                     {sensorsLoading ? '...' : sensors.filter(sensor => sensor.status === 'error').length}
@@ -359,7 +385,7 @@ const Dashboard: React.FC = () => {
               </Box>
               <Box sx={{ mt: 2 }}>
                 <Link component={RouterLink} to="/alerts" color="primary" underline="hover">
-                  View all alerts
+                  {t('dashboard.viewAllAlerts')}
                 </Link>
               </Box>
             </CardContent>
@@ -373,7 +399,7 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Soil Moisture Trend
+              {t('dashboard.soilMoistureTrend')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Box sx={{ height: 300 }}>
@@ -385,7 +411,7 @@ const Dashboard: React.FC = () => {
                   plugins: {
                     title: {
                       display: true,
-                      text: 'Soil Moisture (%) - Last 7 Months'
+                      text: t('dashboard.soilMoistureLast7Months')
                     }
                   }
                 }} 
@@ -398,15 +424,15 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Crops Ready for Sale
+              {t('dashboard.cropsReadyForSale')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             
             {cropsLoading ? (
-              <Typography>Loading crops...</Typography>
+              <Typography>{t('common.loading')}</Typography>
             ) : cropsReadyForSale.length === 0 ? (
               <Typography color="text.secondary">
-                No crops ready for sale at the moment
+                {t('dashboard.noCropsReady')}
               </Typography>
             ) : (
               <List dense>
@@ -437,7 +463,7 @@ const Dashboard: React.FC = () => {
                       secondary={
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
                           <Typography variant="body2" color="text.secondary">
-                            {`Field: ${getFieldName(crop.field)}`}
+                            {`${t('common.field')}: ${getFieldName(crop.field)}`}
                           </Typography>
                           <Typography variant="body2" color="primary">
                             {`${crop.expectedYield || 'N/A'} kg`}
@@ -458,7 +484,7 @@ const Dashboard: React.FC = () => {
                   size="small"
                   color="primary"
                 >
-                  View All Crops
+                  {t('dashboard.viewAllCrops')}
                 </Button>
                 <Button
                   component={RouterLink}
@@ -467,7 +493,7 @@ const Dashboard: React.FC = () => {
                   variant="contained"
                   startIcon={<ShoppingCartIcon />}
                 >
-                  Sell Now
+                  {t('dashboard.sellNow')}
                 </Button>
               </Box>
             )}
@@ -478,14 +504,14 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Recommendations
+              {t('dashboard.recommendations')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             
             {recommendationsLoading ? (
-              <Typography>Loading recommendations...</Typography>
+              <Typography>{t('common.loading')}</Typography>
             ) : recommendations.length === 0 ? (
-              <Typography>No recommendations available</Typography>
+              <Typography>{t('dashboard.noRecommendations')}</Typography>
             ) : (
               <List dense>
                 {recommendations.slice(0, 5).map((rec, index) => (
@@ -503,7 +529,7 @@ const Dashboard: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary={rec.action}
-                      secondary={`Field: ${rec.Fields.name}`}
+                      secondary={`${t('common.field')}: ${rec.Fields.name}`}
                     />
                     <Chip
                       label={rec.priority}
@@ -526,7 +552,7 @@ const Dashboard: React.FC = () => {
                 size="small"
                 color="primary"
               >
-                View All Recommendations
+                {t('dashboard.viewAllRecommendations')}
               </Button>
             </Box>
           </Paper>
@@ -536,7 +562,7 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Weather Forecast
+              {t('dashboard.weatherForecast')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Box sx={{ textAlign: 'center', py: 2 }}>
@@ -544,32 +570,32 @@ const Dashboard: React.FC = () => {
                 24°C
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                Partly Cloudy
+                {t('weather.partlyCloudy')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Humidity: 65% | Wind: 8 km/h
+                {t('weather.humidity')}: 65% | {t('weather.wind')}: 8 km/h
               </Typography>
             </Box>
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Mon</Typography>
+                <Typography variant="body2">{t('days.mon')}</Typography>
                 <Typography variant="body1">23°C</Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Tue</Typography>
+                <Typography variant="body2">{t('days.tue')}</Typography>
                 <Typography variant="body1">25°C</Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Wed</Typography>
+                <Typography variant="body2">{t('days.wed')}</Typography>
                 <Typography variant="body1">22°C</Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Thu</Typography>
+                <Typography variant="body2">{t('days.thu')}</Typography>
                 <Typography variant="body1">20°C</Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2">Fri</Typography>
+                <Typography variant="body2">{t('days.fri')}</Typography>
                 <Typography variant="body1">21°C</Typography>
               </Box>
             </Box>
@@ -580,7 +606,7 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} sm={6} md={4}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Crop Status
+              {t('dashboard.cropStatus')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Box sx={{ height: 250, display: 'flex', justifyContent: 'center' }}>
@@ -604,7 +630,7 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12} sm={6} md={4}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              Sensor Status
+              {t('dashboard.sensorStatus')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Box sx={{ height: 250, display: 'flex', justifyContent: 'center' }}>
@@ -628,7 +654,7 @@ const Dashboard: React.FC = () => {
         <Grid item xs={12}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
-              Crop Yield Comparison
+              {t('dashboard.cropYieldComparison')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <Box sx={{ height: 300 }}>
@@ -644,4 +670,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default FarmerDashboard;

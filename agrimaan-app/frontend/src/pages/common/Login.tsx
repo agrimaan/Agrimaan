@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Avatar,
   Box,
@@ -11,13 +12,19 @@ import {
   Paper,
   TextField,
   Typography,
-  Alert
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material';
 import { login } from '../../features/auth/authSlice';
 import { RootState } from '../../store';
+import { languages } from '../../i18n';
 
 const Login: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, isAuthenticated, user } = useSelector((state: RootState) => state.auth);
@@ -26,6 +33,11 @@ const Login: React.FC = () => {
     email: '',
     password: ''
   });
+
+  const handleLanguageChange = (languageCode: string) => {
+    i18n.changeLanguage(languageCode);
+    localStorage.setItem('preferredLanguage', languageCode);
+  };
 
   const { email, password } = formData;
 
@@ -86,12 +98,28 @@ const Login: React.FC = () => {
           borderRadius: 2
         }}
       >
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%', mb: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel>{t('common.language')}</InputLabel>
+            <Select
+              value={i18n.language}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              label={t('common.language')}
+            >
+              {languages.map((language) => (
+                <MenuItem key={language.code} value={language.code}>
+                  {language.flag} {language.nativeName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
         <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
           <LockOutlinedIcon />
         </Avatar>
 
         <Typography component="h1" variant="h5">
-          Sign in to Agrimaan
+          {t('auth.welcomeBack')}
         </Typography>
 
         {error && (
@@ -106,7 +134,7 @@ const Login: React.FC = () => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t('auth.email')}
             name="email"
             autoComplete="email"
             autoFocus
@@ -119,7 +147,7 @@ const Login: React.FC = () => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t('auth.password')}
             type="password"
             id="password"
             autoComplete="current-password"
@@ -134,8 +162,8 @@ const Login: React.FC = () => {
             sx={{ mt: 3, mb: 2, py: 1.5 }}
             disabled={loading}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </Button>
+            {loading ? 'Signing in...' : t('auth.login')}
+            </Button>
 
           <Grid container>
             <Grid item xs>
@@ -145,7 +173,7 @@ const Login: React.FC = () => {
             </Grid>
             <Grid item>
               <Link component={RouterLink} to="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
+                {"{t('auth.dontHaveAccount')} {t('auth.createAccount')}"}
               </Link>
             </Grid>
           </Grid>

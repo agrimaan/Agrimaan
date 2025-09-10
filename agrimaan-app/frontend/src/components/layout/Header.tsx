@@ -20,6 +20,7 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
+import LanguageSelector from '../common/LanguageSelector';
 
 import { logout } from '../../features/auth/authSlice';
 import { RootState } from '../../store';
@@ -106,6 +107,11 @@ const Header: React.FC<HeaderProps> = ({ open, toggleDrawer }) => {
           />
           Agrimaan
         </Typography>
+
+        {/* Language Selector */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}>
+          <LanguageSelector variant="chip" size="medium" />
+        </Box>
         
         {/* Notifications */}
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>

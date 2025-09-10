@@ -1,419 +1,317 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Button,
+  Typography,
+  Grid,
   Card,
   CardContent,
   CardMedia,
-  Container,
-  Divider,
-  Grid,
-  Link,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
+  Button,
   Chip,
-  Avatar
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Avatar,
+  IconButton,
+  Badge,
 } from '@mui/material';
 import {
+  Dashboard as DashboardIcon,
   ShoppingCart as ShoppingCartIcon,
   Store as StoreIcon,
-  History as HistoryIcon,
+  TrendingUp as TrendingUpIcon,
   LocalShipping as LocalShippingIcon,
-  Favorite as FavoriteIcon
+  Notifications as NotificationsIcon,
+  Favorite as FavoriteIcon,
+  AddShoppingCart as AddShoppingCartIcon,
 } from '@mui/icons-material';
-import { RootState } from '../agronomist/store';
-import axios from 'axios';
-import { API_BASE_URL } from '../../config/apiConfig';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
-// Define types
-interface Order {
-  _id: string;
-  seller: {
-    _id: string;
-    name: string;
-  };
-  items: Array<{
-    crop: {
-      _id: string;
-      name: string;
-      variety: string;
-    };
-    quantity: number;
-    pricePerUnit: number;
-    totalPrice: number;
-  }>;
-  totalAmount: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
-  paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
-  createdAt: string;
+interface BuyerStats {
+  totalOrders: number;
+  activeOrders: number;
+  savedItems: number;
+  totalSpent: number;
 }
 
-interface MarketplaceItem {
-  _id: string;
-  cropName: string;
-  variety: string;
-  quantity: number;
-  unit: string;
-  pricePerUnit: number;
-  totalPrice: number;
-  seller: {
-    _id: string;
-    name: string;
-  };
-  image?: string;
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  seller: string;
+  location: string;
   quality: string;
-  status: string;
+  category: string;
 }
 
 const BuyerDashboard: React.FC = () => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state: RootState) => state.auth);
-  
-  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
-  const [featuredProducts, setFeaturedProducts] = useState<MarketplaceItem[]>([]);
-  const [loading, setLoading] = useState({
-    orders: true,
-    products: true
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<BuyerStats>({
+    totalOrders: 15,
+    activeOrders: 3,
+    savedItems: 8,
+    totalSpent: 25000,
   });
 
-  useEffect(() => {
-    // Fetch recent orders
-    const fetchOrders = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/api/orders`);
-        setRecentOrders(res.data.slice(0, 5)); // Get only the 5 most recent orders
-        setLoading(prev => ({ ...prev, orders: false }));
-      } catch (err) {
-        console.error('Error fetching orders:', err);
-        setLoading(prev => ({ ...prev, orders: false }));
-      }
-    };
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([
+    {
+      id: '1',
+      name: t('crops.wheat'),
+      price: 2200,
+      image: '/images/wheat.jpeg',
+      seller: 'राम कुमार',
+      location: 'हरियाणा',
+      quality: 'प्रीमियम',
+      category: 'अनाज',
+    },
+    {
+      id: '2',
+      name: t('crops.rice'),
+      price: 2800,
+      image: '/images/rice.jpeg',
+      seller: 'सीता देवी',
+      location: 'पंजाब',
+      quality: 'सुपर',
+      category: 'अनाज',
+    },
+    {
+      id: '3',
+      name: t('crops.corn'),
+      price: 1800,
+      image: '/images/corn.jpeg',
+      seller: 'श्याम लाल',
+      location: 'मध्य प्रदेश',
+      quality: 'मध्यम',
+      category: 'अनाज',
+    },
+  ]);
 
-    // Fetch featured products
-    const fetchFeaturedProducts = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/api/marketplace/featured`);
-        setFeaturedProducts(res.data);
-        setLoading(prev => ({ ...prev, products: false }));
-      } catch (err) {
-        console.error('Error fetching featured products:', err);
-        setLoading(prev => ({ ...prev, products: false }));
-      }
-    };
+  const quickActions = [
+    {
+      title: t('roles.buyer.browseMarket'),
+      icon: <StoreIcon />,
+      action: () => navigate('/buyer/marketplace'),
+      color: 'success',
+    },
+    {
+      title: t('roles.buyer.viewOrders'),
+      icon: <ShoppingCartIcon />,
+      action: () => navigate('/buyer/orders'),
+      color: 'primary',
+    },
+    {
+      title: t('roles.buyer.trackDelivery'),
+      icon: <LocalShippingIcon />,
+      action: () => navigate('/buyer/deliveries'),
+      color: 'warning',
+    },
+    {
+      title: t('roles.buyer.qualityCheck'),
+      icon: <TrendingUpIcon />,
+      action: () => navigate('/buyer/analytics'),
+      color: 'info',
+    },
+  ];
 
-    fetchOrders();
-    fetchFeaturedProducts();
-  }, []);
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  // Get status color
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'warning';
-      case 'confirmed':
-        return 'info';
-      case 'shipped':
-        return 'primary';
-      case 'delivered':
-        return 'success';
-      case 'cancelled':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
+  const dashboardStats = [
+    {
+      title: t('orders.totalOrders'),
+      value: stats.totalOrders,
+      icon: <ShoppingCartIcon />,
+      color: 'primary',
+      description: t('roles.buyer.orders'),
+    },
+    {
+      title: t('orders.activeOrders'),
+      value: stats.activeOrders,
+      icon: <LocalShippingIcon />,
+      color: 'warning',
+      description: t('roles.buyer.activeOrders'),
+    },
+    {
+      title: t('profile.savedItems'),
+      value: stats.savedItems,
+      icon: <FavoriteIcon />,
+      color: 'error',
+      description: t('roles.buyer.savedItems'),
+    },
+    {
+      title: t('orders.totalSpent'),
+      value: `₹${stats.totalSpent}`,
+      icon: <TrendingUpIcon />,
+      color: 'success',
+      description: t('roles.buyer.totalSpent'),
+    },
+  ];
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Buyer Dashboard
+    <Box sx={{ p: 3 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          {t('roles.buyer.title')}
         </Typography>
-        
-        <Box>
-          <Button
-            component={RouterLink}
-            to="/marketplace"
-            variant="contained"
-            startIcon={<StoreIcon />}
-            sx={{ mr: 1 }}
-          >
-            Browse Marketplace
-          </Button>
-          <Button
-            component={RouterLink}
-            to="/orders"
-            variant="outlined"
-            startIcon={<HistoryIcon />}
-          >
-            My Orders
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Welcome Card */}
-      <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-        <Typography variant="h5" gutterBottom>
-          Welcome back, {user?.name}!
+        <Typography variant="h6" color="text.secondary">
+          {t('roles.buyer.welcome')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Browse the latest agricultural products from verified farmers, place orders, and track your deliveries all in one place.
+          {t('roles.buyer.description')}
         </Typography>
+      </Box>
+
+      {/* Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {dashboardStats.map((stat, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Card>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar sx={{ bgcolor: `${stat.color}.main`, mr: 2 }}>
+                    {stat.icon}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h4" color={`${stat.color}.main`}>
+                      {stat.value}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {stat.title}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Typography variant="caption" color="text.secondary">
+                  {stat.description}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Quick Actions */}
+      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          {t('dashboard.quickActions')}
+        </Typography>
+        <Grid container spacing={2}>
+          {quickActions.map((action, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={action.icon}
+                onClick={action.action}
+                sx={{
+                  bgcolor: `${action.color}.main`,
+                  '&:hover': { bgcolor: `${action.color}.dark` },
+                  height: 60,
+                }}
+              >
+                {action.title}
+              </Button>
+            </Grid>
+          ))}
+        </Grid>
       </Paper>
 
-      {/* Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Active Orders
+      {/* Featured Products */}
+      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          {t('roles.buyer.featuredProducts')}
+        </Typography>
+        <Grid container spacing={3}>
+          {featuredProducts.map((product) => (
+            <Grid item xs={12} sm={6} md={4} key={product.id}>
+              <Card sx={{ maxWidth: 345 }}>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={product.image}
+                  alt={product.name}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h6" component="div">
+                    {product.name}
                   </Typography>
-                  <Typography variant="h4" component="div">
-                    {loading.orders ? '..' : recentOrders.filter(order => 
-                      ['pending', 'confirmed', 'shipped'].includes(order.status)
-                    ).length}
+                  <Typography variant="h5" color="primary">
+                    ₹{product.price}/क्विंटल
                   </Typography>
-                </Box>
-                <LocalShippingIcon color="primary" sx={{ fontSize: 40 }} />
-              </Box>
-              <Box sx={{ mt: 2 }}>
-                <Link component={RouterLink} to="/orders" color="primary" underline="hover">
-                  View all orders
-                </Link>
-              </Box>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('common.seller')}: {product.seller}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('common.location')}: {product.location}
+                  </Typography>
+                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Chip label={product.quality} size="small" color="success" />
+                    <Button
+                      size="small"
+                      variant="contained"
+                      startIcon={<AddShoppingCartIcon />}
+                      onClick={() => navigate(`/marketplace/product/${product.id}`)}
+                    >
+                      {t('marketplace.addToCart')}
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+
+      {/* Navigation Cards */}
+      <Grid container spacing={3} sx={{ mt: 2 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ cursor: 'pointer' }} onClick={() => navigate('/marketplace')}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <StoreIcon sx={{ fontSize: 40, mb: 2, color: 'success.main' }} />
+              <Typography variant="h6">{t('marketplace.title')}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('roles.buyer.browseMarket')}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid item xs={12} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Available Products
-                  </Typography>
-                  <Typography variant="h4" component="div">
-                    {loading.products ? '..' : featuredProducts.length}
-                  </Typography>
-                </Box>
-                <StoreIcon color="success" sx={{ fontSize: 40 }} />
-              </Box>
-              <Box sx={{ mt: 2 }}>
-                <Link component={RouterLink} to="/marketplace" color="primary" underline="hover">
-                  Browse marketplace
-                </Link>
-              </Box>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ cursor: 'pointer' }} onClick={() => navigate('/orders')}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <ShoppingCartIcon sx={{ fontSize: 40, mb: 2, color: 'primary.main' }} />
+              <Typography variant="h6">{t('orders.title')}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('roles.buyer.viewOrders')}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
-        
-        <Grid item xs={12} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <Box>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Saved Items
-                  </Typography>
-                  <Typography variant="h4" component="div">
-                    0
-                  </Typography>
-                </Box>
-                <FavoriteIcon color="error" sx={{ fontSize: 40 }} />
-              </Box>
-              <Box sx={{ mt: 2 }}>
-                <Link component={RouterLink} to="/saved" color="primary" underline="hover">
-                  View saved items
-                </Link>
-              </Box>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ cursor: 'pointer' }} onClick={() => navigate('/deliveries')}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <LocalShippingIcon sx={{ fontSize: 40, mb: 2, color: 'warning.main' }} />
+              <Typography variant="h6">{t('deliveries.title')}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('roles.buyer.trackDelivery')}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ cursor: 'pointer' }} onClick={() => navigate('/profile')}>
+            <CardContent sx={{ textAlign: 'center' }}>
+              <FavoriteIcon sx={{ fontSize: 40, mb: 2, color: 'error.main' }} />
+              <Typography variant="h6">{t('profile.title')}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('roles.buyer.savedItems')}
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
-
-      {/* Recent Orders */}
-      <Paper sx={{ p: 2, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" component="h2">
-            Recent Orders
-          </Typography>
-          <Button 
-            component={RouterLink} 
-            to="/orders" 
-            size="small" 
-            endIcon={<HistoryIcon />}
-          >
-            View All
-          </Button>
-        </Box>
-        <Divider sx={{ mb: 2 }} />
-        
-        {loading.orders ? (
-          <Typography>Loading recent orders...</Typography>
-        ) : recentOrders.length === 0 ? (
-          <Typography color="text.secondary">
-            You haven't placed any orders yet. Browse the marketplace to find products.
-          </Typography>
-        ) : (
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Order ID</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Seller</TableCell>
-                  <TableCell>Items</TableCell>
-                  <TableCell align="right">Total</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="right">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {recentOrders.map((order) => (
-                  <TableRow key={order._id}>
-                    <TableCell>{order._id.substring(0, 8)}...</TableCell>
-                    <TableCell>{formatDate(order.createdAt)}</TableCell>
-                    <TableCell>{order.seller.name}</TableCell>
-                    <TableCell>{order.items.length} item(s)</TableCell>
-                    <TableCell align="right">${order.totalAmount.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={order.status.charAt(0).toUpperCase() + order.status.slice(1)} 
-                        color={getStatusColor(order.status) as any}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Button 
-                        component={RouterLink} 
-                        to={`/orders/${order._id}`} 
-                        size="small" 
-                        variant="outlined"
-                      >
-                        Details
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Paper>
-
-      {/* Featured Products */}
-      <Paper sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" component="h2">
-            Featured Products
-          </Typography>
-          <Button 
-            component={RouterLink} 
-            to="/marketplace" 
-            size="small" 
-            endIcon={<ShoppingCartIcon />}
-          >
-            Browse All
-          </Button>
-        </Box>
-        <Divider sx={{ mb: 2 }} />
-        
-        {loading.products ? (
-          <Typography>Loading featured products...</Typography>
-        ) : featuredProducts.length === 0 ? (
-          <Typography color="text.secondary">
-            No featured products available at the moment.
-          </Typography>
-        ) : (
-          <Grid container spacing={3}>
-            {featuredProducts.map((product) => (
-              <Grid item xs={12} sm={6} md={4} key={product._id}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  {product.image ? (
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={product.image}
-                      alt={product.cropName}
-                    />
-                  ) : (
-                    <Box sx={{ height: 140, bgcolor: 'grey.200', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Typography variant="body2" color="text.secondary">
-                        No image available
-                      </Typography>
-                    </Box>
-                  )}
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6" component="h3" gutterBottom>
-                      {product.cropName} - {product.variety}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="body2" color="text.secondary">
-                        Quality: {product.quality}
-                      </Typography>
-                      <Chip 
-                        label={product.status} 
-                        color={product.status === 'Available' ? 'success' : 'default'}
-                        size="small"
-                      />
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Avatar sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }}>
-                        {product.seller.name.charAt(0)}
-                      </Avatar>
-                      <Typography variant="body2">
-                        {product.seller.name}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="h6" color="primary">
-                        ${product.pricePerUnit.toFixed(2)}/{product.unit}
-                      </Typography>
-                      <Typography variant="body2">
-                        {product.quantity} {product.unit} available
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                  <Box sx={{ p: 2, pt: 0 }}>
-                    <Button 
-                      component={RouterLink}
-                      to={`/marketplace/${product._id}`}
-                      variant="contained" 
-                      fullWidth
-                      startIcon={<ShoppingCartIcon />}
-                    >
-                      View Details
-                    </Button>
-                  </Box>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Paper>
-    </Container>
+    </Box>
   );
 };
 

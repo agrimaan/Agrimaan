@@ -14,6 +14,7 @@ import NotFound from './pages/common/NotFound';
 // Authentication Components
 import Login from './pages/common/Login';
 import Register from './pages/common/Register';
+import AlertsPage from './pages/common/AletrsPage';
 import { loadUser } from './features/auth/authSlice';
 import { RootState } from './store';
 import Help from './pages/Help';
@@ -157,6 +158,7 @@ const App: React.FC = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
             <Route path="marketplace" element={<Marketplace />} />
+            <Route path="alerts" element={<AlertsPage />} />
             <Route path="help" element={<Help />} />
           </Route>
           
@@ -170,6 +172,7 @@ const App: React.FC = () => {
             <Route path="history" element={<OrderHistory />} />
             <Route path="payments" element={<Payments />} />
             <Route path="notifications" element={<Notifications />} />
+            <Route path="alerts" element={<AlertsPage />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
@@ -190,6 +193,7 @@ const App: React.FC = () => {
             <Route path="sensors/:id" element={<AdminSensorDetail />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="orders/:id" element={<AdminOrderDetail />} />
+            <Route path="alerts" element={<AlertsPage />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="profile" element={<Profile />} />
             <Route path="help" element={<Help />} />
@@ -202,6 +206,7 @@ const App: React.FC = () => {
             <Route path="available-requests" element={<AvailableRequests />} />
             <Route path="earnings" element={<Earnings />} />
             <Route path="reviews" element={<Reviews />} />
+            <Route path="alerts" element={<AlertsPage />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
@@ -216,6 +221,7 @@ const App: React.FC = () => {
             <Route path="consultations" element={<Consultations />} />
             <Route path="crop-issues" element={<CropIssues />} />
             <Route path="analytics" element={<AgronomistAnalytics />} />
+            <Route path="alerts" element={<AlertsPage />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
