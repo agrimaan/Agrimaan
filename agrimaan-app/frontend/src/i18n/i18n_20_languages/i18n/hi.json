@@ -80,9 +80,7 @@
     "create": "बनाएं",
     "manage": "प्रबंधन",
     "view": "देखें",
-    "select": "चुनें",
-    "priority": "प्राथमिकता",
-    "clearAll": "सभी साफ़ करें"
+    "select": "चुनें"
   },
   "header": {
     "appName": "अग्रिमान",
@@ -149,6 +147,7 @@
       "orders": "मेरे ऑर्डर",
       "cart": "कार्ट",
       "saved": "सहेजे गए",
+      "savedItems": "सहेजी गई वस्तुएं",
       "buyProducts": "उत्पाद खरीदें",
       "browseMarket": "बाज़ार देखें",
       "viewOrders": "ऑर्डर देखें",
@@ -286,15 +285,7 @@
     "recommendations": "सिफारिशें",
     "addNewField": "नया खेत जोड़ें",
     "fieldManagement": "खेत प्रबंधन",
-    "fieldAnalytics": "खेत विश्लेषण",
-    "found": "खेत मिला",
-    "fieldsCount": "खेतों की संख्या",
-    "AddYourFirstFields": "अपना पहला खेत जोड़ें",
-    "NoFieldsfound": "कोई खेत नहीं मिला",
-    "FieldsDeletedSuccessfully": "खेत सफलतापूर्वक हटाए गए",
-    "SearchFieldsByNameCropOrLocation": "नाम, फसल या स्थान द्वारा खेत खोजें"
-
-    
+    "fieldAnalytics": "खेत विश्लेषण"
   },
   "crops": {
     "title": "फसल प्रबंधन",
@@ -540,7 +531,6 @@
     "address": "पता",
     "paymentMethods": "भुगतान विधियाँ",
     "orderHistory": "ऑर्डर इतिहास",
-    "savedItems": "सहेजी गई वस्तुएं",
     "preferences": "प्राथमिकताएं",
     "notifications": "सूचनाएं",
     "security": "सुरक्षा",
@@ -664,7 +654,7 @@
     "resetYourPassword": "अपना पासवर्ड रीसेट करें",
     "agreeToTerms": "मैं सेवा की शर्तों और गोपनीयता नीति से सहमत हूं",
     "termsOfService": "सेवा की शर्तें",
-    "privacyPolicy": "गोपनीयता नीति"  
+    "privacyPolicy": "गोपनीयता नीति"
   },
   "validation": {
     "required": "यह फ़ील्ड आवश्यक है",

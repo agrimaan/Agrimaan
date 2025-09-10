@@ -1,0 +1,85 @@
+{
+  "source": "hi",
+  "targets": [
+    {
+      "code": "bn",
+      "name": "Bengali"
+    },
+    {
+      "code": "mr",
+      "name": "Marathi"
+    },
+    {
+      "code": "te",
+      "name": "Telugu"
+    },
+    {
+      "code": "ta",
+      "name": "Tamil"
+    },
+    {
+      "code": "gu",
+      "name": "Gujarati"
+    },
+    {
+      "code": "ur",
+      "name": "Urdu"
+    },
+    {
+      "code": "kn",
+      "name": "Kannada"
+    },
+    {
+      "code": "or",
+      "name": "Odia"
+    },
+    {
+      "code": "ml",
+      "name": "Malayalam"
+    },
+    {
+      "code": "pa",
+      "name": "Punjabi"
+    },
+    {
+      "code": "as",
+      "name": "Assamese"
+    },
+    {
+      "code": "mai",
+      "name": "Maithili"
+    },
+    {
+      "code": "sat",
+      "name": "Santali"
+    },
+    {
+      "code": "ks",
+      "name": "Kashmiri"
+    },
+    {
+      "code": "ne",
+      "name": "Nepali"
+    },
+    {
+      "code": "sd",
+      "name": "Sindhi"
+    },
+    {
+      "code": "doi",
+      "name": "Dogri"
+    },
+    {
+      "code": "kok",
+      "name": "Konkani"
+    },
+    {
+      "code": "mni",
+      "name": "Meitei (Manipuri)"
+    },
+    {
+      "code": "sa",
+      "name": "Sanskrit"
+    }
+  ]
+}

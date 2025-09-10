@@ -1,0 +1,12 @@
+{
+  "name": "agrimaan-i18n-20lang",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "translate": "node scripts/translate.mjs"
+  },
+  "devDependencies": {
+    "@vitalets/google-translate-api": "^9.2.1"
+  }
+}

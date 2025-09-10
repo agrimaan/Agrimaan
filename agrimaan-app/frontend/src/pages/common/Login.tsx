@@ -168,12 +168,12 @@ const Login: React.FC = () => {
           <Grid container>
             <Grid item xs>
               <Link component={RouterLink} to="/forgot-password" variant="body2">
-                Forgot password?
+                {t('auth.forgotPassword')}
               </Link>
             </Grid>
             <Grid item>
               <Link component={RouterLink} to="/register" variant="body2">
-                {"{t('auth.dontHaveAccount')} {t('auth.createAccount')}"}
+                {t('auth.dontHaveAccount')} {t('auth.createAccount')}
               </Link>
             </Grid>
           </Grid>

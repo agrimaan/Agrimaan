@@ -1,1 +1,285 @@
-{"common":{"loading":"Loading...","language":"Language"},"blockchain":{"agmCoin":"AGM Coin"}}
+{
+    "common": {
+      "loading": "लोड होत आहे...",
+      "error": "त्रुटी",
+      "success": "यश",
+      "save": "साठवा",
+      "cancel": "रद्द करा",
+      "delete": "हटवा",
+      "edit": "संपादन करा",
+      "add": "जोडा",
+      "search": "शोधा",
+      "filter": "फिल्टर",
+      "reset": "रीसेट",
+      "submit": "सबमिट",
+      "back": "मागे",
+      "next": "पुढे",
+      "previous": "मागील",
+      "close": "बंद",
+      "confirm": "निश्चित करा",
+      "yes": "होय",
+      "no": "नahi",
+      "select": "निवडा",
+      "all": "सर्व",
+      "none": "काहीही नाही",
+      "refresh": "रीफ्रेश",
+      "export": "निर्यात",
+      "import": "आयात",
+      "download": "डाउनलोड",
+      "upload": "अपलोड",
+      "view": "पहा",
+      "details": "तपशील",
+      "settings": "सेटिंग्ज",
+      "profile": "प्रोफाइल",
+      "logout": "लॉग आउट",
+      "login": "लॉग इन",
+      "register": "नोंदणी",
+      "dashboard": "डॅशबोर्ड",
+      "home": "होम",
+      "about": "बद्दल",
+      "contact": "संपर्क",
+      "help": "मदत",
+      "support": "समर्थन",
+      "documentation": "दस्तऐवज"
+    },
+    "header": {
+      "appName": "अग्रिमान",
+      "tagline": "शेतीचे भवितव्य",
+      "dashboard": "डॅशबोर्ड",
+      "profile": "माझे प्रोफाइल",
+      "notifications": "सूचना"
+    },
+    "navigation": {
+      "dashboard": "डॅशबोर्ड",
+      "fields": "शेत व्यवस्थापन",
+      "crops": "पिक व्यवस्थापन",
+      "sensors": "IoT सेन्सर",
+      "analytics": "विश्लेषण"
+    },
+    "roles": {
+      "farmer": {
+        "title": "शेतकरी डॅशबोर्ड",
+        "welcome": "शेतकरी पोर्टलमध्ये आपले स्वागत आहे",
+        "description": "आपली शेती व पिके व्यवस्थापित करा",
+        "fields": "माझी शेते",
+        "crops": "माझी पिके",
+        "sensors": "माझे सेन्सर",
+        "marketplace": "पीक विक्री",
+        "orders": "माझी ऑर्डर",
+        "analytics": "माझे विश्लेषण",
+        "weather": "हवामान माहिती",
+        "sellCrops": "पीक विक्री करा",
+        "addField": "नवीन शेत जोडा",
+        "plantCrop": "पीक लावा",
+        "viewYields": "उत्पन्न पाहा",
+        "checkPrices": "बाजारभाव",
+        "weatherForecast": "हवामानाचा अंदाज",
+        "cropHealth": "पिकांचे आरोग्य",
+        "irrigation": "सिंचन व्यवस्थापन"
+      },
+      "buyer": {
+        "title": "खरेदीदार डॅशबोर्ड",
+        "welcome": "खरेदीदार पोर्टलमध्ये आपले स्वागत आहे",
+        "description": "ताजी आणि गुणवत्तापूर्ण शेती उत्पादनांची खरेदी करा",
+        "marketplace": "बाजार ब्राउज करा",
+        "products": "उपलब्ध उत्पादने",
+        "orders": "माझ्या ऑर्डर",
+        "cart": "कार्ट",
+        "saved": "जतन केलेले",
+        "savedItems": "जतन केलेल्या वस्तू",
+        "buyProducts": "उत्पादने खरेदी करा",
+        "browseMarket": "बाजार पाहा",
+        "viewOrders": "ऑर्डर्स पाहा",
+        "trackDelivery": "डिलिव्हरी ट्रॅक करा",
+        "qualityCheck": "गुणवत्ता तपासणी",
+        "farmerProfiles": "शेतकरी प्रोफाइल",
+        "bulkOrders": "मोठ्या प्रमाणावर ऑर्डर"
+      },
+      "logistics": {
+        "title": "लॉजिस्टिक्स डॅशबोर्ड",
+        "welcome": "लॉजिस्टिक्स पोर्टलमध्ये आपले स्वागत आहे",
+        "description": "शेती उत्पादने सुरक्षितपणे वाहतूक करा",
+        "deliveries": "डिलिव्हरी व्यवस्थापन",
+        "orders": "डिलिव्हरी ऑर्डर्स",
+        "routes": "मार्ग व्यवस्थापन",
+        "vehicles": "वाहने व्यवस्थापन",
+        "tracking": "ट्रॅकिंग",
+        "scheduleDelivery": "डिलिव्हरी शेड्यूल करा",
+        "manageRoutes": "मार्ग व्यवस्थापित करा",
+        "vehicleTracking": "वाहन ट्रॅकिंग",
+        "deliveryStatus": "डिलिव्हरी स्थिती",
+        "farmerPickup": "शेतकरीकडून पिकअप",
+        "buyerDelivery": "खरेदीदाराला डिलिव्हरी",
+        "routeOptimization": "मार्ग अनुकूलन"
+      },
+      "investor": {
+        "title": "गुंतवणूकदार डॅशबोर्ड",
+        "welcome": "गुंतवणूकदार पोर्टलमध्ये आपले स्वागत आहे",
+        "description": "शेती उद्योगातील गुंतवणुकीची संधी",
+        "portfolio": "माझे पोर्टफोलिओ",
+        "analytics": "गुंतवणूक विश्लेषण",
+        "opportunities": "गुंतवणूक संधी",
+        "reports": "गुंतवणूक अहवाल",
+        "marketTrends": "बाजारातील कल",
+        "cropYields": "पिकांचे उत्पादन",
+        "farmerProfiles": "शेतकरी प्रोफाइल",
+        "investmentOpportunities": "गुंतवणूक संधी पहा",
+        "portfolioSummary": "पोर्टफोलिओ सारांश",
+        "marketAnalysis": "बाजार विश्लेषण",
+        "riskAssessment": "जोखीम मूल्यांकन",
+        "returnsProjection": "परतावे अंदाज"
+      },
+      "admin": {
+        "title": "प्रशासक डॅशबोर्ड",
+        "welcome": "प्रशासक पोर्टलमध्ये आपले स्वागत आहे",
+        "description": "संपूर्ण प्लॅटफॉर्मचे व्यवस्थापन करा",
+        "users": "सर्व वापरकर्ते",
+        "fields": "सर्व शेते",
+        "crops": "सर्व पिके",
+        "sensors": "सर्व सेन्सर",
+        "orders": "सर्व ऑर्डर",
+        "analytics": "प्लॅटफॉर्म विश्लेषण",
+        "settings": "सिस्टम सेटिंग्ज",
+        "manageUsers": "वापरकर्ते व्यवस्थापित करा",
+        "manageContent": "सामग्री व्यवस्थापित करा",
+        "systemAnalytics": "सिस्टम विश्लेषण",
+        "platformSettings": "प्लॅटफॉर्म सेटिंग्ज",
+        "userReports": "वापरकर्ता अहवाल",
+        "contentModeration": "सामग्रीModeration",
+        "systemHealth": "सिस्टमची अवस्था"
+      }
+    },
+    "dashboard": {
+      "title": "डॅशबोर्ड",
+      "welcome": "अग्रिमान मध्ये आपले स्वागत आहे",
+      "overview": "आढावा",
+      "recentActivity": "अलीकडील क्रियाकलाप",
+      "quickActions": "जलद क्रिया"
+    },
+    "fields": {
+      "title": "शेत व्यवस्थापन",
+      "addField": "शेत जोडा",
+      "editField": "शेत संपादित करा",
+      "fieldName": "शेताचे नाव",
+      "fieldSize": "शेताचे आकार"
+    },
+    "crops": {
+      "title": "पिक व्यवस्थापन",
+      "addCrop": "पीक जोडा",
+      "editCrop": "पीक संपादित करा",
+      "cropName": "पीकाचे नाव",
+      "variety": "प्रकार"
+    },
+    "sensors": {
+      "title": "IoT सेन्सर व्यवस्थापन",
+      "addSensor": "सेन्सर जोडा",
+      "editSensor": "सेन्सर संपादित करा",
+      "sensorName": "सेन्सरचे नाव",
+      "sensorType": "सेन्सरचा प्रकार"
+    },
+    "weather": {
+      "title": "हवामान माहिती",
+      "current": "सध्याचे हवामान",
+      "forecast": "हवामानाचा अंदाज",
+      "temperature": "तापमान",
+      "humidity": "आर्द्रता"
+    },
+    "marketplace": {
+      "title": "कृषी बाजार",
+      "buyProducts": "उत्पादने खरेदी करा",
+      "sellProducts": "उत्पादने विक्री करा",
+      "myListings": "माझ्या सूची",
+      "addListing": "सूची जोडा"
+    },
+    "orders": {
+      "title": "ऑर्डर व्यवस्थापन",
+      "myOrders": "माझ्या ऑर्डर",
+      "orderDetails": "ऑर्डर तपशील",
+      "orderStatus": "ऑर्डर स्थिती",
+      "orderHistory": "ऑर्डर इतिहास"
+    },
+    "deliveries": {
+      "title": "डिलिव्हरी व्यवस्थापन",
+      "deliveries": "डिलिव्हरी",
+      "deliveryDetails": "डिलिव्हरी तपशील",
+      "deliveryStatus": "डिलिव्हरी स्थिती",
+      "deliveryDate": "डिलिव्हरी दिनांक"
+    },
+    "analytics": {
+      "title": "विश्लेषण",
+      "cropAnalysis": "पिक विश्लेषण",
+      "fieldAnalysis": "शेत विश्लेषण",
+      "yieldAnalysis": "उत्पन्न विश्लेषण",
+      "profitAnalysis": "नफा विश्लेषण"
+    },
+    "profile": {
+      "title": "प्रोफाइल",
+      "editProfile": "प्रोफाइल संपादित करा",
+      "personalInfo": "वैयक्तिक माहिती",
+      "contactInfo": "संपर्क माहिती",
+      "address": "पत्ता"
+    },
+    "settings": {
+      "title": "सेटिंग्ज",
+      "general": "सामान्य",
+      "notifications": "सूचना",
+      "privacy": "गोपनीयता",
+      "security": "सुरक्षा"
+    },
+    "help": {
+      "title": "मदत",
+      "faq": "वारंवार विचारले जाणारे प्रश्न",
+      "documentation": "दस्तऐवज",
+      "tutorials": "ट्युटोरियल",
+      "guides": "मार्गदर्शिका"
+    },
+    "alerts": {
+      "title": "अलर्ट",
+      "totalAlerts": "एकूण अलर्ट",
+      "unreadAlerts": "न वाचलेले अलर्ट",
+      "highPriority": "उच्च प्राधान्य",
+      "recentAlerts": "अलीकडील अलर्ट"
+    },
+    "auth": {
+      "login": "लॉग इन",
+      "register": "नोंदणी",
+      "logout": "लॉग आउट",
+      "email": "ईमेल",
+      "password": "पासवर्ड",
+      "forgotPassword": "पासवर्ड विसरलात?",
+      "resetPassword": "पासवर्ड रीसेट करा",
+      "sendResetLink": "रीसेट लिंंक पाठवा",
+      "changePassword": "पासवर्ड बदला"
+    },
+    "validation": {
+      "required": "हे फील्ड आवश्यक आहे",
+      "invalidEmail": "कृपया वैध ईमेल प्रविष्ट करा",
+      "invalidPhone": "कृपया वैध फोन नंबर प्रविष्ट करा",
+      "passwordTooShort": "पासवर्ड किमान ६ अक्षरांचा असला पाहिजे",
+      "passwordMismatch": "पासवर्ड जुळत नाहीत"
+    },
+    "days": {
+      "mon": "सोम",
+      "tue": "मंगळ",
+      "wed": "बुध",
+      "thu": "गुरु",
+      "fri": "शुक्र",
+      "sat": "शनि",
+      "sun": "रवि"
+    },
+    "months": {
+      "jan": "जानेवारी",
+      "feb": "फेब्रुवारी",
+      "mar": "मार्च",
+      "apr": "एप्रिल",
+      "may": "मे",
+      "jun": "जून",
+      "jul": "जुलै",
+      "aug": "ऑगस्ट",
+      "sep": "सप्टेंबर",
+      "oct": "ऑक्टोबर",
+      "nov": "नोव्हेंबर",
+      "dec": "डिसेंबर"
+    }
+  }
+  

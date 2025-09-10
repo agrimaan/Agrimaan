@@ -154,7 +154,13 @@
     "pestControl": "Pest Control",
     "fieldHistory": "Field History",
     "yieldPrediction": "Yield Prediction",
-    "recommendations": "Recommendations"
+    "recommendations": "Recommendations",
+    "addNewField": "Add New Field",
+    "fieldManagement": "Field Management",
+    "fieldAnalytics": "Field Analytics",
+    "found": "Found",
+    "fieldsCount": "fields",
+    "AddYourFirstFields" : "Add Your First Fields"
   },
   "crops": {
     "title": "Crops Management",

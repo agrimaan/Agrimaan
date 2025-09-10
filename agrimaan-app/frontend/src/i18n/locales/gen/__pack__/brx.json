@@ -71,16 +71,9 @@
     "quality": "गुणवत्ता",
     "availability": "उपलब्धता",
     "general": "सामान्य",
-    "cancel": "रद्द करें",
-    "add": "जोड़ें",
-    "edit": "संपादित करें",
-    "delete": "हटाएं",
-    "save": "सहेजें",
     "update": "अपडेट करें",
     "create": "बनाएं",
     "manage": "प्रबंधन",
-    "view": "देखें",
-    "select": "चुनें",
     "priority": "प्राथमिकता",
     "clearAll": "सभी साफ़ करें"
   },
@@ -293,8 +286,6 @@
     "NoFieldsfound": "कोई खेत नहीं मिला",
     "FieldsDeletedSuccessfully": "खेत सफलतापूर्वक हटाए गए",
     "SearchFieldsByNameCropOrLocation": "नाम, फसल या स्थान द्वारा खेत खोजें"
-
-    
   },
   "crops": {
     "title": "फसल प्रबंधन",
@@ -344,7 +335,13 @@
     "sensorName": "सेंसर का नाम",
     "sensorType": "सेंसर का प्रकार",
     "location": "स्थान",
-    "status": "स्थिति",
+    "status": {
+      "title": "सेंसर की स्थिति",
+      "active": "सक्रिय",
+      "inactive": "निष्क्रिय",
+      "maintenance": "रखरखाव",
+      "error": "त्रुटि"
+    },
     "batteryLevel": "बैटरी स्तर",
     "lastReading": "अंतिम रीडिंग",
     "temperature": "तापमान",
@@ -364,13 +361,6 @@
     "alerts": "सेंसर अलर्ट",
     "configuration": "कॉन्फ़िगरेशन",
     "diagnostics": "निदान",
-    "status": {
-      "title": "सेंसर की स्थिति",
-      "active": "सक्रिय",
-      "inactive": "निष्क्रिय",
-      "maintenance": "रखरखाव",
-      "error": "त्रुटि"
-    },
     "addNewSensor": "नया सेंसर जोड़ें",
     "sensorManagement": "सेंसर प्रबंधन",
     "sensorAnalytics": "सेंसर विश्लेषण"
@@ -380,7 +370,7 @@
     "current": "वर्तमान मौसम",
     "forecast": "मौसम पूर्वानुमान",
     "temperature": "तापमान",
-    "humidity": "आर्द्रता",
+    "humidity": "नमी",
     "windSpeed": "हवा की गति",
     "windDirection": "हवा की दिशा",
     "pressure": "दबाव",
@@ -400,7 +390,6 @@
     "warning": "मौसम चेतावनी",
     "severe": "गंभीर मौसम",
     "partlyCloudy": "आंशिक रूप से बादल",
-    "humidity": "नमी",
     "wind": "हवा",
     "weatherAlert": "मौसम चेतावनी",
     "weatherForecast": "मौसम पूर्वानुमान"
@@ -664,7 +653,7 @@
     "resetYourPassword": "अपना पासवर्ड रीसेट करें",
     "agreeToTerms": "मैं सेवा की शर्तों और गोपनीयता नीति से सहमत हूं",
     "termsOfService": "सेवा की शर्तें",
-    "privacyPolicy": "गोपनीयता नीति"  
+    "privacyPolicy": "गोपनीयता नीति"
   },
   "validation": {
     "required": "यह फ़ील्ड आवश्यक है",

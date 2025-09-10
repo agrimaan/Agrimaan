@@ -33,10 +33,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import TerrainIcon from '@mui/icons-material/Terrain';
+import { useTranslation } from 'react-i18next';
+
 
 const Fields: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
+
 
   const { fields, loading, error } = useSelector((state: RootState) => state.fields);
 
@@ -104,7 +108,7 @@ const Fields: React.FC = () => {
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="div">
-          Fields Management
+          {t('fields.fieldManagement')}
         </Typography>
         <Button 
           component={Link}
@@ -113,13 +117,13 @@ const Fields: React.FC = () => {
           color="primary" 
           startIcon={<AddIcon />}
         >
-          Add Fields
+          {t('fields.addField')}
         </Button>
       </Box>
 
       {deleteSuccess && (
         <Alert severity="success" sx={{ mb: 3 }}>
-          Fields deleted successfully!
+          Fields deleted successfully! {t('fields.FieldsDeletedSuccessfully')}
         </Alert>
       )}
 
@@ -133,7 +137,7 @@ const Fields: React.FC = () => {
         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search fields by name, crop, or location..."
+          placeholder= {t('fields.SearchFieldsByNameCropOrLocation')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -153,7 +157,7 @@ const Fields: React.FC = () => {
       ) : (
         <>
           <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            Found {filteredFields.length} Fields{filteredFields.length !== 1 ? 's' : ''}
+          {t('fields.fieldsCount')} {filteredFields.length} 
           </Typography>
 
           <Grid container spacing={3}>
@@ -241,7 +245,7 @@ const Fields: React.FC = () => {
           {filteredFields.length === 0 && !loading && (
             <Box sx={{ textAlign: 'center', py: 8 }}>
               <Typography variant="h6" color="text.secondary" gutterBottom>
-                No Fields found
+                {t('fields.NoFieldsfound')}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 {searchTerm ? 'Try adjusting your search criteria' : 'Get started by adding your first field'}
@@ -252,7 +256,7 @@ const Fields: React.FC = () => {
                 variant="contained" 
                 startIcon={<AddIcon />}
               >
-                Add Your First Fields
+                {t('fields.AddYourFirstFields')}
               </Button>
             </Box>
           )}

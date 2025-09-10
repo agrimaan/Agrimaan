@@ -37,6 +37,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import CloseIcon from '@mui/icons-material/Close';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import WarningIcon from '@mui/icons-material/Warning';
+import { useTranslation } from 'react-i18next';
+
 
 // Add current user context (in real app, this would come from Redux/Context)
 const CURRENT_USER = {
@@ -118,7 +120,7 @@ interface MarketplaceItem {
   quality: string;
   description: string;
   image: string;
-  status: 'Available' | 'Sold' | 'Reserved';
+  status: 'Available' | 'Sold' |  'Reserved' ;
   category: 'Grains' | 'Vegetables' | 'Fruits' | 'Herbs';
   userCropId?: number; // Reference to user's crop
 }
@@ -198,6 +200,8 @@ const mockMarketplaceItems: MarketplaceItem[] = [
 ];
 
 const Marketplace: React.FC = () => {
+  const { t } = useTranslation();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [items, setItems] = useState<MarketplaceItem[]>(mockMarketplaceItems);
   const [tabValue, setTabValue] = useState(0);
