@@ -32,7 +32,7 @@ import {
   Spa as SpaIcon,
   BugReport as BugReportIcon
 } from '@mui/icons-material';
-import { RootState } from './store';
+import { RootState } from '../store';
 import axios from 'axios';
 
 // Define types

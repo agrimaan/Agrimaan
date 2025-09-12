@@ -42,7 +42,7 @@ import {
   Sort as SortIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import { RootState } from '../agronomist/store';
+import { RootState } from '../store';
 
 // Define types
 interface SavedItem {

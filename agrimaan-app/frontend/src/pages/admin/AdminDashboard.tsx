@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
@@ -38,8 +37,7 @@ import {
   CircularProgress,
   Alert,
   Tabs,
-  Tab,
-  Snackbar
+  Tab
 } from '@mui/material';
 import {
   People as PeopleIcon,
@@ -64,11 +62,9 @@ import {
   Verified as VerifiedIcon,
   Pending as PendingIcon,
   Cancel as CancelIcon,
-  CloudUpload as CloudUploadIcon
+  CloudUpload as CloudUploadIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material';
-import SettingsIcon from "@mui/icons-material/Settings";
-
-
 import { RootState } from '../../store';
 import axios from 'axios';
 import { API_BASE_URL } from '../../config/apiConfig';
@@ -156,9 +152,6 @@ interface BulkUpload {
 }
 
 const AdminDashboard: React.FC = () => {
-  const [success, setSuccess] = useState<string | null>(null);
-// you already have this, but keeping for context:
-const [verificationDialog, setVerificationDialog] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.auth);
   
@@ -171,12 +164,13 @@ const [verificationDialog, setVerificationDialog] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(0);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedLandToken, setSelectedLandToken] = useState<LandToken | null>(null);
-  //const [verificationDialog, setVerificationDialog] = useState(false);
+  const [verificationDialog, setVerificationDialog] = useState(false);
   const [verificationNotes, setVerificationNotes] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
   const [bulkUploadDialog, setBulkUploadDialog] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadType, setUploadType] = useState('');
+  const [alert, setAlert] = useState<{ show: boolean; message: string; severity: 'success' | 'error' | 'info' | 'warning' }>({ show: false, message: '', severity: 'info' });
 
   useEffect(() => {
     fetchDashboardData();
@@ -891,7 +885,7 @@ const [verificationDialog, setVerificationDialog] = useState<boolean>(false);
                         >
                           {user.email}
                         </Typography>
-                        {` \u2014 Joined ${formatDate(user.createdAt)}`}
+                        {` — Joined ${formatDate(user.createdAt)}`}
                       </React.Fragment>
                     }
                   />
@@ -1161,7 +1155,7 @@ const [verificationDialog, setVerificationDialog] = useState<boolean>(false);
             color="success"
             variant="contained"
             onClick={() => {
-              setSuccess('Approval functionality coming soon');
+              setAlert({ show: true, message: 'Approval functionality coming soon', severity: 'info' });
               setVerificationDialog(false);
             }}
           >

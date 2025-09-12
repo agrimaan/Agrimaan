@@ -16,7 +16,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { register } from 'features/auth/authSlice';
+import { register } from '../../features/auth/authSlice';
 
 const Register: React.FC = () => {
   const dispatch = useDispatch();

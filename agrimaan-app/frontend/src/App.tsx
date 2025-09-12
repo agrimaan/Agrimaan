@@ -19,7 +19,6 @@ import { loadUser } from './features/auth/authSlice';
 import { RootState } from './store';
 import Help from './pages/Help';
 
-
 // Farmer Components
 import FarmerDashboard from './pages/farmer/FarmerDashboard';
 import FarmerFields from './pages/farmer/Fields';
@@ -50,13 +49,11 @@ import Payments from './pages/buyer/Payments';
 import Notifications from './pages/buyer/Notifications';
 
 // Admin Components
-import AdminDashboard from './pages/admin/AdminDashboard';
-//import AdminDashboard from './components/admin/AdminDashboard';
-
 import Users from './pages/admin/AdminUsers';
 import AdminUserDetail from './pages/admin/AdminUserDetail';
 import AdminUserEdit from './pages/admin/AdminUserEdit';
 import AdminUserCreate from './pages/admin/AdminUserCreate';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminFields from './pages/admin/AdminFields';
 import AdminFieldDetail from './pages/admin/AdminFieldDetail';
 import AdminCrops from './pages/admin/AdminCrops';
@@ -66,6 +63,10 @@ import AdminSensorDetail from './pages/admin/AdminSensorDetail';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminOrderDetail from './pages/admin/AdminOrderDetail';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminBulkUploads from './pages/admin/AdminBulkUploads';
+import AdminTokens from './pages/admin/AdminTokens';
+import AdminVerification from './pages/admin/AdminVerification';
+import AdminTerms from './pages/admin/AdminTerms';
 
 // Logistics Components
 import LogisticsDashboard from './pages/logistics/LogisticsDashboard';
@@ -73,92 +74,72 @@ import Deliveries from './pages/logistics/Deliveries';
 import AvailableRequests from './pages/logistics/AvailableRequests';
 import Earnings from './pages/logistics/Earnings';
 import Reviews from './pages/logistics/Reviews';
+import DeliveryDetail from './pages/logistics/DeliveryDetail';
 
 // Agronomist Components
 import AgronomistDashboard from './pages/agronomist/AgronomistDashboard';
 import FieldAnalysis from './pages/agronomist/FieldAnalysis';
 import Recommendations from './pages/agronomist/Recommendations';
-import AgromonistFields from './pages/agronomist/Fields';
 import Consultations from './pages/agronomist/Consultations';
 import CropIssues from './pages/agronomist/CropIssues';
+import AgronomistFields from './pages/agronomist/Fields';
+import AgronomistAnalytics from './pages/agronomist/AgronomistAnalytics';
 
 // Investor Components
 import InvestorDashboard from './pages/investor/InvestorDashboard';
-import AgronomistFields from './pages/agronomist/Fields';
-import InvestorReturns from './pages/investor/InvestorReturns';
-import InvestorPortfolio from './pages/investor/InvestorPortfolio';
 import FarmProjects from './pages/investor/FarmProjects';
-import AgronomistAnalytics from './pages/agronomist/AgronomistAnalytics';
 import ProjectDetail from './pages/investor/ProjectDetail';
+import InvestorPortfolio from './pages/investor/InvestorPortfolio';
+import InvestorReturns from './pages/investor/InvestorReturns';
 
-//import AgronomistSettings from './pages/agronomist/AgronomistSettings';
+// New Features
+import Messages from './pages/common/Messages';
+import Documents from './pages/common/Documents';
+import AdminReports from './pages/admin/AdminReports';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, loading, user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    dispatch(loadUser() as any);
-  }, [dispatch]);
+    if (isAuthenticated) {
+      dispatch(loadUser() as any);
+    }
+  }, [dispatch, isAuthenticated]);
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <CircularProgress />
       </Box>
     );
   }
-
-  // Function to determine the home route based on user role
-  const getHomeRoute = () => {
-    if (!user) return '/login';
-    
-    switch (user.role) {
-      case 'farmer':
-        return '/';
-      case 'buyer':
-        return '/buyer';
-      case 'admin':
-        return '/admin';
-      case 'logistics':
-        return '/logistics';
-      case 'agronomist':
-        return '/agronomist';
-      case 'investor':
-        return '/investor';
-      default:
-        return '/';
-    }
-  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to={getHomeRoute()} />} />
-          <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to={getHomeRoute()} />} />
-          
-          {/* Farmer Routes */}
-          <Route path="/" element={isAuthenticated && user?.role === 'farmer' ? <Layout /> : <Navigate to="/login" replace />}>
+          {/* Public Routes */}
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to={`/${user?.role}`} />} />
+          <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to={`/${user?.role}`} />} />
+
+          {/* Protected Routes */}
+          <Route path="/farmer" element={isAuthenticated && user?.role === 'farmer' ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<FarmerDashboard />} />
             <Route path="fields" element={<FarmerFields />} />
             <Route path="fields/new" element={<AddField />} />
-            <Route path="fields/:id/edit" element={<EditField />} />
             <Route path="fields/:id" element={<FieldDetail />} />
+            <Route path="fields/:id/edit" element={<EditField />} />
             <Route path="crops" element={<Crops />} />
             <Route path="crops/:id" element={<CropDetail />} />
             <Route path="sensors" element={<Sensors />} />
             <Route path="sensors/:id" element={<SensorDetail />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="weather" element={<Weather />} />
-            <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="marketplace" element={<Marketplace />} />
             <Route path="alerts" element={<AlertsPage />} />
             <Route path="help" element={<Help />} />
@@ -197,6 +178,11 @@ const App: React.FC = () => {
             <Route path="orders/:id" element={<AdminOrderDetail />} />
             <Route path="alerts" element={<AlertsPage />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="bulk-uploads" element={<AdminBulkUploads />} />
+            <Route path="tokens" element={<AdminTokens />} />
+            <Route path="verification" element={<AdminVerification />} />
+            <Route path="terms" element={<AdminTerms />} />
+            <Route path="reports" element={<AdminReports />} />
             <Route path="profile" element={<Profile />} />
             <Route path="help" element={<Help />} />
           </Route>
@@ -205,6 +191,7 @@ const App: React.FC = () => {
           <Route path="/logistics" element={isAuthenticated && user?.role === 'logistics' ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<LogisticsDashboard />} />
             <Route path="deliveries" element={<Deliveries />} />
+            <Route path="deliveries/:id" element={<DeliveryDetail />} />
             <Route path="available-requests" element={<AvailableRequests />} />
             <Route path="earnings" element={<Earnings />} />
             <Route path="reviews" element={<Reviews />} />
@@ -229,7 +216,6 @@ const App: React.FC = () => {
             <Route path="help" element={<Help />} />
           </Route>
 
-          
           {/* Investor Routes */}
           <Route path="/investor" element={isAuthenticated && user?.role === 'investor' ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<InvestorDashboard />} />
@@ -243,6 +229,15 @@ const App: React.FC = () => {
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
           </Route>
+          
+          {/* Messaging Routes */}
+          <Route path="/messages" element={isAuthenticated ? <Messages /> : <Navigate to="/login" />} />
+          
+          {/* Document Management Routes */}
+          <Route path="/documents" element={isAuthenticated ? <Documents /> : <Navigate to="/login" />} />
+          
+          {/* Reports Routes */}
+          <Route path="/admin/reports" element={isAuthenticated && user?.role === 'admin' ? <AdminReports /> : <Navigate to="/login" />} />
           
           {/* Test Route - accessible to all authenticated users */}
           <Route path="/test" element={isAuthenticated ? <TestPage /> : <Navigate to="/login" />} />
