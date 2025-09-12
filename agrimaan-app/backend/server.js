@@ -48,6 +48,15 @@ app.use(express.json());
 // Public
 app.use('/api', require('./routes/public.weather.routes')); // e.g., /api/public-weather-...
 
+// Authentication routes
+app.use('/api/auth', require('./routes/auth.routes'));
+
+// Admin routes
+app.use('/api/admin', require('./routes/admin.routes'));
+
+// Land tokenization routes
+app.use('/api/land-tokens', require('./routes/landToken.routes'));
+
 // App routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/users', require('./routes/user.routes'));

@@ -1,1 +1,285 @@
-{"common":{"loading":"Loading...","language":"Language"},"blockchain":{"agmCoin":"AGM Coin"}}
+{
+    "common": {
+      "loading": "ஏற்றுகிறது...",
+      "error": "பிழை",
+      "success": "வெற்றி",
+      "save": "சேமிக்க",
+      "cancel": "ரத்துசெய்",
+      "delete": "அழி",
+      "edit": "தொகு",
+      "add": "சேர்க்க",
+      "search": "தேடு",
+      "filter": "வடிகட்டி",
+      "reset": "மீட்டமை",
+      "submit": "சமர்ப்பி",
+      "back": "பின்னுக்கு",
+      "next": "அடுத்தது",
+      "previous": "முந்தையது",
+      "close": "மூடு",
+      "confirm": "உறுதிப்படுத்து",
+      "yes": "ஆம்",
+      "no": "இல்லை",
+      "select": "தேர்வு",
+      "all": "அனைத்தும்",
+      "none": "ஏதுமில்லை",
+      "refresh": "புதுப்பி",
+      "export": "ஏற்றுமதி",
+      "import": "இறக்குமதி",
+      "download": "பதிவிறக்க",
+      "upload": "பதிவேற்று",
+      "view": "காண்க",
+      "details": "விவரங்கள்",
+      "settings": "அமைப்புகள்",
+      "profile": "சுயவிவரம்",
+      "logout": "வெளியேறு",
+      "login": "உள்நுழை",
+      "register": "பதிவு",
+      "dashboard": "டாஷ்போர்டு",
+      "home": "முகப்பு",
+      "about": "பற்றி",
+      "contact": "தொடர்பு",
+      "help": "உதவி",
+      "support": "ஆதரவு",
+      "documentation": "ஆவணங்கள்"
+    },
+    "header": {
+      "appName": "அக்ரிமான்",
+      "tagline": "விவசாயத்தின் எதிர்காலம்",
+      "dashboard": "டாஷ்போர்டு",
+      "profile": "என் சுயவிவரம்",
+      "notifications": "அறிவிப்புகள்"
+    },
+    "navigation": {
+      "dashboard": "டாஷ்போர்டு",
+      "fields": "புல மேலாண்மை",
+      "crops": "பயிர் மேலாண்மை",
+      "sensors": "IoT சென்சார்கள்",
+      "analytics": "பகுப்பாய்வு"
+    },
+    "roles": {
+      "farmer": {
+        "title": "விவசாயி டாஷ்போர்டு",
+        "welcome": "விவசாயி போர்டலுக்கு வரவேற்பு",
+        "description": "உங்கள் புலங்களையும் பயிர்களையும் நிர்வகிக்கவும்",
+        "fields": "என் புலங்கள்",
+        "crops": "என் பயிர்கள்",
+        "sensors": "என் சென்சார்கள்",
+        "marketplace": "பயிர் விற்பனை",
+        "orders": "என் ஆர்டர்கள்",
+        "analytics": "என் பகுப்பாய்வு",
+        "weather": "வானிலை தகவல்",
+        "sellCrops": "பயிர்களை விற்கவும்",
+        "addField": "புதிய புலம் சேர்க்கவும்",
+        "plantCrop": "பயிர் நடவு",
+        "viewYields": "விளைச்சலை காண்க",
+        "checkPrices": "சந்தை விலைகள்",
+        "weatherForecast": "வானிலை முன்னறிவு",
+        "cropHealth": "பயிர் ஆரோக்கியம்",
+        "irrigation": "நீர்ப்பாசன மேலாண்மை"
+      },
+      "buyer": {
+        "title": "கொள்முதலாளர் டாஷ்போர்டு",
+        "welcome": "கொள்முதலாளர் போர்டலுக்கு வரவேற்பு",
+        "description": "புதிய மற்றும் தரமான வேளாண் தயாரிப்புகளை வாங்கவும்",
+        "marketplace": "சந்தையை உலாவுக",
+        "products": "கிடைக்கும் தயாரிப்புகள்",
+        "orders": "என் ஆர்டர்கள்",
+        "cart": "வண்டி",
+        "saved": "சேமிக்கப்பட்டவை",
+        "savedItems": "சேமித்த உருப்படிகள்",
+        "buyProducts": "தயாரிப்புகள் வாங்கவும்",
+        "browseMarket": "சந்தை காண்க",
+        "viewOrders": "ஆர்டர்களைக் காண்க",
+        "trackDelivery": "டெலிவரியை பின்தொடர்க",
+        "qualityCheck": "தரச் சரிபார்ப்பு",
+        "farmerProfiles": "விவசாயி சுயவிவரங்கள்",
+        "bulkOrders": "மொத்த ஆர்டர்கள்"
+      },
+      "logistics": {
+        "title": "லாஜிஸ்டிக்ஸ் டாஷ்போர்டு",
+        "welcome": "லாஜிஸ்டிக்ஸ் போர்டலுக்கு வரவேற்பு",
+        "description": "வேளாண் தயாரிப்புகளை பாதுகாப்பாக கடத்தவும்",
+        "deliveries": "டெலிவரி மேலாண்மை",
+        "orders": "டெலிவரி ஆர்டர்கள்",
+        "routes": "பாதை மேலாண்மை",
+        "vehicles": "வாகன மேலாண்மை",
+        "tracking": "கண்காணிப்பு",
+        "scheduleDelivery": "டெலிவரியை நிரலாக்கு",
+        "manageRoutes": "பாதைகளை நிர்வகிக்கவும்",
+        "vehicleTracking": "வாகனக் கண்காணிப்பு",
+        "deliveryStatus": "டெலிவரி நிலை",
+        "farmerPickup": "விவசாயியிடமிருந்து பெறுதல்",
+        "buyerDelivery": "கொள்முதலாளருக்கு டெலிவரி",
+        "routeOptimization": "பாதை மேம்பாடு"
+      },
+      "investor": {
+        "title": "முதலீட்டாளர் டாஷ்போர்டு",
+        "welcome": "முதலீட்டாளர் போர்டலுக்கு வரவேற்பு",
+        "description": "வேளாண்துறையில் முதலீட்டு வாய்ப்புகள்",
+        "portfolio": "என் போர்ட்ஃபோலியோ",
+        "analytics": "முதலீட்டு பகுப்பாய்வு",
+        "opportunities": "முதலீட்டு வாய்ப்புகள்",
+        "reports": "முதலீட்டு அறிக்கைகள்",
+        "marketTrends": "சந்தை போக்குகள்",
+        "cropYields": "பயிர் விளைச்சல்கள்",
+        "farmerProfiles": "விவசாயி சுயவிவரங்கள்",
+        "investmentOpportunities": "முதலீட்டு வாய்ப்புகளை காண்க",
+        "portfolioSummary": "போர்ட்ஃபோலியோ சுருக்கம்",
+        "marketAnalysis": "சந்தை பகுப்பாய்வு",
+        "riskAssessment": "அபாய மதிப்பீடு",
+        "returnsProjection": "வருமான முன்னாய்வு"
+      },
+      "admin": {
+        "title": "நிர்வாகி டாஷ்போர்டு",
+        "welcome": "நிர்வாகி போர்டலுக்கு வரவேற்பு",
+        "description": "மொத்த தளத்தையும் நிர்வகிக்கவும்",
+        "users": "அனைத்து பயனர்கள்",
+        "fields": "அனைத்து புலங்கள்",
+        "crops": "அனைத்து பயிர்கள்",
+        "sensors": "அனைத்து சென்சார்கள்",
+        "orders": "அனைத்து ஆர்டர்கள்",
+        "analytics": "தள பகுப்பாய்வு",
+        "settings": "கணினி அமைப்புகள்",
+        "manageUsers": "பயனர்களை நிர்வகிக்கவும்",
+        "manageContent": "உள்ளடக்கத்தை நிர்வகிக்கவும்",
+        "systemAnalytics": "கணினி பகுப்பாய்வு",
+        "platformSettings": "தள அமைப்புகள்",
+        "userReports": "பயனர் அறிக்கைகள்",
+        "contentModeration": "உள்ளடக்க மேற்பார்வை",
+        "systemHealth": "கணினி ஆரோக்கியம்"
+      }
+    },
+    "dashboard": {
+      "title": "டாஷ்போர்டு",
+      "welcome": "அக்ரிமானுக்கு வரவேற்பு",
+      "overview": "கண்ணோட்டம்",
+      "recentActivity": "சமீபத்திய செயல்கள்",
+      "quickActions": "விரைவு நடவடிக்கைகள்"
+    },
+    "fields": {
+      "title": "புல மேலாண்மை",
+      "addField": "புலம் சேர்க்க",
+      "editField": "புலம் திருத்து",
+      "fieldName": "புலத்தின் பெயர்",
+      "fieldSize": "புல அளவு"
+    },
+    "crops": {
+      "title": "பயிர் மேலாண்மை",
+      "addCrop": "பயிர் சேர்க்க",
+      "editCrop": "பயிர் திருத்து",
+      "cropName": "பயிரின் பெயர்",
+      "variety": "வகை"
+    },
+    "sensors": {
+      "title": "IoT சென்சார் மேலாண்மை",
+      "addSensor": "சென்சார் சேர்க்க",
+      "editSensor": "சென்சார் திருத்து",
+      "sensorName": "சென்சாரின் பெயர்",
+      "sensorType": "சென்சார் வகை"
+    },
+    "weather": {
+      "title": "வானிலை தகவல்",
+      "current": "தற்போதைய வானிலை",
+      "forecast": "வானிலை முன்னறிவு",
+      "temperature": "வெப்பநிலை",
+      "humidity": "ஈரப்பதம்"
+    },
+    "marketplace": {
+      "title": "வேளாண் சந்தை",
+      "buyProducts": "தயாரிப்புகள் வாங்கவும்",
+      "sellProducts": "தயாரிப்புகள் விற்கவும்",
+      "myListings": "என் பட்டியல்கள்",
+      "addListing": "பட்டியல் சேர்க்க"
+    },
+    "orders": {
+      "title": "ஆர்டர் மேலாண்மை",
+      "myOrders": "என் ஆர்டர்கள்",
+      "orderDetails": "ஆர்டர் விவரங்கள்",
+      "orderStatus": "ஆர்டர் நிலை",
+      "orderHistory": "ஆர்டர் வரலாறு"
+    },
+    "deliveries": {
+      "title": "டெலிவரி மேலாண்மை",
+      "deliveries": "டெலிவரிகள்",
+      "deliveryDetails": "டெலிவரி விவரங்கள்",
+      "deliveryStatus": "டெலிவரி நிலை",
+      "deliveryDate": "டெலிவரி தேதி"
+    },
+    "analytics": {
+      "title": "பகுப்பாய்வு",
+      "cropAnalysis": "பயிர் பகுப்பாய்வு",
+      "fieldAnalysis": "புல பகுப்பாய்வு",
+      "yieldAnalysis": "விளைச்சல் பகுப்பாய்வு",
+      "profitAnalysis": "லாப பகுப்பாய்வு"
+    },
+    "profile": {
+      "title": "சுயவிவரம்",
+      "editProfile": "சுயவிவரம் திருத்து",
+      "personalInfo": "தனிப்பட்ட தகவல்",
+      "contactInfo": "தொடர்பு தகவல்",
+      "address": "முகவரி"
+    },
+    "settings": {
+      "title": "அமைப்புகள்",
+      "general": "பொது",
+      "notifications": "அறிவிப்புகள்",
+      "privacy": "தனியுரிமை",
+      "security": "பாதுகாப்பு"
+    },
+    "help": {
+      "title": "உதவி",
+      "faq": "அடிக்கடி கேட்கப்படும் கேள்விகள்",
+      "documentation": "ஆவணங்கள்",
+      "tutorials": "பயிற்சிகள்",
+      "guides": "வழிகாட்டிகள்"
+    },
+    "alerts": {
+      "title": "எச்சரிக்கைகள்",
+      "totalAlerts": "மொத்த எச்சரிக்கைகள்",
+      "unreadAlerts": "படிக்காத எச்சரிக்கைகள்",
+      "highPriority": "மிக உயர்ந்த முன்னுரிமை",
+      "recentAlerts": "சமீபத்திய எச்சரிக்கைகள்"
+    },
+    "auth": {
+      "login": "உள்நுழைவு",
+      "register": "பதிவு",
+      "logout": "வெளியேறு",
+      "email": "மின்னஞ்சல்",
+      "password": "கடவுச்சொல்",
+      "forgotPassword": "கடவுச்சொல்லை மறந்துவிட்டீர்களா?",
+      "resetPassword": "கடவுச்சொல்லை மீட்டமை",
+      "sendResetLink": "மீட்டமைப்பு இணைப்பை அனுப்பு",
+      "changePassword": "கடவுச்சொல்லை மாற்று"
+    },
+    "validation": {
+      "required": "இந்த புலம் அவசியம்",
+      "invalidEmail": "சரியான மின்னஞ்சலை உள்ளிடவும்",
+      "invalidPhone": "சரியான தொலைபேசி எண்ணை உள்ளிடவும்",
+      "passwordTooShort": "கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்",
+      "passwordMismatch": "கடவுச்சொற்கள் பொருந்தவில்லை"
+    },
+    "days": {
+      "mon": "தி",
+      "tue": "செ",
+      "wed": "பு",
+      "thu": "வி",
+      "fri": "வெ",
+      "sat": "ச",
+      "sun": "ஞா"
+    },
+    "months": {
+      "jan": "ஜனவரி",
+      "feb": "பிப்ரவரி",
+      "mar": "மார்ச்",
+      "apr": "ஏப்ரல்",
+      "may": "மே",
+      "jun": "ஜூன்",
+      "jul": "ஜூலை",
+      "aug": "ஆகஸ்ட்",
+      "sep": "செப்டம்பர்",
+      "oct": "அக்டோபர்",
+      "nov": "நவம்பர்",
+      "dec": "டிசம்பர்"
+    }
+  }
+  

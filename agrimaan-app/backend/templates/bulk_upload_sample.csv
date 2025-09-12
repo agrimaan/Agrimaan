@@ -1,0 +1,11 @@
+name,email,phone,role,address,city,state,country,zipCode
+Rajesh Kumar,rajesh.kumar@example.com,9876543210,farmer,"123 Village Road, Kolar District",Kolar,Karnataka,India,563101
+Priya Sharma,priya.sharma@example.com,9876543211,buyer,"456 Market Street",Bangalore,Karnataka,India,560001
+Suresh Reddy,suresh.reddy@example.com,9876543212,farmer,"789 Farm Lane, Anantapur District",Anantapur,"Andhra Pradesh",India,515001
+Meera Patel,meera.patel@example.com,9876543213,agronomist,"321 Science Park",Pune,Maharashtra,India,411001
+Vikram Singh,vikram.singh@example.com,9876543214,logistics,"654 Transport Hub",Delhi,Delhi,India,110001
+Anjali Gupta,anjali.gupta@example.com,9876543215,investor,"987 Business District",Mumbai,Maharashtra,India,400001
+Ravi Krishnan,ravi.krishnan@example.com,9876543216,farmer,"147 Coconut Grove, Thrissur District",Thrissur,Kerala,India,680001
+Sunita Devi,sunita.devi@example.com,9876543217,buyer,"258 Wholesale Market",Jaipur,Rajasthan,India,302001
+Arjun Nair,arjun.nair@example.com,9876543218,agronomist,"369 Research Center",Coimbatore,"Tamil Nadu",India,641001
+Kavya Iyer,kavya.iyer@example.com,9876543219,farmer,"741 Paddy Fields, Thanjavur District",Thanjavur,"Tamil Nadu",India,613001

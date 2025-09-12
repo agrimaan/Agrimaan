@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { 
   Box, 
   Drawer, 
@@ -44,7 +45,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import PeopleIcon from '@mui/icons-material/People';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import TokenIcon from '@mui/icons-material/Token';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { RootState } from '../../store';
 
 // Import MobileNavigation for small screens
 import MobileNavigation from '../navigation/MobileNavigation';
@@ -72,6 +80,16 @@ const mainNavItems = [
   { text: 'Marketplace', icon: <StorefrontIcon />, path: '/marketplace' },
 ];
 
+// Admin-specific navigation items
+const adminNavItems = [
+  { text: 'Admin Dashboard', icon: <AdminPanelSettingsIcon />, path: '/admin/dashboard' },
+  { text: 'User Management', icon: <PeopleIcon />, path: '/admin/users' },
+  { text: 'Bulk Uploads', icon: <UploadFileIcon />, path: '/admin/bulk-uploads' },
+  { text: 'Token Management', icon: <TokenIcon />, path: '/admin/tokens' },
+  { text: 'Verification Queue', icon: <VerifiedUserIcon />, path: '/admin/verification' },
+  { text: 'Terms & Conditions', icon: <DescriptionIcon />, path: '/admin/terms' },
+];
+
 const secondaryNavItems = [
   { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
   { text: 'Help', icon: <HelpIcon />, path: '/help' },
@@ -89,6 +107,7 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
   onNotificationsClick
 }) => {
   const theme = useTheme();
+  const { user } = useSelector((state: RootState) => state.auth);
   const isXsScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [drawerOpen, setDrawerOpen] = useState(!isMobile);
@@ -214,6 +233,50 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
       
       <Divider />
       
+      {/* Admin Section - Only show for admin users */}
+      {user?.role === 'admin' && (
+        <Box>
+          <ListItemButton onClick={() => handleSectionToggle('admin')}>
+            <ListItemText primary="Admin Panel" />
+            {expandedSection === 'admin' ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </ListItemButton>
+          <Collapse in={expandedSection === 'admin'} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {adminNavItems.map((item) => (
+                <ListItem key={item.text} disablePadding>
+                  <ListItemButton
+                    component={RouterLink}
+                    to={item.path}
+                    selected={isActive(item.path)}
+                    sx={{
+                      pl: 4,
+                      '&.Mui-selected': {
+                        backgroundColor: `${theme.palette.primary.main}20`,
+                        borderRight: `4px solid ${theme.palette.primary.main}`,
+                        '&:hover': {
+                          backgroundColor: `${theme.palette.primary.main}30`,
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        color: isActive(item.path) ? theme.palette.primary.main : 'inherit',
+                      }}
+                    >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </Box>
+      )}
+
+      <Divider />
+
       {/* Settings Section */}
       <Box>
         <ListItemButton onClick={() => handleSectionToggle('settings')}>
@@ -257,18 +320,18 @@ const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
       {/* User Profile Section */}
       <Box sx={{ mt: 'auto', p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          {userAvatar ? (
+          {user?.profileImage || userAvatar ? (
             <Avatar 
-              alt={userName} 
-              src={userAvatar} 
+              alt={user?.name || userName} 
+              src={user?.profileImage || userAvatar} 
               sx={{ width: 32, height: 32, mr: 1 }}
             />
           ) : (
             <Avatar sx={{ width: 32, height: 32, mr: 1, bgcolor: theme.palette.primary.main }}>
-              {userName.charAt(0)}
+              {(user?.name || userName).charAt(0)}
             </Avatar>
           )}
-          <Typography variant="body2">{userName}</Typography>
+          <Typography variant="body2">{user?.name || userName}</Typography>
         </Box>
         <ListItemButton
           component={RouterLink}

@@ -47,7 +47,9 @@
     "faker": "^5.5.3",
     "moment": "^2.30.1",
     "csv-parser": "^3.0.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "google-auth-library": "^9.6.3",
+    "twilio": "^4.19.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",

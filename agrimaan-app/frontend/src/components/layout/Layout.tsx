@@ -9,6 +9,7 @@ import LogisticsSidebar from './LogisticsSidebar';
 import InvestorSidebar from './InvestorSidebar';
 import AgronomistSidebar from './AgronomistSidebar';
 import BuyerSidebar from './BuyerSidebar';
+import ResponsiveLayout from './ResponsiveLayout';
 
 import AlertDisplay from '../common/AlertDisplay';
 import { RootState } from '../../store';
@@ -20,6 +21,26 @@ const Layout: React.FC = () => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  // Use ResponsiveLayout for admin users
+  if (user?.role === 'admin') {
+    return (
+      <ResponsiveLayout
+        title="Admin Panel"
+        userName={user?.name || 'Admin'}
+        userAvatar={user?.profileImage}
+        onLogout={() => {
+          // Dispatch logout action here
+          console.log('Admin logout');
+        }}
+      >
+        <Box sx={{ p: 3 }}>
+          <AlertDisplay />
+          <Outlet />
+        </Box>
+      </ResponsiveLayout>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -37,7 +58,7 @@ const Layout: React.FC = () => {
         <AgronomistSidebar open={open} toggleDrawer={toggleDrawer} user={user} />
       ) : user?.role === 'buyer' ? (
         <BuyerSidebar open={open} toggleDrawer={toggleDrawer} user={user} />
-      ): (
+      ) : (
         <Sidebar open={open} toggleDrawer={toggleDrawer} user={user} />
       )}
       
